@@ -53,6 +53,8 @@ def normalize_measurement(value: object, default_unit: str = "inch") -> float | 
     text = str(value).strip().lower()
     if not text:
         return None
+    if _is_area_measurement(text):
+        return None
 
     text = _replace_unicode_fractions(text)
     unit = _detect_unit(text, default_unit)
@@ -100,9 +102,11 @@ def split_dimension_pair(value: str) -> tuple[str, str] | None:
     text = _replace_unicode_fractions(value.lower())
     text = re.sub(r"\bby\b", "x", text)
     text = text.replace("*", "x").replace("×", "x")
-    parts = [part.strip(" ,") for part in re.split(r"\s+x\s+", text, maxsplit=1)]
-    if len(parts) == 2 and all(parts):
-        return parts[0], parts[1]
+    number = r"\d+(?:\s*-\s*\d+/\d+|\s+\d+/\d+|/\d+|\.\d+)?"
+    unit = r"(?:\s*(?:mm|cm|ft|in|inch|inches)|\s*[\"'])?"
+    match = re.search(rf"(?P<width>{number}{unit})\s*x\s*(?P<height>{number}{unit})", text)
+    if match:
+        return match.group("width").strip(), match.group("height").strip()
     return None
 
 
@@ -110,6 +114,8 @@ def parse_measurements_in_text(value: object) -> list[float]:
     if value is None:
         return []
     text = _replace_unicode_fractions(str(value).lower())
+    if _is_area_measurement(text):
+        return []
     unit = _detect_unit(text, "inch")
     measurements: list[float] = []
     for match in re.finditer(r"\d+\s*-\s*\d+/\d+|\d+\s+\d+/\d+|\d+/\d+|\d*\.\d+|\d+", text):
@@ -130,6 +136,15 @@ def _replace_unicode_fractions(text: str) -> str:
     for frac, repl in UNICODE_FRACTIONS.items():
         text = text.replace(frac, repl)
     return text
+
+
+def _is_area_measurement(text: str) -> bool:
+    return bool(
+        re.search(
+            r"\b(?:sq\.?\s*ft|sqft|square\s+feet|square\s+foot|square\s+ft|sf)\b",
+            text,
+        )
+    )
 
 
 def _detect_unit(text: str, default_unit: str) -> str:

@@ -9,60 +9,38 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T18:08:30+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:08:59.765025+00:00",
-    "status": "human_review_required",
+    "extracted_at": "2026-06-11T21:04:53.352110+00:00",
+    "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 36.0,
           "height": 84.0,
           "unit": "inch"
         },
-        "quantity": null,
+        "quantity": 1,
         "TK": "3/8\"",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "3/8\"",
-        "coating": null,
         "edge_work": "flat polished all around",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "3/8\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
           "dimensions": "body",
+          "quantity": "default",
           "TK": "body",
           "HT": "body",
           "TT": "body",
-          "makeup": "body",
           "edge_work": "body"
         },
-        "missing_fields": [
-          "quantity"
-        ],
-        "notes": "Door lites for storefront job. Two 1\" diameter holes approximately 4\" down from each top corner for pulls; hardware details to be confirmed and sent later. Quantity not specified. Budgetary pricing requested along with lead time."
+        "missing_fields": [],
+        "notes": "Quantity defaulted to 1; email says 'a few door lites' but no explicit count is given. Two 1\" diameter pull holes located approximately 4\" down from each top corner are mentioned; hole detail pending hardware finalization. Holes do not affect glass shape classification."
       }
-    ],
-    "review": {
-      "reason": "Quantity not specified in the email body. Hole drilling details are pending hardware finalization \u2014 fabricator should follow up before quoting. Lead time requested. One or more items are missing required fields: quantity.",
-      "missing_fields": [
-        "quantity"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead58eb7411919",
@@ -74,71 +52,61 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:05:46+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:09:06.591595+00:00",
+    "extracted_at": "2026-06-11T21:05:02.784247+00:00",
     "status": "human_review_required",
+    "review": {
+      "reason": "Individual lite thicknesses (TK1, TK2) and spacer_thickness are ambiguous. Overall thickness of 1\" is given, and 'standard airspace' was mentioned but is not a valid spacer_thickness value. Without a confirmed spacer thickness, per-lite thicknesses cannot be derived. Argon fill is conditional and not confirmed. Clarification needed on spacer thickness and lite thicknesses. One or more items are missing required fields: TK1, TK2, spacer_material, spacer_thickness.",
+      "missing_fields": [
+        "TK1",
+        "TK2",
+        "spacer_material",
+        "spacer_thickness"
+      ],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "insulated",
+        "shape": "rectangle",
         "dimensions": {
           "width": 36.0,
           "height": 60.0,
           "unit": "inch"
         },
-        "quantity": null,
-        "TK": null,
-        "HT": "tempered",
-        "TT": "clear",
-        "makeup": "insulated",
-        "airspace": "standard",
+        "quantity": 1,
+        "TK1": null,
+        "HT1": "tempered",
+        "TK2": null,
+        "HT2": "tempered",
+        "spacer_material": null,
+        "spacer_thickness": null,
+        "TT1": "clear",
+        "TT2": "clear",
         "overall_thickness": "1\"",
         "coating": "Low-E on surface #2",
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "lite 1",
-            "thickness": null,
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          },
-          {
-            "position": "lite 2",
-            "thickness": null,
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": "Low-E coating on surface #2"
-          }
-        ],
         "source": "body",
         "field_sources": {
           "dimensions": "body",
-          "overall_thickness": "body",
-          "HT": "body",
-          "TT": "body",
-          "makeup": "body",
-          "airspace": "body",
-          "coating": "body"
+          "quantity": "default",
+          "glass_type": "body",
+          "coating": "body",
+          "HT1": "body",
+          "TT1": "body",
+          "HT2": "body",
+          "TT2": "body",
+          "overall_thickness": "body"
         },
         "missing_fields": [
-          "quantity",
-          "TK"
+          "TK1",
+          "TK2",
+          "spacer_material",
+          "spacer_thickness"
         ],
-        "notes": "Argon fill requested conditionally \u2014 only if it does not extend lead time."
+        "notes": "Quantity defaulted to 1; not stated in email. Overall thickness is 1\" but individual lite thicknesses (TK1, TK2) and spacer_thickness are not explicitly stated \u2014 'standard airspace' is not a valid spacer_thickness value, set to null. Per-lite thicknesses cannot be reliably derived without knowing the spacer thickness. Argon fill requested conditionally (if it doesn't affect lead time); not captured as a confirmed spec. Spacer material not specified."
       }
-    ],
-    "review": {
-      "reason": "Airspace thickness not explicitly specified ('standard' only). Individual lite thicknesses not provided; overall thickness is 1\" but split is unknown. Argon fill is conditional on lead time and should be confirmed with customer. One or more items are missing required fields: quantity, TK.",
-      "missing_fields": [
-        "quantity",
-        "TK"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead58e62eeefa1",
@@ -150,76 +118,57 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:05:45+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:09:23.497500+00:00",
+    "extracted_at": "2026-06-11T21:05:18.292980+00:00",
     "status": "human_review_required",
+    "review": {
+      "reason": "Heat treatment is unspecified for both lites. Sender flagged uncertainty about whether tempered should be used for a railing application. Fabricator should confirm HT1 and HT2 before proceeding. Dimension units (inches assumed) not explicitly stated. One or more items are missing required fields: HT1, HT2.",
+      "missing_fields": [
+        "HT1",
+        "HT2"
+      ],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "laminated",
+        "shape": "rectangle",
         "dimensions": {
           "width": 42.0,
           "height": 84.0,
           "unit": "inch"
         },
-        "quantity": null,
-        "TK": "1/4\"",
-        "HT": "annealed",
-        "TT": null,
-        "makeup": "laminated",
-        "airspace": null,
-        "overall_thickness": null,
-        "coating": null,
+        "quantity": 1,
+        "TK1": "1/4\"",
+        "HT1": null,
+        "TK2": "1/4\"",
+        "HT2": null,
+        "interlayer_material": "PVB",
+        "interlayer_thickness": ".030\"",
+        "TT1": "clear",
+        "TT2": "clear",
         "edge_work": "flat polished",
-        "interlayer": ".030 PVB, clear",
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/4\"",
-            "HT": "annealed",
-            "TT": null,
-            "interlayer": null,
-            "notes": null
-          },
-          {
-            "position": "interlayer",
-            "thickness": ".030",
-            "HT": null,
-            "TT": null,
-            "interlayer": "PVB, clear",
-            "notes": null
-          },
-          {
-            "position": "2",
-            "thickness": "1/4\"",
-            "HT": "annealed",
-            "TT": null,
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
           "dimensions": "body",
-          "makeup": "body",
-          "interlayer": "body",
+          "quantity": "default",
+          "glass_type": "body",
           "edge_work": "body",
-          "lite_makeup": "body",
-          "HT": "body"
+          "TK1": "body",
+          "TT1": "body",
+          "TK2": "body",
+          "TT2": "body",
+          "interlayer_material": "body",
+          "interlayer_thickness": "body"
         },
         "missing_fields": [
-          "quantity"
+          "HT1",
+          "HT2"
         ],
-        "notes": "Customer inquired about recommending tempered-laminated for railing application. HT defaulted to annealed as no tempering was explicitly specified, but customer flagged interest in tempered-laminated \u2014 recommend confirming heat treatment before quoting. Quantity not specified. Dimensions assumed to be in inches."
+        "notes": "Quantity not stated; defaulted to 1. Heat treatment not specified for either lite (HT1 and HT2 are null). The interlayer is described as 'clear' which refers to the PVB color/tint, not a separate glass type. Sender asks whether tempered-laminated is recommended for a railing application \u2014 this is a question, not a specification; heat treatment remains unconfirmed. Dimensions appear to be in inches but units not explicitly stated."
       }
-    ],
-    "review": {
-      "reason": "No quantity provided. Heat treatment is ambiguous \u2014 customer asked whether tempered-laminated should be recommended for a railing application, implying current spec may be annealed but could change. Confirm HT and quantity before quoting. One or more items are missing required fields: quantity.",
-      "missing_fields": [
-        "quantity"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead58e761510f0",
@@ -231,62 +180,37 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:05:45+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:09:14.333216+00:00",
-    "status": "human_review_required",
+    "extracted_at": "2026-06-11T21:05:08.669280+00:00",
+    "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 60.0,
           "height": 84.0,
           "unit": "inch"
         },
-        "quantity": null,
+        "quantity": 1,
         "TK": "1/4\"",
-        "HT": "annealed",
+        "HT": null,
         "TT": "mirror",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/4\"",
-        "coating": "mirror coating",
         "edge_work": "seamed",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/4\"",
-            "HT": "annealed",
-            "TT": "mirror",
-            "interlayer": null,
-            "notes": "Safety backing (vinyl) applied to back surface; intended for gym wall installation"
-          }
-        ],
         "source": "body",
         "field_sources": {
           "dimensions": "body",
+          "quantity": "default",
           "TK": "body",
-          "HT": "body",
           "TT": "body",
-          "makeup": "body",
-          "coating": "body",
-          "edge_work": "body",
-          "notes": "body"
+          "edge_work": "body"
         },
-        "missing_fields": [
-          "quantity"
-        ],
-        "notes": "Safety vinyl backing required on back of mirror for gym wall application. Quantity not specified. Customer inquired about lead time."
+        "missing_fields": [],
+        "notes": "Safety backing (vinyl) to be applied to back of mirror for gym wall installation. Quantity defaulted to 1 as none was stated. Heat treatment not specified; mirrors are typically annealed but not explicitly stated \u2014 left null."
       }
-    ],
-    "review": {
-      "reason": "Quantity not provided. Heat treatment not explicitly stated; annealed assumed as no tempering was mentioned, but safety backing may imply a safety glazing requirement \u2014 reviewer should confirm whether tempered mirror is needed for gym wall application. One or more items are missing required fields: quantity.",
-      "missing_fields": [
-        "quantity"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead58e28c1c7e2",
@@ -298,61 +222,38 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:05:44+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:09:36.700730+00:00",
-    "status": "human_review_required",
+    "extracted_at": "2026-06-11T21:05:31.561835+00:00",
+    "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 36.0,
           "height": 84.0,
           "unit": "inch"
         },
-        "quantity": null,
+        "quantity": 1,
         "TK": "3/8\"",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "3/8\"",
-        "coating": null,
         "edge_work": "flat polished all around",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "3/8\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
           "dimensions": "body",
+          "quantity": "default",
           "TK": "body",
           "HT": "body",
           "TT": "body",
-          "makeup": "body",
-          "edge_work": "body",
-          "quantity": "body"
+          "edge_work": "body"
         },
-        "missing_fields": [
-          "quantity"
-        ],
-        "notes": "Door lites for storefront job. Quantity not specified \u2014 described as 'a few.' Two 1\" diameter holes approximately 4\" down from each top corner for door pulls; hole detail pending hardware finalization. Lead time requested."
+        "missing_fields": [],
+        "notes": "Quantity defaulted to 1; email says 'a few door lites' but no explicit count is given. Two 1\" diameter pull holes located approximately 4\" down from each top corner are mentioned; hardware detail to follow. Holes do not affect glass shape classification \u2014 shape remains rectangle."
       }
-    ],
-    "review": {
-      "reason": "Quantity is ambiguous ('a few' \u2014 likely 2 or more but not stated explicitly). Hole drilling details are pending hardware finalization and not yet confirmed. No attachment provided. One or more items are missing required fields: quantity.",
-      "missing_fields": [
-        "quantity"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead58e564889f0",
@@ -364,11 +265,15 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:05:44+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:09:29.636642+00:00",
+    "extracted_at": "2026-06-11T21:05:24.683591+00:00",
     "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 48.0,
           "height": 96.0,
@@ -377,41 +282,21 @@
         "quantity": 1,
         "TK": "1/2\"",
         "HT": "tempered",
-        "TT": "low-iron",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/2\"",
-        "coating": null,
-        "edge_work": "polished",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "monolithic",
-            "thickness": "1/2\"",
-            "HT": "tempered",
-            "TT": "low-iron",
-            "interlayer": null,
-            "notes": "Starphire-type ultra clear low-iron glass"
-          }
-        ],
+        "TT": "low-iron ultra clear (Starphire-type)",
+        "edge_work": "polished edges; top two corners radiused at approximately 1\" radius",
         "source": "body",
         "field_sources": {
           "dimensions": "body",
-          "quantity": "body",
+          "quantity": "default",
           "TK": "body",
           "HT": "body",
           "TT": "body",
-          "makeup": "body",
-          "edge_work": "body",
-          "shape": "body"
+          "edge_work": "body"
         },
         "missing_fields": [],
-        "notes": "Top two corners radiused at approximately 1\" radius. Customer requests fabrication and freight quote to ZIP code 60607. Glass described as 'starphire-type ultra clear' low-iron."
+        "notes": "Quantity defaulted to 1; not explicitly stated. Corner radii (~1\" radius on top two corners) are approximate per customer. Customer also requested freight quote to ZIP 60607."
       }
-    ],
-    "review": null,
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead5401c1c9fda",
@@ -423,11 +308,19 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:24+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:09:43.668326+00:00",
+    "extracted_at": "2026-06-11T21:05:37.363427+00:00",
     "status": "human_review_required",
+    "review": {
+      "reason": "Frit color is not finalized (TBD). Quantity is approximate and may increase. No edge work specified.",
+      "missing_fields": [],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 48.0,
           "height": 96.0,
@@ -437,43 +330,21 @@
         "TK": "1/4\"",
         "HT": "tempered",
         "TT": "spandrel",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/4\"",
-        "coating": "ceramic frit on surface 2 (color TBD, likely black or dark grey)",
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/4\"",
-            "HT": "tempered",
-            "TT": "spandrel",
-            "interlayer": null,
-            "notes": "ceramic frit applied on surface 2; color TBD, probably black or dark grey"
-          }
-        ],
+        "coating": "ceramic frit on surface 2, color TBD (likely black or dark grey)",
         "source": "body",
         "field_sources": {
           "dimensions": "body",
           "quantity": "body",
+          "glass_type": "body",
           "TK": "body",
           "HT": "body",
           "TT": "body",
-          "makeup": "body",
           "coating": "body"
         },
         "missing_fields": [],
-        "notes": "Quantity is approximate (~20, could go up). Frit color is TBD (probably black or dark grey). Customer is asking about lead time impact of the ceramic frit."
+        "notes": "Quantity stated as 'around 20, could go up' \u2014 using 20 as stated approximate. Frit color is TBD, noted as probably black or dark grey. Customer asked about lead time impact of ceramic frit."
       }
-    ],
-    "review": {
-      "reason": "Quantity is approximate and frit color is undecided; confirm both before finalizing quote.",
-      "missing_fields": [],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead53fa403f67c",
@@ -485,36 +356,25 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:22+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:09:48.784544+00:00",
+    "extracted_at": "2026-06-11T21:05:41.822564+00:00",
     "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 71.5,
           "height": 99.625,
           "unit": "inch"
         },
         "quantity": 1,
-        "TK": "1/4",
+        "TK": "1/4\"",
         "HT": "tempered",
         "TT": "bronze",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/4",
-        "coating": null,
         "edge_work": "none",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/4",
-            "HT": "tempered",
-            "TT": "bronze",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
           "dimensions": "body",
@@ -522,16 +382,12 @@
           "TK": "body",
           "HT": "body",
           "TT": "body",
-          "makeup": "body",
           "edge_work": "body"
         },
         "missing_fields": [],
-        "notes": "Customer is on-site waiting; rush requested."
+        "notes": "Customer is on-site waiting; rush order requested."
       }
-    ],
-    "review": null,
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead53f61f7d179",
@@ -543,11 +399,15 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:21+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:09:56.975696+00:00",
+    "extracted_at": "2026-06-11T21:05:49.493547+00:00",
     "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": "fixed panel",
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 30.0,
           "height": 72.0,
@@ -557,38 +417,24 @@
         "TK": "3/8\"",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "3/8\"",
-        "coating": null,
         "edge_work": "polished edges all around",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "3/8\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
-          "mark": "body",
           "dimensions": "body",
           "quantity": "body",
+          "shape": "body",
+          "glass_type": "body",
           "TK": "body",
           "HT": "body",
           "TT": "body",
-          "makeup": "body",
           "edge_work": "body"
         },
         "missing_fields": [],
-        "notes": null
+        "notes": "Fixed panels. No cutouts or special fabrication noted for these panels."
       },
       {
-        "mark": "door",
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 26.0,
           "height": 72.0,
@@ -598,41 +444,22 @@
         "TK": "3/8\"",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "3/8\"",
-        "coating": null,
         "edge_work": "polished edges all around",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "3/8\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": "hinge cutouts and notch for handle required"
-          }
-        ],
         "source": "body",
         "field_sources": {
-          "mark": "body",
           "dimensions": "body",
           "quantity": "body",
+          "shape": "body",
+          "glass_type": "body",
           "TK": "body",
           "HT": "body",
           "TT": "body",
-          "makeup": "body",
-          "edge_work": "body",
-          "notes": "body"
+          "edge_work": "body"
         },
         "missing_fields": [],
-        "notes": "hinge cutouts and a notch for the handle required"
+        "notes": "Shower doors. Require hinge cutouts and a notch for the handle. Cutouts/notches do not affect overall shape classification (rectangle). Polished edges all around."
       }
-    ],
-    "review": null,
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead53f243055cd",
@@ -644,11 +471,19 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:20+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:10:04.451387+00:00",
+    "extracted_at": "2026-06-11T21:05:55.754259+00:00",
     "status": "human_review_required",
+    "review": {
+      "reason": "This is a budgetary estimate request with approximate dimensions and quantities. The architect has not yet provided final specifications. Dimensions and quantity should be confirmed before production.",
+      "missing_fields": [],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 40.0,
           "height": 90.0,
@@ -658,22 +493,7 @@
         "TK": "1/2\"",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/2\"",
-        "coating": null,
         "edge_work": "polished",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/2\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
           "quantity": "body",
@@ -681,20 +501,12 @@
           "TK": "body",
           "HT": "body",
           "TT": "body",
-          "makeup": "body",
           "edge_work": "body"
         },
         "missing_fields": [],
-        "notes": "Budgetary/ballpark request only. Architect details not yet finalized. Described as standard storefront. Quantity (~15) and dimensions (~40\" x 90\") are approximate per customer."
+        "notes": "Budgetary/ballpark request only. Dimensions described as 'give or take' \u2014 approximate, not confirmed. Approximately 15 lites of standard storefront monolithic tempered glass."
       }
-    ],
-    "review": {
-      "reason": "All values are explicitly flagged as approximate by the sender. No formal drawings or attachments provided. Quantities and dimensions should be confirmed before final quoting.",
-      "missing_fields": [],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead53ec9969f33",
@@ -706,16 +518,35 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:19+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:10:16.736719+00:00",
+    "extracted_at": "2026-06-11T21:06:11.523827+00:00",
     "status": "human_review_required",
-    "items": [],
     "review": {
-      "reason": "Insufficient information to extract any RFQ items. The email references a prior 'Hudson Street job' order but provides no specifications \u2014 no marks, dimensions, quantities, makeup, thickness, heat treatment, edge work, or any other extractable fields. All details are deferred to assumed on-file records not present in this email or any attachment. No glass items were extracted from the message.",
-      "missing_fields": [],
+      "reason": "Insufficient information to extract any glass specifications. The customer references a prior job ('Hudson Street job last month') and asks for a reorder based on fabricator records. No dimensions, glass type, makeup, quantity, edge work, or any other spec was provided in the email body. No attachments were included. Fabricator must retrieve historical order details before quoting. One or more items are missing required fields: dimensions, glass_type.",
+      "missing_fields": [
+        "dimensions",
+        "glass_type"
+      ],
       "conflicts": []
     },
     "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    "llm_model": "claude-sonnet-4-6",
+    "items": [
+      {
+        "glass_type": "unknown",
+        "shape": "rectangle",
+        "dimensions": null,
+        "quantity": 1,
+        "source": "body",
+        "field_sources": {
+          "quantity": "default"
+        },
+        "missing_fields": [
+          "dimensions",
+          "glass_type"
+        ],
+        "notes": "Customer is requesting a reorder of lites from a previous 'Hudson Street job' with no specifications provided in this email. All details (sizes, makeup, edge work, quantity) are deferred to fabricator records on file. Quantity defaulted to 1 as a placeholder only; actual quantity unknown. Dimensions, glass type, heat treatment, tint/type, and all other specs are null because no information was provided. Fabricator must look up the Hudson Street job history to fulfill this request."
+      }
+    ]
   },
   {
     "email_id": "19ead53eeef26caa",
@@ -727,11 +558,19 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:19+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:10:13.727670+00:00",
+    "extracted_at": "2026-06-11T21:06:03.382435+00:00",
     "status": "human_review_required",
+    "review": {
+      "reason": "Mixed units between items (metric for item 1, imperial for item 2). Customer acknowledged this explicitly.",
+      "missing_fields": [],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 23.622,
           "height": 59.0551,
@@ -741,37 +580,22 @@
         "TK": "10mm",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "10mm",
-        "coating": null,
         "edge_work": "polished edges",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "10mm",
-            "HT": "tempered",
-            "TT": null,
-            "interlayer": null,
-            "notes": "clear"
-          }
-        ],
         "source": "body",
         "field_sources": {
           "dimensions": "body",
           "quantity": "body",
           "TK": "body",
           "HT": "body",
-          "edge_work": "body",
-          "coating": "body",
-          "TT": "body"
+          "TT": "body",
+          "edge_work": "body"
         },
         "missing_fields": [],
         "notes": "Dimensions from European supplier's drawing, provided in metric units."
       },
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 32.0,
           "height": 84.0,
@@ -781,43 +605,20 @@
         "TK": "1/2\"",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/2\"",
-        "coating": null,
-        "edge_work": "polished edges",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/2\"",
-            "HT": "tempered",
-            "TT": null,
-            "interlayer": null,
-            "notes": "clear"
-          }
-        ],
+        "edge_work": "polished",
         "source": "body",
         "field_sources": {
           "dimensions": "body",
           "quantity": "body",
           "TK": "body",
           "HT": "body",
-          "edge_work": "body",
-          "coating": "body",
-          "TT": "body"
+          "TT": "body",
+          "edge_work": "body"
         },
         "missing_fields": [],
-        "notes": "Dimensions provided in imperial units. 'Half inch' interpreted as 1/2\"."
+        "notes": "Thickness stated as 'half inch', interpreted as 1/2\". Glass type described as 'same clear tempered' referencing the first item."
       }
-    ],
-    "review": {
-      "reason": "Mixed units across two items (metric vs imperial) as noted by the customer. No conflicts between body and attachment since there are no attachments.",
-      "missing_fields": [],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead53e95f6f2d5",
@@ -829,11 +630,15 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:18+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:10:24.573414+00:00",
-    "status": "human_review_required",
+    "extracted_at": "2026-06-11T21:06:17.505720+00:00",
+    "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 48.0,
           "height": 80.0,
@@ -843,22 +648,7 @@
         "TK": "3/8\"",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "3/8\"",
-        "coating": null,
-        "edge_work": "polished",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "3/8\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": "Originally specified as 1/4\"; corrected to 3/8\" per architect instruction in same email"
-          }
-        ],
+        "edge_work": "polished edges",
         "source": "body",
         "field_sources": {
           "dimensions": "body",
@@ -866,27 +656,12 @@
           "TK": "body",
           "HT": "body",
           "TT": "body",
-          "makeup": "body",
           "edge_work": "body"
         },
         "missing_fields": [],
-        "notes": "Customer initially requested 1/4\" thickness, then corrected to 3/8\" per architect. Final specified thickness is 3/8\". Quantity stated as two pieces; no correction to quantity was made."
+        "notes": "Thickness was initially stated as 1/4\" but corrected by the customer to 3/8\" per architect instruction. Final thickness used is 3/8\"."
       }
-    ],
-    "review": {
-      "reason": "Thickness was corrected mid-email from 1/4\" to 3/8\". Latest explicit correction (3/8\") has been used as the final value. One or more body/attachment conflicts require review.",
-      "missing_fields": [],
-      "conflicts": [
-        {
-          "field": "TK",
-          "body": "Initially 1/4\", corrected to 3/8\" in same email",
-          "attachment": null,
-          "source": "body"
-        }
-      ]
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead53e796f8179",
@@ -898,140 +673,92 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:17+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:10:38.495898+00:00",
+    "extracted_at": "2026-06-11T21:06:30.923085+00:00",
     "status": "human_review_required",
+    "review": {
+      "reason": "The 60 x 84 lite's heat treatment and tint were not explicitly stated \u2014 they were inferred from context (all other lites are clear tempered, and the GC references temp stickers). Confirm HT and TT for this item. Quantity for the 60 x 84 lite was defaulted to 1. The GC references a markup/attachment with sizes, but no attachment was provided; confirm all sizes are correct.",
+      "missing_fields": [],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 30.0,
           "height": 72.0,
           "unit": "inch"
         },
         "quantity": 4,
-        "TK": "1/4",
+        "TK": "1/4\"",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/4",
-        "coating": null,
         "edge_work": "polished",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/4",
-            "HT": "tempered",
-            "TT": null,
-            "interlayer": null,
-            "notes": "clear"
-          }
-        ],
         "source": "body",
         "field_sources": {
           "dimensions": "body",
           "quantity": "body",
           "TK": "body",
           "HT": "body",
-          "makeup": "body",
-          "edge_work": "body",
-          "coating": "body",
-          "TT": "body"
+          "TT": "body",
+          "edge_work": "body"
         },
         "missing_fields": [],
-        "notes": "Clear tempered, polished edges. Sizes described by forwarding party interpreting GC markup; original markup not provided."
+        "notes": "Dimensions given as width x height in inches. 'Quarter inch clear tempered' interpreted as 1/4\" clear tempered. 'Polished edges throughout' applies to all items."
       },
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 24.0,
           "height": 36.0,
           "unit": "inch"
         },
         "quantity": 2,
-        "TK": "1/4",
+        "TK": "1/4\"",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/4",
-        "coating": null,
         "edge_work": "polished",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/4",
-            "HT": "tempered",
-            "TT": null,
-            "interlayer": null,
-            "notes": "clear"
-          }
-        ],
         "source": "body",
         "field_sources": {
           "dimensions": "body",
           "quantity": "body",
           "TK": "body",
           "HT": "body",
-          "makeup": "body",
-          "edge_work": "body",
-          "coating": "body",
-          "TT": "body"
+          "TT": "body",
+          "edge_work": "body"
         },
         "missing_fields": [],
-        "notes": "Clear tempered, polished edges. Sizes described by forwarding party interpreting GC markup; original markup not provided."
+        "notes": "Dimensions given as width x height in inches. 'Quarter inch clear tempered' inherited from same sentence grouping. 'Polished edges throughout' applies to all items."
       },
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 60.0,
           "height": 84.0,
           "unit": "inch"
         },
         "quantity": 1,
-        "TK": "1/2",
+        "TK": "1/2\"",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/2",
-        "coating": null,
         "edge_work": "polished",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/2",
-            "HT": "tempered",
-            "TT": null,
-            "interlayer": null,
-            "notes": "clear; HT inferred from context \u2014 GC referenced temp stickers, suggesting all lites are tempered"
-          }
-        ],
         "source": "body",
         "field_sources": {
           "dimensions": "body",
-          "quantity": "body",
+          "quantity": "default",
           "TK": "body",
           "HT": "body",
-          "makeup": "body",
-          "edge_work": "body",
-          "coating": "body",
-          "TT": "body"
+          "TT": "body",
+          "edge_work": "body"
         },
         "missing_fields": [],
-        "notes": "Half inch lite; HT not explicitly stated for this piece but inferred from GC's reference to temp stickers and overall context. Flag for confirmation. Polished edges throughout applies."
+        "notes": "Quantity defaulted to 1 as none was stated. Heat treatment (tempered) and tint (clear) not explicitly stated for this lite but inferred from context of the same sentence grouping and the GC's reference to 'temp stickers'; marked for review. Thickness 'half inch' = 1/2\". 'Polished edges throughout' applies to all items."
       }
-    ],
-    "review": {
-      "reason": "Sizes are described by the forwarding party interpreting a GC markup that was not attached. Quantities and dimensions should be verified against the original markup. HT for the 60x84 lite is inferred, not explicitly stated. Recommend confirming all specs directly with GC or obtaining the markup.",
-      "missing_fields": [],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead53e09e3342c",
@@ -1043,11 +770,23 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:16+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:11:30.908917+00:00",
+    "extracted_at": "2026-06-11T21:07:26.313445+00:00",
     "status": "human_review_required",
+    "review": {
+      "reason": "Several spec fields are ambiguous or missing: (1) Insulated unit spacer_material not stated. (2) Laminated-insulated outboard plies have no heat treatment or glass type/color stated. (3) Laminated-insulated inboard lite glass type/color not stated. (4) Low-E coating surface position (#2 vs #3) should be confirmed for both insulated items. (5) Argon fill noted in notes for insulated items. One or more items are missing required fields: spacer_material, HT1, HT2.",
+      "missing_fields": [
+        "spacer_material",
+        "HT1",
+        "HT2"
+      ],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 48.0,
           "height": 96.0,
@@ -1057,22 +796,7 @@
         "TK": "1/2\"",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/2\"",
-        "coating": null,
         "edge_work": "flat polished",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "monolithic",
-            "thickness": "1/2\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
           "quantity": "body",
@@ -1080,194 +804,129 @@
           "TK": "body",
           "HT": "body",
           "TT": "body",
-          "makeup": "body",
           "edge_work": "body"
         },
-        "missing_fields": [],
-        "notes": null
+        "missing_fields": []
       },
       {
-        "mark": null,
+        "glass_type": "laminated",
+        "shape": "rectangle",
         "dimensions": {
           "width": 60.0,
           "height": 120.0,
           "unit": "inch"
         },
         "quantity": 1,
-        "TK": "1/4\"",
-        "HT": "heat-strengthened",
-        "TT": "clear",
-        "makeup": "laminated",
-        "airspace": null,
-        "overall_thickness": null,
-        "coating": null,
+        "TK1": "1/4\"",
+        "HT1": "heat-strengthened",
+        "TK2": "1/4\"",
+        "HT2": "heat-strengthened",
+        "interlayer_material": "PVB",
+        "interlayer_thickness": ".060\"",
+        "TT1": "clear",
+        "TT2": "clear",
         "edge_work": "flat polished",
-        "interlayer": ".060 PVB",
-        "lite_makeup": [
-          {
-            "position": "outboard",
-            "thickness": "1/4\"",
-            "HT": "heat-strengthened",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          },
-          {
-            "position": "interlayer",
-            "thickness": null,
-            "HT": null,
-            "TT": null,
-            "interlayer": ".060 PVB",
-            "notes": null
-          },
-          {
-            "position": "inboard",
-            "thickness": "1/4\"",
-            "HT": "heat-strengthened",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
           "quantity": "body",
           "dimensions": "body",
-          "HT": "body",
-          "TT": "body",
-          "makeup": "body",
-          "edge_work": "body",
-          "interlayer": "body"
+          "TK1": "body",
+          "HT1": "body",
+          "TT1": "body",
+          "TK2": "body",
+          "HT2": "body",
+          "TT2": "body",
+          "interlayer_material": "body",
+          "interlayer_thickness": "body",
+          "edge_work": "body"
         },
-        "missing_fields": [],
-        "notes": null
+        "missing_fields": []
       },
       {
-        "mark": null,
+        "glass_type": "insulated",
+        "shape": "rectangle",
         "dimensions": {
           "width": 36.0,
           "height": 72.0,
           "unit": "inch"
         },
         "quantity": 4,
-        "TK": "1/4\"",
-        "HT": "heat-strengthened",
-        "TT": "clear",
-        "makeup": "insulated",
-        "airspace": "1/2\"",
+        "TK1": "1/4\"",
+        "HT1": "heat-strengthened",
+        "TK2": "1/4\"",
+        "HT2": "heat-strengthened",
+        "spacer_material": null,
+        "spacer_thickness": "1/2\"",
+        "TT1": "clear",
+        "TT2": "clear",
         "overall_thickness": "1\"",
         "coating": "Low-E #2",
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "outboard",
-            "thickness": "1/4\"",
-            "HT": "heat-strengthened",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          },
-          {
-            "position": "inboard",
-            "thickness": "1/4\"",
-            "HT": "heat-strengthened",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
           "quantity": "body",
           "dimensions": "body",
-          "HT": "body",
-          "TT": "body",
-          "makeup": "body",
-          "airspace": "body",
+          "TK1": "body",
+          "HT1": "body",
+          "TT1": "body",
+          "TK2": "body",
+          "HT2": "body",
+          "TT2": "body",
+          "spacer_thickness": "body",
           "overall_thickness": "body",
           "coating": "body"
         },
-        "missing_fields": [],
-        "notes": "Argon filled."
+        "missing_fields": [
+          "spacer_material"
+        ],
+        "notes": "Argon filled. Spacer material not specified. Low-E #2 surface position noted but specific surface (e.g., #2 or #3) not disambiguated beyond what was written."
       },
       {
-        "mark": null,
+        "glass_type": "laminated-insulated",
+        "shape": "rectangle",
         "dimensions": {
           "width": 48.0,
           "height": 96.0,
           "unit": "inch"
         },
         "quantity": 2,
-        "TK": "1/4\"",
-        "HT": null,
-        "TT": "clear",
-        "makeup": "laminated-insulated",
-        "airspace": "1/2\"",
+        "laminate_lite": "outboard",
+        "TK1": "1/4\"",
+        "HT1": null,
+        "TK2": "1/4\"",
+        "HT2": null,
+        "TK3": "1/4\"",
+        "HT3": "heat-strengthened",
+        "interlayer_material": "PVB",
+        "interlayer_thickness": ".090\"",
+        "spacer_material": null,
+        "spacer_thickness": "1/2\"",
+        "TT2": "clear",
         "overall_thickness": "1-5/16\"",
         "coating": "Low-E #2",
-        "edge_work": null,
-        "interlayer": ".090 PVB",
-        "lite_makeup": [
-          {
-            "position": "outboard lite 1",
-            "thickness": "1/4\"",
-            "HT": null,
-            "TT": null,
-            "interlayer": null,
-            "notes": "Part of outboard laminated assembly"
-          },
-          {
-            "position": "outboard interlayer",
-            "thickness": null,
-            "HT": null,
-            "TT": null,
-            "interlayer": ".090 PVB",
-            "notes": null
-          },
-          {
-            "position": "outboard lite 2",
-            "thickness": "1/4\"",
-            "HT": null,
-            "TT": null,
-            "interlayer": null,
-            "notes": "Part of outboard laminated assembly"
-          },
-          {
-            "position": "inboard",
-            "thickness": "1/4\"",
-            "HT": "heat-strengthened",
-            "TT": null,
-            "interlayer": null,
-            "notes": "Inboard monolithic lite"
-          }
-        ],
         "source": "body",
         "field_sources": {
           "quantity": "body",
           "dimensions": "body",
-          "TT": "body",
-          "makeup": "body",
-          "airspace": "body",
+          "laminate_lite": "body",
+          "TK1": "body",
+          "TK2": "body",
+          "TT2": "body",
+          "interlayer_material": "body",
+          "interlayer_thickness": "body",
+          "spacer_thickness": "body",
+          "TK3": "body",
+          "HT3": "body",
           "overall_thickness": "body",
-          "coating": "body",
-          "interlayer": "body"
+          "coating": "body"
         },
         "missing_fields": [
-          "HT"
+          "HT1",
+          "HT2",
+          "spacer_material"
         ],
-        "notes": "Outboard laminated lite: 1/4\" + .090 PVB + 1/4\" (HT not specified for outboard lites). Inboard 1/4\" HS. Argon filled. Low-E #2 position not explicitly stated."
+        "notes": "Outboard laminated lite: 1/4\" + .090 PVB + 1/4\". Heat treatment and glass type (clear/etc.) for outboard plies (TK1, TK2) not specified \u2014 set to null. Inboard lite (TK3) is 1/4\" HS; glass type/color not specified. Argon filled. Spacer material not specified. Low-E #2 surface position noted as written."
       }
-    ],
-    "review": {
-      "reason": "Laminated-insulated item: HT specification for outboard laminated lites is not explicitly stated (only inboard is noted as HS). Low-E coating surface position (#2) is noted but surface assignment should be confirmed. Overall thickness of 1-5/16\" should be verified against stated lite and airspace thicknesses (1/4+1/4+1/4 + .090 PVB + 1/2\" airspace). One or more items are missing required fields: HT.",
-      "missing_fields": [
-        "HT"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead53e4b533cb2",
@@ -1279,11 +938,30 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:16+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:10:53.172362+00:00",
+    "extracted_at": "2026-06-11T21:06:48.552165+00:00",
     "status": "human_review_required",
+    "review": {
+      "reason": "Multiple items have incomplete specifications. Item 2 (laminated): individual ply thicknesses and interlayer details missing. Item 3 (IGU): lite thicknesses, heat treatments, and spacer thickness missing; argon noted as gas fill only. Item 4 (LIU): laminated ply details, inboard lite thickness, and spacer thickness all missing. One or more items are missing required fields: HT, TK1, TK2, interlayer_thickness, interlayer_material, spacer_material, spacer_thickness, HT1, HT2, TK3.",
+      "missing_fields": [
+        "HT",
+        "TK1",
+        "TK2",
+        "interlayer_thickness",
+        "interlayer_material",
+        "spacer_material",
+        "spacer_thickness",
+        "HT1",
+        "HT2",
+        "TK3"
+      ],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 84.0,
           "height": 108.0,
@@ -1291,161 +969,131 @@
         },
         "quantity": 2,
         "TK": "1/2\"",
-        "HT": "annealed",
+        "HT": null,
         "TT": "low-iron",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/2\"",
-        "coating": null,
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "monolithic",
-            "thickness": "1/2\"",
-            "HT": "annealed",
-            "TT": "low-iron",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
           "quantity": "body",
           "dimensions": "body",
           "TK": "body",
-          "TT": "body",
-          "makeup": "body"
+          "TT": "body"
         },
-        "missing_fields": [],
-        "notes": null
+        "missing_fields": [
+          "HT"
+        ],
+        "notes": "Heat treatment not specified; HT set to null."
       },
       {
-        "mark": null,
+        "glass_type": "laminated",
+        "shape": "rectangle",
         "dimensions": {
           "width": 60.0,
           "height": 96.0,
           "unit": "inch"
         },
         "quantity": 2,
-        "TK": "9/16\"",
-        "HT": "heat-strengthened",
-        "TT": "clear",
-        "makeup": "laminated",
-        "airspace": null,
-        "overall_thickness": "9/16\"",
-        "coating": null,
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [],
+        "TK1": null,
+        "HT1": "heat-strengthened",
+        "TK2": null,
+        "HT2": "heat-strengthened",
+        "interlayer_material": null,
+        "interlayer_thickness": null,
+        "TT1": "clear",
+        "TT2": "clear",
         "source": "body",
         "field_sources": {
           "quantity": "body",
           "dimensions": "body",
-          "TK": "body",
-          "HT": "body",
-          "TT": "body",
-          "makeup": "body"
+          "HT1": "body",
+          "TT1": "body",
+          "HT2": "body",
+          "TT2": "body"
         },
         "missing_fields": [
-          "interlayer"
+          "TK1",
+          "TK2",
+          "interlayer_thickness",
+          "interlayer_material"
         ],
-        "notes": "9/16\" overall laminated, heat-strengthened (HS) construction. Individual lite thicknesses and interlayer not specified."
+        "notes": "Overall thickness stated as 9/16\" but individual ply thicknesses not specified; TK1 and TK2 set to null. Interlayer material and thickness not specified. HS construction applies to both plies."
       },
       {
-        "mark": null,
+        "glass_type": "insulated",
+        "shape": "rectangle",
         "dimensions": {
           "width": 48.0,
           "height": 84.0,
           "unit": "inch"
         },
         "quantity": 8,
-        "TK": null,
-        "HT": null,
-        "TT": null,
-        "makeup": "insulated",
-        "airspace": null,
+        "TK1": null,
+        "HT1": null,
+        "TK2": null,
+        "HT2": null,
+        "spacer_material": null,
+        "spacer_thickness": null,
         "overall_thickness": "1\"",
         "coating": "Low-E surface 2",
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [],
         "source": "body",
         "field_sources": {
           "quantity": "body",
           "dimensions": "body",
-          "overall_thickness": "body",
           "coating": "body",
-          "makeup": "body"
+          "overall_thickness": "body"
         },
         "missing_fields": [
-          "TK",
-          "HT",
-          "lite_makeup"
+          "TK1",
+          "TK2",
+          "spacer_material",
+          "spacer_thickness",
+          "HT1",
+          "HT2"
         ],
-        "notes": "1\" overall IGU, Low-E on surface 2, argon filled. Individual lite thicknesses and airspace not specified."
+        "notes": "Individual lite thicknesses and heat treatments not specified. Spacer thickness cannot be derived without knowing lite thicknesses; set to null. Argon fill noted but argon is a gas fill, not a spacer material; spacer_material set to null. Gas fill: argon."
       },
       {
-        "mark": null,
+        "glass_type": "laminated-insulated",
+        "shape": "rectangle",
         "dimensions": {
           "width": 60.0,
           "height": 120.0,
           "unit": "inch"
         },
         "quantity": 4,
-        "TK": null,
-        "HT": null,
-        "TT": null,
-        "makeup": "laminated-insulated",
-        "airspace": null,
+        "laminate_lite": "outboard",
+        "TK1": null,
+        "HT1": null,
+        "TK2": null,
+        "HT2": null,
+        "TK3": null,
+        "HT3": "tempered",
+        "interlayer_material": null,
+        "interlayer_thickness": null,
+        "spacer_material": null,
+        "spacer_thickness": null,
         "overall_thickness": "1-5/16\"",
-        "coating": null,
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "outboard",
-            "thickness": null,
-            "HT": null,
-            "TT": null,
-            "interlayer": null,
-            "notes": "laminated outboard lite"
-          },
-          {
-            "position": "inboard",
-            "thickness": null,
-            "HT": "tempered",
-            "TT": null,
-            "interlayer": null,
-            "notes": "tempered inboard lite"
-          }
-        ],
         "source": "body",
         "field_sources": {
           "quantity": "body",
           "dimensions": "body",
-          "overall_thickness": "body",
-          "makeup": "body"
+          "laminate_lite": "body",
+          "HT3": "body",
+          "overall_thickness": "body"
         },
         "missing_fields": [
-          "TK",
-          "HT"
+          "TK1",
+          "TK2",
+          "TK3",
+          "HT1",
+          "HT2",
+          "interlayer_material",
+          "interlayer_thickness",
+          "spacer_material",
+          "spacer_thickness"
         ],
-        "notes": "1-5/16\" overall LIU. Laminated outboard lite, tempered inboard lite. Individual lite thicknesses, airspace, and interlayer not specified."
+        "notes": "Outboard lite is laminated; individual laminated ply thicknesses (TK1, TK2), heat treatments (HT1, HT2), tint types, and interlayer details not specified. Inboard lite (TK3) is tempered but thickness and tint not specified. Spacer thickness cannot be derived; set to null. Spacer material not specified."
       }
-    ],
-    "review": {
-      "reason": "Several items are missing individual lite thicknesses, airspace dimensions, and interlayer specifications. The IGU item does not specify individual lite thicknesses or airspace breakdown. The LIU item does not specify individual lite thicknesses, airspace, or interlayer type. The laminated item does not specify individual lite thicknesses or interlayer type. One or more items are missing required fields: interlayer, TK, HT, lite_makeup.",
-      "missing_fields": [
-        "interlayer",
-        "TK",
-        "HT",
-        "lite_makeup"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead53dd47e8c8d",
@@ -1457,57 +1105,42 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:15+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:11:37.386241+00:00",
+    "extracted_at": "2026-06-11T21:07:33.607479+00:00",
     "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": null,
-        "quantity": 120,
-        "TK": "1/2\"",
-        "HT": "tempered",
-        "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/2\"",
-        "coating": null,
-        "edge_work": "flat polished",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/2\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
-        "source": "body",
-        "field_sources": {
-          "quantity": "body",
-          "TK": "body",
-          "HT": "body",
-          "TT": "body",
-          "makeup": "body",
-          "edge_work": "body",
-          "dimensions": "body"
-        },
-        "missing_fields": [
-          "dimensions"
-        ],
-        "notes": "Budget/ballpark per square foot requested. Individual panel sizes vary and are not specified. Total area approximately 120 sq ft."
-      }
-    ],
     "review": {
-      "reason": "No individual panel sizes provided; customer explicitly states sizes will vary and is requesting a per-square-foot budget estimate only. One or more items are missing required fields: dimensions.",
+      "reason": "No individual panel dimensions provided \u2014 only a total area of 120 sq. ft. was given. Customer is seeking a per-square-foot budget estimate, not a firm quote. Dimensions cannot be extracted. One or more items are missing required fields: dimensions.",
       "missing_fields": [
         "dimensions"
       ],
       "conflicts": []
     },
     "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    "llm_model": "claude-sonnet-4-6",
+    "items": [
+      {
+        "glass_type": "monolithic",
+        "shape": "rectangle",
+        "dimensions": null,
+        "quantity": 1,
+        "TK": "1/2\"",
+        "HT": "tempered",
+        "TT": "clear",
+        "edge_work": "flat polished",
+        "source": "body",
+        "field_sources": {
+          "quantity": "default",
+          "TK": "body",
+          "HT": "body",
+          "TT": "body",
+          "edge_work": "body",
+          "shape": "body"
+        },
+        "missing_fields": [
+          "dimensions"
+        ],
+        "notes": "Customer is requesting a budget/ballpark per-square-foot price for approximately 120 sq. ft. of material. No individual panel sizes provided; 120 sq. ft. is an area total, not a dimension, so dimensions set to null. Quantity defaulted to 1 as no discrete panel count was given. Individual sizes described as varying rectangular panels."
+      }
+    ]
   },
   {
     "email_id": "19ead53e1774c842",
@@ -1519,186 +1152,151 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:15+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:11:09.836239+00:00",
+    "extracted_at": "2026-06-11T21:07:06.619112+00:00",
     "status": "human_review_required",
+    "review": {
+      "reason": "All four items are specified only by area (sq. ft.), not by individual piece dimensions or counts. A full schedule was referenced as an attachment but no attachment was provided. All dimensions are null and quantities are defaulted to 1. Many required spec fields are null due to insufficient information in the body. Requester should provide the full glass schedule for accurate quoting. One or more items are missing required fields: dimensions, HT1, HT2, TK1, TK2, spacer_material, spacer_thickness, TK3, HT3, interlayer_material, interlayer_thickness.",
+      "missing_fields": [
+        "dimensions",
+        "HT1",
+        "HT2",
+        "TK1",
+        "TK2",
+        "spacer_material",
+        "spacer_thickness",
+        "TK3",
+        "HT3",
+        "interlayer_material",
+        "interlayer_thickness"
+      ],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": null,
-        "quantity": 180,
+        "quantity": 1,
         "TK": "1/2\"",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/2\"",
-        "coating": null,
         "edge_work": "flat polished",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/2\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
-          "quantity": "body",
+          "quantity": "default",
           "TK": "body",
           "HT": "body",
           "TT": "body",
-          "makeup": "body",
           "edge_work": "body"
         },
         "missing_fields": [
           "dimensions"
         ],
-        "notes": "180 sq. ft. total; no individual piece sizes provided."
+        "notes": "Area given as 180 sq. ft. \u2014 dimensions not provided, set to null. Quantity defaulted to 1 since no piece count was stated. Full schedule referenced as attached but no attachment was provided."
       },
       {
-        "mark": null,
+        "glass_type": "laminated",
+        "shape": "rectangle",
         "dimensions": null,
-        "quantity": 120,
-        "TK": "1/4\"",
-        "HT": "annealed",
-        "TT": "clear",
-        "makeup": "laminated",
-        "airspace": null,
-        "overall_thickness": null,
-        "coating": null,
+        "quantity": 1,
+        "TK1": "1/4\"",
+        "HT1": null,
+        "TK2": "1/4\"",
+        "HT2": null,
+        "interlayer_material": "PVB",
+        "interlayer_thickness": ".060\"",
+        "TT1": "clear",
+        "TT2": "clear",
         "edge_work": "polished",
-        "interlayer": ".060 PVB",
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/4\"",
-            "HT": "annealed",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          },
-          {
-            "position": "interlayer",
-            "thickness": ".060",
-            "HT": null,
-            "TT": null,
-            "interlayer": "PVB",
-            "notes": null
-          },
-          {
-            "position": "2",
-            "thickness": "1/4\"",
-            "HT": "annealed",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
-          "quantity": "body",
-          "TT": "body",
-          "makeup": "body",
-          "edge_work": "body",
-          "interlayer": "body"
+          "quantity": "default",
+          "TK1": "body",
+          "TT1": "body",
+          "TK2": "body",
+          "TT2": "body",
+          "interlayer_material": "body",
+          "interlayer_thickness": "body",
+          "edge_work": "body"
         },
         "missing_fields": [
-          "dimensions"
+          "dimensions",
+          "HT1",
+          "HT2"
         ],
-        "notes": "120 sq. ft. total; makeup specified as 1/4\" + .060 PVB + 1/4\". HT not specified; assumed annealed. No individual piece sizes provided."
+        "notes": "Area given as 120 sq. ft. \u2014 dimensions not provided, set to null. Quantity defaulted to 1. Heat treatment not specified for either lite; HT1 and HT2 set to null. Full schedule referenced as attached but no attachment was provided."
       },
       {
-        "mark": null,
+        "glass_type": "insulated",
+        "shape": "rectangle",
         "dimensions": null,
-        "quantity": 240,
-        "TK": null,
-        "HT": null,
-        "TT": null,
-        "makeup": "insulated",
-        "airspace": null,
+        "quantity": 1,
+        "TK1": null,
+        "HT1": null,
+        "TK2": null,
+        "HT2": null,
+        "spacer_material": null,
+        "spacer_thickness": null,
         "overall_thickness": "1\"",
         "coating": "Low-E",
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [],
         "source": "body",
         "field_sources": {
-          "quantity": "body",
-          "makeup": "body",
-          "overall_thickness": "body",
-          "coating": "body"
+          "quantity": "default",
+          "coating": "body",
+          "overall_thickness": "body"
         },
         "missing_fields": [
           "dimensions",
-          "TK",
-          "HT",
-          "lite_makeup"
+          "TK1",
+          "TK2",
+          "spacer_material",
+          "spacer_thickness",
+          "HT1",
+          "HT2"
         ],
-        "notes": "240 sq. ft. total; 1\" overall IGU with Low-E coating and argon fill. Individual lite thicknesses, HT, and airspace not specified. No individual piece sizes provided."
+        "notes": "Area given as 240 sq. ft. \u2014 dimensions not provided, set to null. Quantity defaulted to 1. Overall thickness is 1\" but individual lite thicknesses and spacer thickness cannot be derived without more information. Argon fill noted in body but argon is a gas fill, not a spacer material; spacer_material set to null. Low-E coating position not specified. Heat treatment not specified for either lite. Full schedule referenced as attached but no attachment was provided."
       },
       {
-        "mark": null,
+        "glass_type": "laminated-insulated",
+        "shape": "rectangle",
         "dimensions": null,
-        "quantity": 160,
-        "TK": null,
-        "HT": null,
-        "TT": null,
-        "makeup": "laminated-insulated",
-        "airspace": null,
-        "overall_thickness": null,
+        "quantity": 1,
+        "laminate_lite": "outboard",
+        "TK1": null,
+        "HT1": null,
+        "TK2": null,
+        "HT2": null,
+        "TK3": null,
+        "HT3": null,
+        "interlayer_material": null,
+        "interlayer_thickness": null,
+        "spacer_material": null,
+        "spacer_thickness": null,
         "coating": "Low-E",
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "outboard",
-            "thickness": null,
-            "HT": null,
-            "TT": null,
-            "interlayer": null,
-            "notes": "laminated outboard lite with Low-E"
-          },
-          {
-            "position": "inboard",
-            "thickness": null,
-            "HT": null,
-            "TT": null,
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
-          "quantity": "body",
-          "makeup": "body",
+          "quantity": "default",
+          "laminate_lite": "body",
           "coating": "body"
         },
         "missing_fields": [
           "dimensions",
-          "TK",
-          "HT",
-          "airspace"
+          "TK1",
+          "TK2",
+          "TK3",
+          "HT1",
+          "HT2",
+          "HT3",
+          "interlayer_material",
+          "interlayer_thickness",
+          "spacer_material",
+          "spacer_thickness"
         ],
-        "notes": "160 sq. ft. total; laminated outboard lite with Low-E coating. Inboard lite makeup, airspace, interlayer type/thickness, and individual lite thicknesses not specified. No individual piece sizes provided."
+        "notes": "Area given as 160 sq. ft. \u2014 dimensions not provided, set to null. Quantity defaulted to 1. Outboard lite is laminated with Low-E coating; no individual lite thicknesses, heat treatments, glass types, interlayer details, or spacer details provided. Low-E position on outboard laminated lite not further specified. Full schedule referenced as attached but no attachment was provided."
       }
-    ],
-    "review": {
-      "reason": "No attachment was provided despite the email referencing a full schedule attachment. Individual piece sizes, marks, and several lite-level details are missing for all items. HT for laminated item assumed annealed as none was stated. Airspace breakdown for IGU items not specified. One or more items are missing required fields: dimensions, TK, HT, lite_makeup, airspace.",
-      "missing_fields": [
-        "dimensions",
-        "TK",
-        "HT",
-        "lite_makeup",
-        "airspace"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead53db479d800",
@@ -1710,60 +1308,37 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:14+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:11:42.206499+00:00",
-    "status": "human_review_required",
+    "extracted_at": "2026-06-11T21:07:40.749935+00:00",
+    "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
+        "glass_type": "monolithic",
+        "shape": "rectangle",
         "dimensions": {
           "width": 72.0,
           "height": 96.0,
           "unit": "inch"
         },
-        "quantity": null,
+        "quantity": 1,
         "TK": "1/2\"",
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/2\"",
-        "coating": null,
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/2\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
         "source": "body",
         "field_sources": {
           "dimensions": "body",
+          "quantity": "default",
+          "glass_type": "body",
           "TK": "body",
           "HT": "body",
-          "TT": "body",
-          "makeup": "body",
-          "shape": "body"
+          "TT": "body"
         },
-        "missing_fields": [
-          "quantity"
-        ],
-        "notes": null
+        "missing_fields": [],
+        "notes": "Quantity not stated; defaulted to 1."
       }
-    ],
-    "review": {
-      "reason": "One or more items are missing required fields: quantity.",
-      "missing_fields": [
-        "quantity"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   },
   {
     "email_id": "19ead53d90569995",
@@ -1775,1003 +1350,43 @@
     "emailbody_variant": "plain",
     "received_at": "2026-06-09T17:00:13+00:00",
     "has_attachments": false,
-    "extracted_at": "2026-06-10T00:11:49.158362+00:00",
+    "extracted_at": "2026-06-11T21:07:48.910254+00:00",
     "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": null,
-        "quantity": null,
-        "TK": "1/2\"",
-        "HT": "tempered",
-        "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/2\"",
-        "coating": null,
-        "edge_work": "flat polished",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/2\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": "Customer assumes 1/2\"; requests confirmation of thickness"
-          }
-        ],
-        "source": "body",
-        "field_sources": {
-          "TT": "body",
-          "HT": "body",
-          "TK": "body",
-          "edge_work": "body",
-          "notes": "body"
-        },
-        "missing_fields": [
-          "dimensions",
-          "quantity"
-        ],
-        "notes": "Door lite with two door rail cutouts (top and bottom). Dimensions not yet provided; customer states size will follow. Thickness of 1/2\" is customer assumption pending fabricator confirmation."
-      }
-    ],
     "review": {
-      "reason": "Dimensions are missing \u2014 customer explicitly stated they will provide size shortly. Thickness is unconfirmed; customer is assuming 1/2\" and requesting fabricator confirmation. One or more items are missing required fields: dimensions, quantity.",
+      "reason": "Dimensions are missing \u2014 customer has not yet provided the size. The '1/2\"' measurement mentioned is ambiguous: it may refer to door rail cutout size or glass thickness; customer asked fabricator to confirm. Glass thickness set to null pending clarification. Quantity defaulted to 1. One or more items are missing required fields: dimensions, TK.",
       "missing_fields": [
         "dimensions",
-        "quantity"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53d51569f46",
-    "conv_id": "19ead53d51569f46",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "Request for Quote",
-    "body_text": "Hello team,\nCould you quote an 8 ft x 10 ft clear tempered lite, half inch, flat polished edges, as a single piece? Is that even temperable at that size, or do we need to break it up? Advise pricing and lead time please.\nThanks,\nBill",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:12+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:11:55.896131+00:00",
-    "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": {
-          "width": 96.0,
-          "height": 120.0,
-          "unit": "inch"
-        },
-        "quantity": 1,
-        "TK": "1/2\"",
-        "HT": "tempered",
-        "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/2\"",
-        "coating": null,
-        "edge_work": "flat polished",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/2\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
-        "source": "body",
-        "field_sources": {
-          "dimensions": "body",
-          "quantity": "body",
-          "TK": "body",
-          "HT": "body",
-          "TT": "body",
-          "makeup": "body",
-          "edge_work": "body"
-        },
-        "missing_fields": [],
-        "notes": "Customer questions whether 8 ft x 10 ft is temperable as a single piece and requests pricing and lead time advice."
-      }
-    ],
-    "review": {
-      "reason": "Customer explicitly raised a tempering feasibility concern for the 8 ft x 10 ft size. This should be flagged for technical review before quoting.",
-      "missing_fields": [],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53ce90d6bbb",
-    "conv_id": "19ead53ce90d6bbb",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "RFQ: Kind of a random request - can you make a pentagon-shaped te\u2026",
-    "body_text": "Hi,\nKind of a random request - can you make a pentagon-shaped tempered glass panel? I don't have the dimensions yet, I'm really just trying to figure out if it's even possible and roughly what it would run. I'll send a template once the designer gives me one.\nThanks,\nDana",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:11+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:12:06.823676+00:00",
-    "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": null,
-        "quantity": null,
-        "TK": null,
-        "HT": "tempered",
-        "TT": null,
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": null,
-        "coating": null,
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [],
-        "source": "body",
-        "field_sources": {
-          "shape": "body",
-          "HT": "body"
-        },
-        "missing_fields": [
-          "dimensions",
-          "quantity",
-          "TK",
-          "TT"
-        ],
-        "notes": "Customer is inquiring about feasibility and rough pricing only. No dimensions available yet; designer will provide a template later. Makeup assumed monolithic based on no laminate or IGU indication."
-      }
-    ],
-    "review": {
-      "reason": "No dimensions or thickness provided. This is a feasibility/budgetary inquiry only. Item cannot be fully quoted until dimensions are supplied. One or more items are missing required fields: dimensions, quantity, TK, TT.",
-      "missing_fields": [
-        "dimensions",
-        "quantity",
-        "TK",
-        "TT"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53d00182b38",
-    "conv_id": "19ead53d00182b38",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "RFQ: Need an IGU at 5' x 8', Low-E coating, argon filled, standar\u2026",
-    "body_text": "Good morning,\nNeed an IGU at 5' x 8', Low-E coating, argon filled, standard 1\" unit. Pricing and lead time whenever you get a sec.\nThanks",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:11+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:12:01.585105+00:00",
-    "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": {
-          "width": 60.0,
-          "height": 96.0,
-          "unit": "inch"
-        },
-        "quantity": null,
-        "TK": null,
-        "HT": null,
-        "TT": null,
-        "makeup": "insulated",
-        "airspace": null,
-        "overall_thickness": "1\"",
-        "coating": "Low-E",
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [],
-        "source": "body",
-        "field_sources": {
-          "dimensions": "body",
-          "makeup": "body",
-          "coating": "body",
-          "overall_thickness": "body"
-        },
-        "missing_fields": [
-          "quantity",
-          "TK",
-          "HT",
-          "lite_makeup"
-        ],
-        "notes": "Argon filled. Overall unit thickness stated as 1\". Individual lite thicknesses and airspace breakdown not specified. Quantity not provided."
-      }
-    ],
-    "review": {
-      "reason": "Argon fill confirmed but airspace and individual lite thicknesses are not specified \u2014 only the overall 1\" unit thickness is given. Quantity was not stated. Clarification recommended. One or more items are missing required fields: quantity, TK, HT, lite_makeup.",
-      "missing_fields": [
-        "quantity",
-        "TK",
-        "HT",
-        "lite_makeup"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53ca8e17902",
-    "conv_id": "19ead53ca8e17902",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "RFQ: Big lites for a curtain wall mockup. 72 x 120, laminated low\u2026",
-    "body_text": "Hello team,\nBig lites for a curtain wall mockup. 72 x 120, laminated low-iron outboard lite, argon-filled IGU, Low-E on surface 2. I need budget pricing and honestly just confirmation that you can even fabricate at this size.\nThanks",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:10+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:12:26.373420+00:00",
-    "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": {
-          "width": 72.0,
-          "height": 120.0,
-          "unit": "inch"
-        },
-        "quantity": null,
-        "TK": null,
-        "HT": null,
-        "TT": "low-iron",
-        "makeup": "laminated-insulated",
-        "airspace": null,
-        "overall_thickness": null,
-        "coating": "Low-E on surface 2",
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "outboard",
-            "thickness": null,
-            "HT": null,
-            "TT": "low-iron",
-            "interlayer": null,
-            "notes": "laminated low-iron outboard lite"
-          },
-          {
-            "position": "inboard",
-            "thickness": null,
-            "HT": null,
-            "TT": null,
-            "interlayer": null,
-            "notes": null
-          }
-        ],
-        "source": "body",
-        "field_sources": {
-          "dimensions": "body",
-          "makeup": "body",
-          "coating": "body",
-          "airspace": "body",
-          "lite_makeup": "body",
-          "TT": "body"
-        },
-        "missing_fields": [
-          "quantity",
-          "TK",
-          "HT",
-          "airspace"
-        ],
-        "notes": "Argon-filled IGU. Outboard lite is laminated low-iron. Low-E on surface 2. Customer requesting budget pricing and fabrication feasibility confirmation at this size. Interlayer type and thickness not specified. Inboard lite details not specified."
-      }
-    ],
-    "review": {
-      "reason": "Multiple details are missing or ambiguous: quantity not stated, individual lite thicknesses not provided, interlayer type/thickness not specified, inboard lite makeup not described, airspace width not given. Customer is requesting budget pricing only. One or more items are missing required fields: quantity, TK, HT, airspace.",
-      "missing_fields": [
-        "quantity",
-        "TK",
-        "HT",
-        "airspace"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53cbdf5b5ce",
-    "conv_id": "19ead53cbdf5b5ce",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "RFQ: Bit of a complicated one, bear with me. 60\" x 96\", overall t\u2026",
-    "body_text": "Hi,\nBit of a complicated one, bear with me. 60\" x 96\", overall thickness 1-5/16\". The outboard is a laminate - 1/4\" tempered + .060 PVB + 1/4\" tempered - then a 1/2\" airspace, then a 1/4\" tempered inboard lite. We'll want Low-E somewhere appropriate, you tell me which surface makes sense. It's a hurricane zone if that changes anything.\nThanks,\nSam",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:10+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:12:18.799039+00:00",
-    "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": {
-          "width": 60.0,
-          "height": 96.0,
-          "unit": "inch"
-        },
-        "quantity": null,
-        "TK": "1/4\"",
-        "HT": "tempered",
-        "TT": null,
-        "makeup": "laminated-insulated",
-        "airspace": "1/2\"",
-        "overall_thickness": "1-5/16\"",
-        "coating": "Low-E (surface unspecified; customer requests fabricator recommendation)",
-        "edge_work": null,
-        "interlayer": ".060 PVB",
-        "lite_makeup": [
-          {
-            "position": "outboard-exterior",
-            "thickness": "1/4\"",
-            "HT": "tempered",
-            "TT": null,
-            "interlayer": null,
-            "notes": "Outboard laminate exterior lite"
-          },
-          {
-            "position": "outboard-interior",
-            "thickness": "1/4\"",
-            "HT": "tempered",
-            "TT": null,
-            "interlayer": ".060 PVB",
-            "notes": "Outboard laminate interior lite; PVB between outboard-exterior and outboard-interior"
-          },
-          {
-            "position": "inboard",
-            "thickness": "1/4\"",
-            "HT": "tempered",
-            "TT": null,
-            "interlayer": null,
-            "notes": "Single inboard lite; 1/2\" airspace between outboard laminate and inboard lite"
-          }
-        ],
-        "source": "body",
-        "field_sources": {
-          "dimensions": "body",
-          "overall_thickness": "body",
-          "makeup": "body",
-          "airspace": "body",
-          "coating": "body",
-          "interlayer": "body",
-          "lite_makeup": "body"
-        },
-        "missing_fields": [
-          "quantity"
-        ],
-        "notes": "Hurricane zone application \u2014 customer notes this may affect product selection. Low-E surface placement left to fabricator discretion. Overall thickness of 1-5/16\" should be verified: 1/4\" + .060\" + 1/4\" + 1/2\" + 1/4\" = 1.310\" \u2248 1-5/16\" (1.3125\"), which checks out. PVB interlayer specified at .060; hurricane zones typically require impact-rated interlayer (e.g., .090 PVB or SGP) \u2014 recommend confirming with customer."
-      }
-    ],
-    "review": {
-      "reason": "Low-E surface placement is unresolved \u2014 customer explicitly defers to fabricator. Hurricane zone designation may require impact-rated interlayer upgrade beyond .060 PVB; flagged for customer confirmation. Quantity not specified. One or more items are missing required fields: quantity.",
-      "missing_fields": [
-        "quantity"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53c6f8b4678",
-    "conv_id": "19ead53c6f8b4678",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "RFQ: Quote please: 72 x 84, 1\" insulated unit, bronze outboard li\u2026",
-    "body_text": "Hello,\nQuote please: 72 x 84, 1\" insulated unit, bronze outboard lite and a clear inboard lite, tempered both sides. This is exterior glazing on the south elevation. Need a lead time as well.\nThanks",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:09+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:12:32.970245+00:00",
-    "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": {
-          "width": 72.0,
-          "height": 84.0,
-          "unit": "inch"
-        },
-        "quantity": null,
-        "TK": "1\"",
-        "HT": "tempered",
-        "TT": "bronze",
-        "makeup": "insulated",
-        "airspace": null,
-        "overall_thickness": "1\"",
-        "coating": null,
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "outboard",
-            "thickness": null,
-            "HT": "tempered",
-            "TT": "bronze",
-            "interlayer": null,
-            "notes": "bronze tint"
-          },
-          {
-            "position": "inboard",
-            "thickness": null,
-            "HT": "tempered",
-            "TT": null,
-            "interlayer": null,
-            "notes": "clear"
-          }
-        ],
-        "source": "body",
-        "field_sources": {
-          "dimensions": "body",
-          "TK": "body",
-          "HT": "body",
-          "makeup": "body",
-          "coating": "body",
-          "lite_makeup": "body",
-          "TT": "body"
-        },
-        "missing_fields": [
-          "quantity"
-        ],
-        "notes": "Exterior glazing on south elevation. Customer also requests lead time."
-      }
-    ],
-    "review": {
-      "reason": "Overall 1\" IGU thickness noted but individual lite thicknesses and airspace breakdown not specified. Airspace cannot be determined without knowing lite thicknesses. Lead time request noted. One or more items are missing required fields: quantity.",
-      "missing_fields": [
-        "quantity"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53c10fbce63",
-    "conv_id": "19ead53c10fbce63",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "Request for Quote",
-    "body_text": "Hi team,\nCan you price a 48 x 96 IGU, 1\" thick, Low-E on surface 2, argon filled? I haven't gotten the glass thickness back from the architect yet, so just assume something standard unless you'd recommend otherwise. This is budgetary at this stage.\nThanks,\nLena",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:07+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:12:41.289904+00:00",
-    "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": {
-          "width": 48.0,
-          "height": 96.0,
-          "unit": "inch"
-        },
-        "quantity": null,
-        "TK": null,
-        "HT": null,
-        "TT": null,
-        "makeup": "insulated",
-        "airspace": null,
-        "overall_thickness": "1\"",
-        "coating": "Low-E surface 2",
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "lite 1",
-            "thickness": null,
-            "HT": null,
-            "TT": null,
-            "interlayer": null,
-            "notes": "Glass thickness not yet specified by architect; assume standard"
-          },
-          {
-            "position": "lite 2",
-            "thickness": null,
-            "HT": null,
-            "TT": null,
-            "interlayer": null,
-            "notes": "Glass thickness not yet specified by architect; assume standard"
-          }
-        ],
-        "source": "body",
-        "field_sources": {
-          "dimensions": "body",
-          "overall_thickness": "body",
-          "coating": "body",
-          "makeup": "body",
-          "airspace": "body"
-        },
-        "missing_fields": [
-          "quantity",
-          "TK",
-          "HT"
-        ],
-        "notes": "Argon-filled IGU. Overall unit thickness 1\". Individual lite thicknesses unknown pending architect input; requester asks to assume standard. Budgetary quote only. Airspace not explicitly stated but implied by 1\" overall with standard lites."
-      }
-    ],
-    "review": {
-      "reason": "Glass lite thicknesses are unspecified; requester acknowledges this and requests standard assumption. Airspace cannot be determined without knowing individual lite thicknesses. This is a budgetary request only. One or more items are missing required fields: quantity, TK, HT.",
-      "missing_fields": [
-        "quantity",
-        "TK",
-        "HT"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53bb90cb446",
-    "conv_id": "19ead53bb90cb446",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "RFQ: Need grey tinted laminated, 48x96, polished edges. We'll wan\u2026",
-    "body_text": "Hello,\nNeed grey tinted laminated, 48x96, polished edges. We'll want several of them - somewhere between 6 and 8, I'll confirm the exact count once the layout is locked. Per-lite pricing is fine for the estimate.\nThanks",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:06+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:12:47.482386+00:00",
-    "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": {
-          "width": 48.0,
-          "height": 96.0,
-          "unit": "inch"
-        },
-        "quantity": 6,
-        "TK": null,
-        "HT": null,
-        "TT": "grey tinted",
-        "makeup": "laminated",
-        "airspace": null,
-        "overall_thickness": null,
-        "coating": null,
-        "edge_work": "polished",
-        "interlayer": null,
-        "lite_makeup": [],
-        "source": "body",
-        "field_sources": {
-          "dimensions": "body",
-          "quantity": "body",
-          "TT": "body",
-          "makeup": "body",
-          "edge_work": "body"
-        },
-        "missing_fields": [
-          "TK",
-          "HT",
-          "interlayer"
-        ],
-        "notes": "Customer states quantity is between 6 and 8; exact count to be confirmed once layout is locked. Per-lite pricing requested for estimate. No thickness or interlayer specified."
-      }
-    ],
-    "review": {
-      "reason": "Quantity is unconfirmed (6\u20138 range). No thickness, heat treatment, or interlayer details provided. Grey tint could apply to one or both lites but no lite-level breakdown was given. One or more items are missing required fields: TK, HT, interlayer.",
-      "missing_fields": [
-        "TK",
-        "HT",
-        "interlayer"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53b6cb4284e",
-    "conv_id": "19ead53b6cb4284e",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "RFQ: Got a slightly odd one - it's a round table top. 54 inch dia\u2026",
-    "body_text": "Hi,\nGot a slightly odd one - it's a round table top. 54 inch diameter, half inch clear tempered, pencil polished edge all around. Can you do round, and what's the typical upcharge versus a standard rectangle?\nThanks,\nMarco",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:05+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:12:54.205170+00:00",
-    "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": {
-          "width": 54.0,
-          "height": 54.0,
-          "unit": "inch"
-        },
-        "quantity": null,
-        "TK": "1/2\"",
-        "HT": "tempered",
-        "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/2\"",
-        "coating": null,
-        "edge_work": "pencil polished edge all around",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/2\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
-        "source": "body",
-        "field_sources": {
-          "dimensions": "body",
-          "TK": "body",
-          "HT": "body",
-          "TT": "body",
-          "makeup": "body",
-          "edge_work": "body"
-        },
-        "missing_fields": [
-          "quantity"
-        ],
-        "notes": "Customer is asking whether round shapes can be fabricated and what the upcharge is versus a standard rectangle. Quantity not specified."
-      }
-    ],
-    "review": {
-      "reason": "No quantity provided. Customer is requesting pricing information on round shape capability and upcharge \u2014 may need follow-up before quoting. One or more items are missing required fields: quantity.",
-      "missing_fields": [
-        "quantity"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53b2bb1639f",
-    "conv_id": "19ead53b2bb1639f",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "RFQ: We need laminated glass for a railing infill on the Carter p\u2026",
-    "body_text": "Hi,\nWe need laminated glass for a railing infill on the Carter project. Size is 42 x 84, makeup 1/4\" + .030 PVB + 1/4\", clear interlayer, flat polished edges. Let me know on price and lead time - and if you'd recommend going tempered-laminated for a railing app, flag it.\nThanks,\nPriya",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:04+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:13:15.717572+00:00",
-    "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": {
-          "width": 42.0,
-          "height": 84.0,
-          "unit": "inch"
-        },
-        "quantity": null,
-        "TK": "1/4\"",
-        "HT": null,
-        "TT": null,
-        "makeup": "laminated",
-        "airspace": null,
-        "overall_thickness": null,
-        "coating": null,
-        "edge_work": "flat polished",
-        "interlayer": ".030 PVB, clear",
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/4\"",
-            "HT": null,
-            "TT": null,
-            "interlayer": ".030 PVB, clear",
-            "notes": null
-          },
-          {
-            "position": "2",
-            "thickness": "1/4\"",
-            "HT": null,
-            "TT": null,
-            "interlayer": null,
-            "notes": null
-          }
-        ],
-        "source": "body",
-        "field_sources": {
-          "dimensions": "body",
-          "makeup": "body",
-          "interlayer": "body",
-          "edge_work": "body",
-          "lite_makeup": "body"
-        },
-        "missing_fields": [
-          "quantity",
-          "HT"
-        ],
-        "notes": "Customer inquired about whether tempered-laminated is recommended for a railing application. HT not specified; customer is open to recommendation. Project: Carter project. Quantity not specified."
-      }
-    ],
-    "review": {
-      "reason": "No quantity provided. Heat treatment (HT) not specified by customer; they are soliciting a recommendation on whether to go tempered-laminated for a railing application. Reviewer should confirm HT requirement and quantity before quoting. One or more items are missing required fields: quantity, HT.",
-      "missing_fields": [
-        "quantity",
-        "HT"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53b48d50747",
-    "conv_id": "19ead53b48d50747",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "Request for Quote",
-    "body_text": "Hello team,\nPlease quote an insulated unit for me: 36 x 60, 1\" overall thickness, clear tempered on both lites, with a Low-E coating on surface #2. Standard airspace is fine. Throw in argon if it doesn't push the lead time out.\nThanks!",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:04+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:13:00.800476+00:00",
-    "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": {
-          "width": 36.0,
-          "height": 60.0,
-          "unit": "inch"
-        },
-        "quantity": null,
-        "TK": null,
-        "HT": "tempered",
-        "TT": "clear",
-        "makeup": "insulated",
-        "airspace": "standard",
-        "overall_thickness": "1\"",
-        "coating": "Low-E on surface #2",
-        "edge_work": null,
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "lite 1",
-            "thickness": null,
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          },
-          {
-            "position": "lite 2",
-            "thickness": null,
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": "Low-E coating on surface #2"
-          }
-        ],
-        "source": "body",
-        "field_sources": {
-          "dimensions": "body",
-          "overall_thickness": "body",
-          "HT": "body",
-          "TT": "body",
-          "makeup": "body",
-          "airspace": "body",
-          "coating": "body"
-        },
-        "missing_fields": [
-          "quantity",
-          "TK"
-        ],
-        "notes": "Argon fill requested conditionally \u2014 only if it does not extend lead time."
-      }
-    ],
-    "review": {
-      "reason": "Argon fill is conditionally requested and cannot be confirmed as a hard requirement. Individual lite thicknesses are not specified; overall thickness is 1\" but split is unknown. One or more items are missing required fields: quantity, TK.",
-      "missing_fields": [
-        "quantity",
         "TK"
       ],
       "conflicts": []
     },
     "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53afeb869c9",
-    "conv_id": "19ead53afeb869c9",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "RFQ: Hope you're well. We've got a storefront job downtown and I \u2026",
-    "body_text": "Hi team,\nHope you're well. We've got a storefront job downtown and I need budgetary pricing on a few door lites. We're looking at 36\" x 84\", three-eighths clear tempered, flat polished all the way around. There are also a couple of 1\" holes about 4\" down from each top corner for the pulls - I'll send the detail once the hardware is finalized.\nCan you get me a price and your current lead time?\nThanks,\nDave Morrow\nMorrow Glazing | (555) 442-1180",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:03+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:13:29.694286+00:00",
-    "status": "human_review_required",
+    "llm_model": "claude-sonnet-4-6",
     "items": [
       {
-        "mark": null,
-        "dimensions": {
-          "width": 36.0,
-          "height": 84.0,
-          "unit": "inch"
-        },
-        "quantity": null,
-        "TK": "3/8\"",
+        "glass_type": "monolithic",
+        "shape": "rectangle",
+        "dimensions": null,
+        "quantity": 1,
+        "TK": null,
         "HT": "tempered",
         "TT": "clear",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "3/8\"",
-        "coating": null,
-        "edge_work": "flat polished all around",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "3/8\"",
-            "HT": "tempered",
-            "TT": "clear",
-            "interlayer": null,
-            "notes": null
-          }
-        ],
+        "edge_work": "flat polished",
         "source": "body",
         "field_sources": {
-          "dimensions": "body",
-          "TK": "body",
+          "quantity": "default",
+          "shape": "body",
+          "glass_type": "body",
           "HT": "body",
           "TT": "body",
-          "makeup": "body",
           "edge_work": "body"
         },
         "missing_fields": [
-          "quantity"
+          "dimensions",
+          "TK"
         ],
-        "notes": "Door lites for storefront job. Customer mentions 1\" diameter holes approximately 4\" down from each top corner for pulls; hardware details not yet finalized and hole detail drawing to be sent later. Quantity not explicitly stated; described as 'a few door lites'. Lead time requested."
+        "notes": "Quantity defaulted to 1; no size provided yet \u2014 customer stated they will send exact dimensions shortly. Two door rail cutouts (top and bottom) requested. Customer mentioned 'standard 1/2\"' but this appears to refer to door rail cutout depth or rail height, not glass thickness \u2014 context is ambiguous; flagged for confirmation. Glass thickness set to null as no explicit thickness was stated; the 1/2\" reference is not a confirmed glass thickness. Edge work is flat polished per customer request."
       }
-    ],
-    "review": {
-      "reason": "Quantity is ambiguous ('a few door lites' \u2014 no exact number given). Hole/cutout details are pending hardware finalization. Lead time was requested but is not an RFQ spec field. One or more items are missing required fields: quantity.",
-      "missing_fields": [
-        "quantity"
-      ],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53b07ec1dc3",
-    "conv_id": "19ead53b07ec1dc3",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "RFQ: Following up on the lobby feature wall we talked about last \u2026",
-    "body_text": "Good afternoon,\nFollowing up on the lobby feature wall we talked about last week. I need a quote on a 48 by 96 lite, half inch low-iron (the starphire-type ultra clear), tempered, with polished edges. The top two corners should be radiused at about a 1\" radius.\nPlease include fabrication and freight to 60607 if you can swing it.\nAppreciate it,\nKaren",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:03+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:13:22.191526+00:00",
-    "status": "completed",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": {
-          "width": 48.0,
-          "height": 96.0,
-          "unit": "inch"
-        },
-        "quantity": 1,
-        "TK": "1/2\"",
-        "HT": "tempered",
-        "TT": "low-iron",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/2\"",
-        "coating": null,
-        "edge_work": "polished",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "monolithic",
-            "thickness": "1/2\"",
-            "HT": "tempered",
-            "TT": "low-iron",
-            "interlayer": null,
-            "notes": "Starphire-type ultra clear low-iron glass"
-          }
-        ],
-        "source": "body",
-        "field_sources": {
-          "dimensions": "body",
-          "quantity": "body",
-          "TK": "body",
-          "HT": "body",
-          "TT": "body",
-          "makeup": "body",
-          "edge_work": "body",
-          "shape": "body"
-        },
-        "missing_fields": [],
-        "notes": "Top two corners radiused at approximately 1\" radius. Customer requests fabrication and freight quote to ZIP code 60607. Glass described as 'starphire-type ultra clear' low-iron."
-      }
-    ],
-    "review": null,
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
-  },
-  {
-    "email_id": "19ead53b31acbb39",
-    "conv_id": "19ead53b31acbb39",
-    "from_email": "devesettisrikar@gmail.com",
-    "to_email": "devesettisrikar@gmail.com",
-    "subject": "RFQ: Quick one for you - 60\" x 84\", quarter inch mirror, seamed e\u2026",
-    "body_text": "Hello,\nQuick one for you - 60\" x 84\", quarter inch mirror, seamed edges, and we need safety backing (vinyl) applied on the back since it's going on a gym wall.\nHow soon could we get this?\nThanks\nTony R.",
-    "emailbody_variant": "plain",
-    "received_at": "2026-06-09T17:00:03+00:00",
-    "has_attachments": false,
-    "extracted_at": "2026-06-10T00:13:08.368255+00:00",
-    "status": "human_review_required",
-    "items": [
-      {
-        "mark": null,
-        "dimensions": {
-          "width": 60.0,
-          "height": 84.0,
-          "unit": "inch"
-        },
-        "quantity": 1,
-        "TK": "1/4\"",
-        "HT": "annealed",
-        "TT": "mirror",
-        "makeup": "monolithic",
-        "airspace": null,
-        "overall_thickness": "1/4\"",
-        "coating": null,
-        "edge_work": "seamed",
-        "interlayer": null,
-        "lite_makeup": [
-          {
-            "position": "1",
-            "thickness": "1/4\"",
-            "HT": "annealed",
-            "TT": "mirror",
-            "interlayer": null,
-            "notes": "safety backing (vinyl) applied on back side for gym wall installation"
-          }
-        ],
-        "source": "body",
-        "field_sources": {
-          "dimensions": "body",
-          "TK": "body",
-          "HT": "body",
-          "TT": "body",
-          "makeup": "body",
-          "edge_work": "body",
-          "notes": "body"
-        },
-        "missing_fields": [],
-        "notes": "Safety vinyl backing required on back side; intended for gym wall. Customer inquiring about lead time."
-      }
-    ],
-    "review": {
-      "reason": "HT inferred as annealed since no tempering or heat-strengthening was specified; quantity inferred as 1 since no explicit quantity was stated. Safety backing is a vinyl film applied to the back of the mirror, not a laminate interlayer.",
-      "missing_fields": [],
-      "conflicts": []
-    },
-    "attachments": [],
-    "llm_model": "claude-sonnet-4-6"
+    ]
   }
 ]

@@ -2,6 +2,7 @@ anthropic>=0.69,<1
 google-api-python-client>=2.0,<3
 google-auth>=2.0,<3
 google-auth-oauthlib>=1.0,<2
+langgraph>=0.2,<1
 pydantic>=2.8,<3
 pdfplumber>=0.11,<1
 python-dotenv>=1.0,<2

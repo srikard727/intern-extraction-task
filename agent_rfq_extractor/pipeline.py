@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 import re
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
 
@@ -10,9 +9,9 @@ from dotenv import load_dotenv
 
 from .claude_client import ClaudeExtractor
 from .gmail_client import GmailClient
-from .models import AttachmentInfo, EmailRecord, InboundEmail, ReviewInfo
-from .quality import build_review, normalize_items
-from .storage import ExtractionStore
+from .graph import RFQExtractionGraph
+from .models import EmailRecord, InboundEmail
+from database.storage import ExtractionStore
 
 
 class RFQPipeline:
@@ -27,6 +26,7 @@ class RFQPipeline:
         self.db_path = Path(db_path)
         self.json_path = Path(json_path)
         self.extractor = ClaudeExtractor(model=model)
+        self.graph = RFQExtractionGraph(self.extractor)
         self.store = ExtractionStore(self.db_path)
         if replace_existing:
             self.store.clear()
@@ -52,6 +52,19 @@ class RFQPipeline:
         emails = client.fetch_messages(query=query, limit=limit)
         return self.run_emails(emails)
 
+    def run_gmail_ids(
+        self,
+        message_ids: list[str],
+        credentials_path: str | None = None,
+        token_path: str | None = None,
+    ) -> list[EmailRecord]:
+        client = GmailClient(
+            credentials_path=credentials_path or os.getenv("GMAIL_CREDENTIALS", "credentials.json"),
+            token_path=token_path or os.getenv("GMAIL_TOKEN", "token_reader.json"),
+        )
+        emails = [client.fetch_message(message_id) for message_id in message_ids]
+        return self.run_emails(emails)
+
     def run_fixture(self, path: str | Path, limit: int | None = None) -> list[EmailRecord]:
         emails = parse_fixture(path)
         if limit:
@@ -70,35 +83,7 @@ class RFQPipeline:
         return records
 
     def process_email(self, email: InboundEmail) -> EmailRecord:
-        attachment_infos = [_attachment_info(attachment) for attachment in email.attachments]
-        try:
-            raw = self.extractor.extract(email)
-            raw_items = raw.get("items") if isinstance(raw.get("items"), list) else []
-            items = normalize_items(raw_items)
-            raw_review = raw.get("review") if isinstance(raw.get("review"), dict) else None
-            review = build_review(items, raw_review)
-            status = "human_review_required" if review else "completed"
-            return EmailRecord(
-                **_email_base(email, attachment_infos),
-                extracted_at=_now(),
-                status=status,
-                items=items,
-                review=review,
-                llm_model=self.model,
-            )
-        except Exception as exc:
-            return EmailRecord(
-                **_email_base(email, attachment_infos),
-                extracted_at=_now(),
-                status="extraction_failed",
-                items=[],
-                review=ReviewInfo(
-                    reason=f"Extraction failed: {type(exc).__name__}: {exc}",
-                    missing_fields=[],
-                    conflicts=[],
-                ),
-                llm_model=self.model,
-            )
+        return self.graph.process_email(email)
 
 
 def parse_fixture(path: str | Path) -> list[InboundEmail]:
@@ -128,26 +113,6 @@ def parse_fixture(path: str | Path) -> list[InboundEmail]:
     return emails
 
 
-def _email_base(email: InboundEmail, attachments: list[AttachmentInfo]) -> dict:
-    return {
-        "email_id": email.email_id,
-        "conv_id": email.conv_id,
-        "from_email": email.from_email,
-        "to_email": email.to_email,
-        "subject": email.subject,
-        "body_text": email.body_text,
-        "emailbody_variant": email.emailbody_variant,
-        "received_at": email.received_at,
-        "has_attachments": email.has_attachments,
-        "attachments": attachments,
-    }
-
-
-def _attachment_info(attachment) -> AttachmentInfo:
-    data = attachment.model_dump(exclude={"text"})
-    return AttachmentInfo(**data)
-
-
 def _strip_fixture_body(value: str) -> str:
     lines = []
     for line in value.splitlines():
@@ -162,7 +127,3 @@ def _subject_from_body(body: str) -> str:
     if any(ch.isdigit() for ch in first) or "glass" in first.lower():
         return "RFQ: " + first[:70]
     return "Request for Quote"
-
-
-def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()

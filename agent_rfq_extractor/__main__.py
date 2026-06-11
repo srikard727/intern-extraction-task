@@ -25,6 +25,17 @@ def main() -> int:
         help="Gmail search query used when --source gmail.",
     )
     parser.add_argument(
+        "--email-id",
+        action="append",
+        default=[],
+        help="Specific Gmail message ID to process. Repeat for multiple IDs.",
+    )
+    parser.add_argument(
+        "--email-ids",
+        default="",
+        help="Comma-separated Gmail message IDs to process.",
+    )
+    parser.add_argument(
         "--db",
         default=os.getenv("RFQ_DB_PATH", "outputs/rfq_extractions.db"),
         help="SQLite output path.",
@@ -51,6 +62,7 @@ def main() -> int:
         help="Gmail OAuth token path.",
     )
     args = parser.parse_args()
+    message_ids = _parse_message_ids(args.email_id, args.email_ids)
 
     pipeline = RFQPipeline(
         db_path=args.db,
@@ -60,13 +72,21 @@ def main() -> int:
     )
     try:
         if args.source == "gmail":
-            print(f"Fetching up to {args.limit} Gmail messages with query: {args.query}")
-            records = pipeline.run_gmail(
-                query=args.query,
-                limit=args.limit,
-                credentials_path=args.credentials,
-                token_path=args.token,
-            )
+            if message_ids:
+                print(f"Fetching {len(message_ids)} Gmail message(s) by ID")
+                records = pipeline.run_gmail_ids(
+                    message_ids=message_ids,
+                    credentials_path=args.credentials,
+                    token_path=args.token,
+                )
+            else:
+                print(f"Fetching up to {args.limit} Gmail messages with query: {args.query}")
+                records = pipeline.run_gmail(
+                    query=args.query,
+                    limit=args.limit,
+                    credentials_path=args.credentials,
+                    token_path=args.token,
+                )
         else:
             print(f"Reading up to {args.limit} fixture emails from: {args.fixture}")
             records = pipeline.run_fixture(args.fixture, limit=args.limit)
@@ -80,6 +100,16 @@ def main() -> int:
     print(f"JSON: {args.json}")
     print("Statuses: " + ", ".join(f"{status}={count}" for status, count in sorted(counts.items())))
     return 0
+
+
+def _parse_message_ids(repeated_ids: list[str], csv_ids: str) -> list[str]:
+    ids: list[str] = []
+    for value in [*repeated_ids, csv_ids]:
+        for part in value.split(","):
+            message_id = part.strip()
+            if message_id and message_id not in ids:
+                ids.append(message_id)
+    return ids
 
 
 if __name__ == "__main__":

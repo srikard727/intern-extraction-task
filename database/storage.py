@@ -5,7 +5,7 @@ import sqlite3
 from pathlib import Path
 from typing import Iterable
 
-from .models import EmailRecord, RFQItem
+from agent_rfq_extractor.models import EmailRecord, RFQItem
 
 
 class ExtractionStore:
@@ -47,25 +47,29 @@ class ExtractionStore:
                 width REAL,
                 height REAL,
                 quantity INTEGER,
+                shape TEXT,
                 TK TEXT,
                 HT TEXT,
                 TT TEXT,
-                makeup TEXT,
+                glass_type TEXT,
                 airspace TEXT,
                 overall_thickness TEXT,
                 coating TEXT,
                 edge_work TEXT,
                 interlayer TEXT,
-                lite_makeup_json TEXT,
+                lite_details_json TEXT,
                 source TEXT,
                 field_sources_json TEXT,
                 missing_fields_json TEXT,
                 notes TEXT,
+                spec_json TEXT,
                 raw_json TEXT,
                 FOREIGN KEY(email_id) REFERENCES emails(email_id)
             );
             """
         )
+        self._ensure_column("items", "shape", "TEXT")
+        self._ensure_column("items", "spec_json", "TEXT")
         self.conn.commit()
 
     def clear(self) -> None:
@@ -135,15 +139,16 @@ class ExtractionStore:
 
     def _insert_item(self, email_id: str, item: RFQItem) -> None:
         dimensions = item.dimensions
+        spec_json = _json(item.to_jsonable())
         self.conn.execute(
             """
             INSERT INTO items (
-                email_id, mark, width, height, quantity, TK, HT, TT, makeup,
+                email_id, mark, width, height, quantity, shape, TK, HT, TT, glass_type,
                 airspace, overall_thickness, coating, edge_work, interlayer,
-                lite_makeup_json, source, field_sources_json,
-                missing_fields_json, notes, raw_json
+                lite_details_json, source, field_sources_json,
+                missing_fields_json, notes, spec_json, raw_json
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 email_id,
@@ -151,23 +156,33 @@ class ExtractionStore:
                 dimensions.width if dimensions else None,
                 dimensions.height if dimensions else None,
                 item.quantity,
+                item.shape,
                 item.TK,
                 item.HT,
                 item.TT,
-                item.makeup,
-                item.airspace,
+                item.glass_type,
+                item.spacer_thickness,
                 item.overall_thickness,
                 item.coating,
                 item.edge_work,
-                item.interlayer,
-                _json(item.lite_makeup),
+                _interlayer_summary(item),
+                _json(item.lite_details),
                 item.source,
                 _json(item.field_sources),
                 _json(item.missing_fields),
                 item.notes,
-                _json(item.model_dump(mode="json")),
+                spec_json,
+                spec_json,
             ),
         )
+
+    def _ensure_column(self, table: str, column: str, ddl: str) -> None:
+        columns = {
+            row["name"]
+            for row in self.conn.execute(f"PRAGMA table_info({table})").fetchall()
+        }
+        if column not in columns:
+            self.conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {ddl}")
 
 
 def write_json(records: Iterable[EmailRecord], out_path: str | Path) -> None:
@@ -179,3 +194,9 @@ def write_json(records: Iterable[EmailRecord], out_path: str | Path) -> None:
 
 def _json(value) -> str:
     return json.dumps(value, ensure_ascii=False)
+
+
+def _interlayer_summary(item: RFQItem) -> str | None:
+    parts = [item.interlayer_thickness, item.interlayer_material]
+    summary = " ".join(part for part in parts if part)
+    return summary or item.interlayer
