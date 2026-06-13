@@ -63,6 +63,10 @@ The Gmail OAuth token needs the readonly scope:
 https://www.googleapis.com/auth/gmail.readonly
 ```
 
+For Gmail messages with an HTML body, `body_text` is populated from the visible
+HTML text and `emailbody_variant` is set to `html`. Plain-text-only messages and
+fixture emails use `plain`.
+
 ## Run Against Gmail
 
 ```bash

@@ -22,7 +22,7 @@ class RFQPipeline:
         model: str | None = None,
         replace_existing: bool = False,
     ) -> None:
-        load_dotenv()
+        load_dotenv(override=True)
         self.db_path = Path(db_path)
         self.json_path = Path(json_path)
         self.extractor = ClaudeExtractor(model=model)
@@ -37,6 +37,9 @@ class RFQPipeline:
 
     def close(self) -> None:
         self.store.close()
+
+    def validate_llm(self) -> None:
+        self.extractor.validate_credentials()
 
     def run_gmail(
         self,

@@ -8,12 +8,17 @@ from typing import Iterable
 from agent_rfq_extractor.models import EmailRecord, RFQItem
 
 
+class StorageError(RuntimeError):
+    pass
+
+
 class ExtractionStore:
     def __init__(self, db_path: str | Path) -> None:
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        self.conn = sqlite3.connect(self.db_path)
+        self.conn = sqlite3.connect(self.db_path, timeout=30)
         self.conn.row_factory = sqlite3.Row
+        self.conn.execute("PRAGMA busy_timeout = 30000")
         self.init_schema()
 
     def close(self) -> None:
@@ -73,9 +78,12 @@ class ExtractionStore:
         self.conn.commit()
 
     def clear(self) -> None:
-        self.conn.execute("DELETE FROM items")
-        self.conn.execute("DELETE FROM emails")
-        self.conn.commit()
+        try:
+            with self.conn:
+                self.conn.execute("DELETE FROM items")
+                self.conn.execute("DELETE FROM emails")
+        except sqlite3.Error as exc:
+            raise StorageError(f"could not clear SQLite database {self.db_path}: {exc}") from exc
 
     def upsert_record(self, record: EmailRecord) -> None:
         review_json = _json(record.review.model_dump(mode="json") if record.review else None)

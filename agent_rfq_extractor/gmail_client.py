@@ -150,10 +150,12 @@ def _extract_body(payload: dict[str, Any]) -> tuple[str, str]:
         elif mime_type == "text/html":
             html_parts.append(_html_to_text(decoded))
 
-    if plain_parts:
-        return "\n".join(part for part in plain_parts if part).strip(), "plain"
-    if html_parts:
-        return "\n".join(part for part in html_parts if part).strip(), "html"
+    html_body = _join_body_parts(html_parts)
+    if html_body:
+        return html_body, "html"
+    plain_body = _join_body_parts(plain_parts)
+    if plain_body:
+        return plain_body, "plain"
     return "", "plain"
 
 
@@ -244,11 +246,21 @@ def _charset(part: dict[str, Any]) -> str:
 
 def _html_to_text(value: str) -> str:
     value = re.sub(r"(?is)<(script|style).*?</\1>", " ", value)
+    value = re.sub(r"(?is)<head.*?</head>", " ", value)
     value = re.sub(r"(?i)<br\s*/?>", "\n", value)
-    value = re.sub(r"(?i)</p\s*>", "\n", value)
+    value = re.sub(r"(?i)</(p|div|section|article|h[1-6]|tr)\s*>", "\n", value)
+    value = re.sub(r"(?i)</(td|th)\s*>", " | ", value)
+    value = re.sub(r"(?i)<li[^>]*>", "\n- ", value)
     value = re.sub(r"(?s)<[^>]+>", " ", value)
     value = html.unescape(value)
-    return re.sub(r"[ \t]+", " ", value).strip()
+    value = re.sub(r"[ \t]+", " ", value)
+    value = re.sub(r"\s+\|\s+\n", "\n", value)
+    value = re.sub(r"\n{3,}", "\n\n", value)
+    return value.strip()
+
+
+def _join_body_parts(parts: list[str]) -> str:
+    return "\n".join(part for part in (part.strip() for part in parts) if part).strip()
 
 
 def _preview(text: str, limit: int = 500) -> str | None:

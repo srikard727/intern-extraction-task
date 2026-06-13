@@ -5,12 +5,16 @@ import os
 import re
 from typing import Any
 
-from anthropic import Anthropic
+from anthropic import Anthropic, AnthropicError, AuthenticationError
 
 from .models import InboundEmail
 
 
 DEFAULT_MODEL = "claude-sonnet-4-6"
+
+
+class LLMConfigurationError(RuntimeError):
+    pass
 
 SYSTEM_PROMPT = """You extract glass RFQ specifications for a glass fabricator.
 
@@ -131,6 +135,19 @@ class ClaudeExtractor:
             timeout=timeout,
             max_retries=2,
         )
+
+    def validate_credentials(self) -> None:
+        try:
+            self.client.models.list(limit=1)
+        except AuthenticationError as exc:
+            raise LLMConfigurationError(
+                "Anthropic authentication failed: invalid API key. "
+                "Check ANTHROPIC_API_KEY in .env and make sure it is an active Anthropic Console key."
+            ) from exc
+        except AnthropicError as exc:
+            raise LLMConfigurationError(
+                f"Anthropic preflight failed before extraction: {type(exc).__name__}: {exc}"
+            ) from exc
 
     def extract(self, email: InboundEmail) -> dict[str, Any]:
         response = self.client.messages.create(

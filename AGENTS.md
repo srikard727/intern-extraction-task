@@ -23,6 +23,7 @@ This project is an internship RFQ extraction system for glass manufacturing quot
 ## Current Build Direction
 
 - Gmail is the primary input source.
+- Gmail HTML bodies are preferred when present: `body_text` stores cleaned visible HTML text and `emailbody_variant` is `html`.
 - Anthropic is the LLM provider, using the current available model from `.env`.
 - LangGraph orchestrates the per-email flow in `agent_rfq_extractor/graph.py`.
 - SQLite plus JSON export are the persistence/output targets.

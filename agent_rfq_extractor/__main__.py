@@ -6,12 +6,13 @@ from collections import Counter
 
 from dotenv import load_dotenv
 
-from .claude_client import DEFAULT_MODEL
+from .claude_client import DEFAULT_MODEL, LLMConfigurationError
 from .pipeline import RFQPipeline
+from database.storage import StorageError
 
 
 def main() -> int:
-    load_dotenv()
+    load_dotenv(override=True)
     parser = argparse.ArgumentParser(description="Extract structured glass RFQs from Gmail.")
     parser.add_argument("--source", choices=["gmail", "fixture"], default="gmail")
     parser.add_argument("--fixture", default="Emails.txt", help="Fixture file for --source fixture.")
@@ -64,12 +65,23 @@ def main() -> int:
     args = parser.parse_args()
     message_ids = _parse_message_ids(args.email_id, args.email_ids)
 
-    pipeline = RFQPipeline(
-        db_path=args.db,
-        json_path=args.json,
-        model=args.model,
-        replace_existing=args.replace_existing,
-    )
+    try:
+        pipeline = RFQPipeline(
+            db_path=args.db,
+            json_path=args.json,
+            model=args.model,
+            replace_existing=args.replace_existing,
+        )
+    except StorageError as exc:
+        print(f"Startup failed: {exc}")
+        print("If another run is using the same database, stop it or pass a different --db path.")
+        return 1
+    try:
+        pipeline.validate_llm()
+    except LLMConfigurationError as exc:
+        pipeline.close()
+        print(f"Startup failed: {exc}")
+        return 1
     try:
         if args.source == "gmail":
             if message_ids:
