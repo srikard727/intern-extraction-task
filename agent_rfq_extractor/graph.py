@@ -82,7 +82,7 @@ class RFQExtractionGraph:
 
     def _normalize_node(self, state: ExtractionState) -> ExtractionState:
         raw = state.get("raw") or {}
-        raw_items = raw.get("items") if isinstance(raw.get("items"), list) else []
+        raw_items = _raw_items_from_payload(raw)
         raw_review = raw.get("review") if isinstance(raw.get("review"), dict) else None
         return {
             "raw_items": raw_items,
@@ -130,6 +130,35 @@ class RFQExtractionGraph:
 
 def _route_after_extract(state: ExtractionState) -> str:
     return "failure" if state.get("error") else "normalize"
+
+
+def _raw_items_from_payload(raw: dict[str, Any]) -> list[dict[str, Any]]:
+    if isinstance(raw.get("items"), list):
+        return [item for item in raw["items"] if isinstance(item, dict)]
+
+    extraction = raw.get("extraction")
+    if not isinstance(extraction, dict):
+        return []
+
+    groups = extraction.get("glass_type_groups")
+    if not isinstance(groups, list):
+        return []
+
+    items: list[dict[str, Any]] = []
+    for group in groups:
+        if not isinstance(group, dict):
+            continue
+        glass_type = group.get("glass_type")
+        units = group.get("glass_units")
+        if not isinstance(units, list):
+            continue
+        for unit in units:
+            if not isinstance(unit, dict):
+                continue
+            normalized = dict(unit)
+            normalized.setdefault("glass_type", glass_type)
+            items.append(normalized)
+    return items
 
 
 def _email_base(email: InboundEmail, attachments: list[AttachmentInfo]) -> dict[str, Any]:

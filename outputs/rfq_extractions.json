@@ -1,0 +1,2066 @@
+[
+  {
+    "email_id": "19ec7d393bba8dc1",
+    "conv_id": "gmail-thread:19ec7d38c79f13b9",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "Re: RFQ: Quoting spandrel glass for the job. 48 x 96, 1/4\" tempered w...",
+    "body_text": "Hi team,\n\nFollowing up on my RFQ below for this request: Quoting spandrel glass for the job. 48 x 96, 1/4\" tempered with a ceramic frit - color is.... Please keep this in the same quote thread. If anything is missing, let me know what you need and I can send it over.\n\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:51+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:40:22.641088+00:00",
+    "status": "human_review_required",
+    "review": {
+      "reason": "Color is explicitly unresolved (TBD \u2014 possibly black or dark grey). Quantity is approximate ('around 20, could go up'). Follow-up message (Message 2) does not add new specs but confirms the original RFQ is still active.",
+      "missing_fields": [],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": true,
+      "missing_fields": [],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 48.0,
+              "height": 96.0,
+              "quantity": 20,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/4\"",
+                "HT": "tempered",
+                "TT": "spandrel"
+              },
+              "fabrication": {
+                "coatings": "ceramic frit on surface 2"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97,
+                "TT": 0.97
+              },
+              "notes": "Color is TBD per Message 1 (probably black or dark grey); Message 2 follow-up truncates the color field with '...', confirming color is still unresolved. Quantity stated as 'around 20, could go up' in Message 1 \u2014 using 20 as the stated approximate quantity. Customer also asked about lead time impact of the ceramic frit."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d38b9844fd4",
+    "conv_id": "gmail-thread:19ec7d38622cab09",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "Re: RFQ: 71 1/2 x 99 5/8, 1/4 bronze tempered, no edge work. One piec...",
+    "body_text": "Hi team,\n\nFollowing up on my RFQ below for this request: 71 1/2 x 99 5/8, 1/4 bronze tempered, no edge work. One piece. Please rush this if you pos.... Please keep this in the same quote thread. If anything is missing, let me know what you need and I can send it over.\n\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:50+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:40:37.722126+00:00",
+    "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": true,
+      "missing_fields": [],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 71.5,
+              "height": 99.625,
+              "quantity": 1,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/4\"",
+                "HT": "tempered",
+                "color": "bronze"
+              },
+              "fabrication": {
+                "edge_work": "none"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97,
+                "color": 0.97
+              },
+              "notes": "Customer stated urgent/rush request. Quantity of 1 explicitly stated. Edge work explicitly stated as none. Color 'bronze' kept in color field; TT left null as no separate glass type descriptor (e.g., clear, tinted) was given beyond the color name. Message 2 is a follow-up reiterating the same specs from Message 1 with no changes."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d38c79f13b9",
+    "conv_id": "gmail-thread:19ec7d38c79f13b9",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "RFQ: Quoting spandrel glass for the job. 48 x 96, 1/4\" tempered w...",
+    "body_text": "Hello,\nQuoting spandrel glass for the job. 48 x 96, 1/4\" tempered with a ceramic frit - color is still TBD, probably black or dark grey - applied on surface 2. Quantity around 20, could go up. What's the lead time impact of the frit?\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:50+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:40:30.732510+00:00",
+    "status": "human_review_required",
+    "review": {
+      "reason": "Color is explicitly TBD \u2014 sender mentioned 'probably black or dark grey' but did not confirm. Fabricator should confirm color before quoting. Quantity is approximate ('around 20, could go up').",
+      "missing_fields": [],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": true,
+      "missing_fields": [],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 48.0,
+              "height": 96.0,
+              "quantity": 20,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/4\"",
+                "HT": "tempered",
+                "TT": "spandrel"
+              },
+              "fabrication": {
+                "coatings": "ceramic frit on surface 2"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97,
+                "TT": 0.97
+              },
+              "notes": "Color is TBD per sender \u2014 stated 'probably black or dark grey' but not confirmed. Color set to null pending confirmation. Quantity stated as 'around 20, could go up'; using 20 as stated approximate. Ceramic frit applied on surface 2. Sender also asked about lead time impact of frit. Message 2 is a follow-up referencing the same RFQ with no new specs."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d3839917e55",
+    "conv_id": "gmail-thread:19ec7d3807cf9f2c",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "Re: RFQ: Need pricing on shower enclosures - (3) fixed panels at 30 x...",
+    "body_text": "Hi team,\n\nFollowing up on my RFQ below for this request: Need pricing on shower enclosures - (3) fixed panels at 30 x 72 and (3) doors at 26 x 72,.... Please keep this in the same quote thread. If anything is missing, let me know what you need and I can send it over.\n\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:48+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:40:52.469812+00:00",
+    "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": true,
+      "missing_fields": [],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 30.0,
+              "height": 72.0,
+              "quantity": 3,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "3/8\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished edges all around"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Fixed panels. Specs sourced from Message 1 in thread; Message 2 is a follow-up referencing the same RFQ with no changes."
+            },
+            {
+              "width": 26.0,
+              "height": 72.0,
+              "quantity": 3,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "3/8\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished edges all around"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Shower doors. Require hinge cutouts and a notch for the handle. Shape is rectangle (width x height); hinge cutouts and handle notch are fabrication features, not shape-defining. Specs sourced from Message 1 in thread; Message 2 is a follow-up referencing the same RFQ with no changes."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d38622cab09",
+    "conv_id": "gmail-thread:19ec7d38622cab09",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "RFQ: 71 1/2 x 99 5/8, 1/4 bronze tempered, no edge work. One piec...",
+    "body_text": "NEED ASAP - customer is standing here waiting.\n71 1/2 x 99 5/8, 1/4 bronze tempered, no edge work. One piece. Please rush this if you possibly can.\nThx",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:48+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:40:43.933405+00:00",
+    "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": true,
+      "missing_fields": [],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 71.5,
+              "height": 99.625,
+              "quantity": 1,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/4\"",
+                "HT": "tempered",
+                "TT": "monolithic",
+                "color": "bronze"
+              },
+              "fabrication": {
+                "edge_work": "none"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97,
+                "TT": 0.97,
+                "color": 0.97
+              },
+              "notes": "Customer is waiting on-site; rush requested. Quantity of 1 explicitly stated in body. No edge work explicitly stated. Message 2 is a follow-up confirming the same specs with no changes."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d37ef15ccd2",
+    "conv_id": "gmail-thread:19ec7d37858eeab9",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "Re: RFQ: We're putting together a bid for the new community center an...",
+    "body_text": "Hi team,\n\nFollowing up on my RFQ below for this request: We're putting together a bid for the new community center and the architect has been slow.... Please keep this in the same quote thread. If anything is missing, let me know what you need and I can send it over.\n\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:47+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:41:11.257368+00:00",
+    "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": true,
+      "missing_fields": [],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 40.0,
+              "height": 90.0,
+              "quantity": 15,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/2\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Dimensions described as 'give or take' \u2014 approximate/budgetary only. Current message (Message 2) is a follow-up with no new specs; all item details sourced from Message 1. Customer is requesting budgetary pricing, not a firm order. Lead time inquiry also noted but not an RFQ spec."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d3807cf9f2c",
+    "conv_id": "gmail-thread:19ec7d3807cf9f2c",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "RFQ: Need pricing on shower enclosures - (3) fixed panels at 30 x...",
+    "body_text": "Hi,\nNeed pricing on shower enclosures - (3) fixed panels at 30 x 72 and (3) doors at 26 x 72, all 3/8\" clear tempered. The doors need hinge cutouts and a notch for the handle. Polished edges all around.\nLet me know, thanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:47+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:41:03.118299+00:00",
+    "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": true,
+      "missing_fields": [],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 30.0,
+              "height": 72.0,
+              "quantity": 3,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": "fixed panel",
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "3/8\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished edges all around"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Fixed shower panel. No cutouts or notches specified for this item."
+            },
+            {
+              "width": 26.0,
+              "height": 72.0,
+              "quantity": 3,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": "door",
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "3/8\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished edges all around"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Shower door. Requires hinge cutouts and a notch for the handle. Cutout/notch locations and sizes not specified; fabricator should confirm details."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d377e9e7ab3",
+    "conv_id": "gmail-thread:19ec7d374f12d5cb",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "Re: RFQ: Couple of things for the same job. First, pricing on 600mm x...",
+    "body_text": "Hi team,\n\nFollowing up on my RFQ below for this request: Couple of things for the same job. First, pricing on 600mm x 1500mm, 10mm clear tempered,.... Please keep this in the same quote thread. If anything is missing, let me know what you need and I can send it over.\n\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:45+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:41:28.162948+00:00",
+    "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": true,
+      "missing_fields": [],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 23.622,
+              "height": 59.0551,
+              "quantity": 5,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "10mm",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished edges"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Item sourced from Message 1 in thread. Current message (Message 2) is a follow-up referencing the same RFQ. Units are metric per sender's note that the first part came from a European supplier's drawing."
+            },
+            {
+              "width": 32.0,
+              "height": 84.0,
+              "quantity": 3,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/2\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished edges"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Item sourced from Message 1 in thread. Sender specified 'half inch' thickness, interpreted as 1/2\". Edge work 'polished' inferred to match first item's 'polished edges' per sender's 'same clear tempered, polished' language."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d37858eeab9",
+    "conv_id": "gmail-thread:19ec7d37858eeab9",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "RFQ: We're putting together a bid for the new community center an...",
+    "body_text": "Good morning team, hope the week's treating you well!\nWe're putting together a bid for the new community center and the architect has been slow getting us the real details, but I'd like to start pulling budgetary numbers so we're not scrambling at the deadline. When you get a chance, could you ballpark roughly fifteen lites, somewhere around 40\" x 90\" give or take, half inch clear tempered with polished edges? Nothing fancy, just standard storefront stuff.\nAlso, any read on lead times right now given how backed up everyone seems? That'd help a lot.\nReally appreciate it as always.\nTalk soon,\nRachel\nSummit Contracting",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:45+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:41:18.178644+00:00",
+    "status": "human_review_required",
+    "review": {
+      "reason": "Dimensions and quantity are explicitly approximate per customer ('roughly fifteen lites, somewhere around 40\" x 90\" give or take'). Suitable for budgetary pricing only, not final fabrication.",
+      "missing_fields": [],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": true,
+      "missing_fields": [],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 40.0,
+              "height": 90.0,
+              "quantity": 15,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/2\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Budgetary/ballpark request only; dimensions described as approximate ('give or take'). Message 2 is a follow-up referencing the same RFQ with no new specs; all specs sourced from Message 1."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d374f12d5cb",
+    "conv_id": "gmail-thread:19ec7d374f12d5cb",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "RFQ: Couple of things for the same job. First, pricing on 600mm x...",
+    "body_text": "Hello,\nCouple of things for the same job. First, pricing on 600mm x 1500mm, 10mm clear tempered, polished edges, qty 5. Second, I also need 3 pieces at 32\" x 84\", half inch, same clear tempered, polished. Sorry the units are mixed, the first part came from the European supplier's drawing.\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:44+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:41:36.091023+00:00",
+    "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": true,
+      "missing_fields": [],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 23.622,
+              "height": 59.0551,
+              "quantity": 5,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "10mm",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Dimensions provided in metric (mm) per European supplier's drawing."
+            },
+            {
+              "width": 32.0,
+              "height": 84.0,
+              "quantity": 3,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/2\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Thickness stated as 'half inch', interpreted as 1/2\". Customer noted 'same clear tempered, polished' referencing the first item's specs."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d36ff9425d2",
+    "conv_id": "gmail-thread:19ec7d36ff9425d2",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "RFQ: Can we just reorder the same lites we did for the Hudson Str...",
+    "body_text": "Hi,\nCan we just reorder the same lites we did for the Hudson Street job last month? Same sizes, same glass type, same edge work. I don't have the details in front of me but you should have them on file. Just need a current price and how fast we can get them.\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:43+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:41:43.045937+00:00",
+    "status": "human_review_required",
+    "review": {
+      "reason": "The entire thread references a prior job ('Hudson Street job last month') for reorder but provides no dimensions, glass type, thickness, heat treatment, edge work details, or any other specs. No items can be extracted without guessing. Human review required to look up the prior job on file and confirm specs before quoting. No glass items were extracted from the message.",
+      "missing_fields": [],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "unknown",
+      "glass_types": [],
+      "is_complete": false,
+      "missing_fields": [],
+      "glass_type_groups": []
+    }
+  },
+  {
+    "email_id": "19ec7d371b1096f4",
+    "conv_id": "gmail-thread:19ec7d36ff9425d2",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "Re: RFQ: Can we just reorder the same lites we did for the Hudson Str...",
+    "body_text": "Hi team,\n\nFollowing up on my RFQ below for this request: Can we just reorder the same lites we did for the Hudson Street job last month? Same sizes.... Please keep this in the same quote thread. If anything is missing, let me know what you need and I can send it over.\n\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:43+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:41:39.401300+00:00",
+    "status": "human_review_required",
+    "review": {
+      "reason": "Both messages in this thread reference a prior job ('Hudson Street job last month') for reorder but provide no dimensions, glass type, quantity, or any other specifications. No item can be created without guessing. Human review required to look up the Hudson Street job on file and confirm specs before quoting. No glass items were extracted from the message.",
+      "missing_fields": [],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "unknown",
+      "glass_types": [],
+      "is_complete": false,
+      "missing_fields": [],
+      "glass_type_groups": []
+    }
+  },
+  {
+    "email_id": "19ec7d36838d31dd",
+    "conv_id": "gmail-thread:19ec7d3649490546",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "Re: RFQ: Need a quote on 48 x 80 clear tempered, quarter inch, polish...",
+    "body_text": "Hi team,\n\nFollowing up on my RFQ below for this request: Need a quote on 48 x 80 clear tempered, quarter inch, polished edges. Two pieces. Please keep this in the same quote thread. If anything is missing, let me know what you need and I can send it over.\n\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:41+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:41:51.984685+00:00",
+    "status": "human_review_required",
+    "review": {
+      "reason": "Thickness conflict between original request (1/4\") and in-thread correction (3/8\"). The current message body repeats the original 1/4\" language, but the correction in Message 1 explicitly overrides it. Using 3/8\" per the latest explicit correction.",
+      "missing_fields": [],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": true,
+      "missing_fields": [],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 48.0,
+              "height": 80.0,
+              "quantity": 2,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "3/8\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished edges"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Original message specified 1/4\" thickness, but was corrected in Message 1 to 3/8\" by the architect. The current message (Message 2) references '48 x 80 clear tempered, quarter inch' but this appears to be a summary of the original request before the correction; the explicit correction to 3/8\" in Message 1 takes precedence. Quantity of 2 is stated in both messages; the correction message did not change the quantity."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d3622165103",
+    "conv_id": "gmail-thread:19ec7d36098af7e6",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "Re: RFQ: From what I can tell they want (4) lites at 30 x 72 and (2) ...",
+    "body_text": "Hi team,\n\nFollowing up on my RFQ below for this request: Hi team, see the note below from the GC - can you put glass pricing to it?. Please keep this in the same quote thread. If anything is missing, let me know what you need and I can send it over.\n\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:40+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:42:11.774106+00:00",
+    "status": "human_review_required",
+    "review": {
+      "reason": "The 60 x 84 lite is missing heat treatment and glass type (clear, tinted, etc.). Only thickness (1/2\") was stated. Human review recommended to confirm specs for this item. One or more items are missing required fields: HT.",
+      "missing_fields": [
+        "HT"
+      ],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": false,
+      "missing_fields": [
+        "HT"
+      ],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 30.0,
+              "height": 72.0,
+              "quantity": 4,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/4\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Extracted from Message 1 of thread. Current message (Message 2) is a follow-up with no new item details; base RFQ taken from earlier message."
+            },
+            {
+              "width": 24.0,
+              "height": 36.0,
+              "quantity": 2,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/4\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Extracted from Message 1 of thread. Current message (Message 2) is a follow-up with no new item details; base RFQ taken from earlier message."
+            },
+            {
+              "width": 60.0,
+              "height": 84.0,
+              "quantity": 1,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/2\"",
+                "HT": null
+              },
+              "fabrication": {
+                "edge_work": "polished"
+              },
+              "found_fields": [
+                "TK",
+                "dimensions"
+              ],
+              "missing_fields": [
+                "HT"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "TK": 0.97
+              },
+              "notes": "Extracted from Message 1 of thread. Quantity defaulted to 1 as not explicitly stated. Heat treatment and glass type not specified for this lite \u2014 only thickness (1/2\") was mentioned. HT and TT set to null. Current message (Message 2) is a follow-up with no new item details."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d3649490546",
+    "conv_id": "gmail-thread:19ec7d3649490546",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "RFQ: Need a quote on 48 x 80 clear tempered, quarter inch, polish...",
+    "body_text": "Hello,\nNeed a quote on 48 x 80 clear tempered, quarter inch, polished edges. Two pieces.\nActually - hold on, the architect just came back and said make it three-eighths instead. Go with 3/8\". Sorry for the back and forth.\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:40+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:41:59.542551+00:00",
+    "status": "completed",
+    "review": null,
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": true,
+      "missing_fields": [],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 48.0,
+              "height": 80.0,
+              "quantity": 2,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "3/8\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Thickness corrected from 1/4\" to 3/8\" within the same message per architect's instruction. Message 2 references the original 1/4\" spec but is a follow-up with no new corrections; the correction in Message 1 takes precedence."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d36098af7e6",
+    "conv_id": "gmail-thread:19ec7d36098af7e6",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "RFQ: From what I can tell they want (4) lites at 30 x 72 and (2) ...",
+    "body_text": "Hi team, see the note below from the GC - can you put glass pricing to it?\nFrom what I can tell they want (4) lites at 30 x 72 and (2) at 24 x 36, all quarter inch clear tempered, plus one larger 60 x 84 at half inch. Polished edges throughout.\n-----Original Message-----\nFrom: J. Halloran (Halloran Construction)\nSent: Tuesday\nSubject: Building C glass\nWe need the glass package for Building C as soon as possible, the inspector is on us about the temp stickers. Sizes are on the markup I sent over. Let me know.",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:39+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:42:26.834494+00:00",
+    "status": "human_review_required",
+    "review": {
+      "reason": "The 60 x 84 half-inch lite is missing heat treatment (HT) and glass type (TT). The GC's original message references a markup with sizes, but no attachment was provided; dimensions were interpreted from the forwarding party's summary. Human review recommended to confirm specs for the larger lite. One or more items are missing required fields: HT.",
+      "missing_fields": [
+        "HT"
+      ],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "monolithic",
+      "glass_types": [
+        "monolithic"
+      ],
+      "is_complete": false,
+      "missing_fields": [
+        "HT"
+      ],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 30.0,
+              "height": 72.0,
+              "quantity": 4,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/4\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              }
+            },
+            {
+              "width": 24.0,
+              "height": 36.0,
+              "quantity": 2,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/4\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "polished"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              }
+            },
+            {
+              "width": 60.0,
+              "height": 84.0,
+              "quantity": 1,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/2\"",
+                "HT": null
+              },
+              "fabrication": {
+                "edge_work": "polished"
+              },
+              "found_fields": [
+                "TK",
+                "dimensions"
+              ],
+              "missing_fields": [
+                "HT"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "TK": 0.97
+              },
+              "notes": "Heat treatment and glass type (clear, etc.) not specified for the 60 x 84 half-inch lite. HT and TT set to null pending clarification. Quantity defaulted to 1 as only 'one larger' was stated."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d35f6465970",
+    "conv_id": "gmail-thread:19ec7d35aa49ee56",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "Re: RFQ: Quote request below, four different glass types:",
+    "body_text": "Hi team,\n\nFollowing up on my RFQ below for this request: Quote request below, four different glass types:. Please keep this in the same quote thread. If anything is missing, let me know what you need and I can send it over.\n\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:38+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:42:47.329142+00:00",
+    "status": "human_review_required",
+    "review": {
+      "reason": "Multiple required fields are missing across all items (individual ply thicknesses, spacer thickness, interlayer details, heat treatments, glass types for several lites). Human review recommended to obtain complete specifications before quoting. One or more items are missing required fields: HT, TK1, TK2, interlayer_thickness, interlayer_material, spacer_material, spacer_thickness, HT1, HT2, TK3.",
+      "missing_fields": [
+        "HT",
+        "TK1",
+        "TK2",
+        "interlayer_thickness",
+        "interlayer_material",
+        "spacer_material",
+        "spacer_thickness",
+        "HT1",
+        "HT2",
+        "TK3"
+      ],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "mixed",
+      "glass_types": [
+        "monolithic",
+        "laminated",
+        "insulated",
+        "laminated-insulated"
+      ],
+      "is_complete": false,
+      "missing_fields": [
+        "HT",
+        "TK1",
+        "TK2",
+        "interlayer_thickness",
+        "interlayer_material",
+        "spacer_material",
+        "spacer_thickness",
+        "HT1",
+        "HT2",
+        "TK3"
+      ],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 84.0,
+              "height": 108.0,
+              "quantity": 2,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/2\"",
+                "HT": null,
+                "TT": "spandrel"
+              },
+              "fabrication": {
+                "coatings": "low-iron"
+              },
+              "found_fields": [
+                "TK",
+                "dimensions"
+              ],
+              "missing_fields": [
+                "HT"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "TK": 0.97,
+                "TT": 0.97
+              },
+              "notes": "Low-iron specified. HT not stated; set to null. TT not stated (low-iron is a glass type/color modifier, not a standard TT like clear/tinted/spandrel). Heat treatment not specified. Item extracted from Message 1 of thread; Message 2 is a follow-up with no new specs."
+            }
+          ]
+        },
+        {
+          "glass_type": "laminated",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 60.0,
+              "height": 96.0,
+              "quantity": 2,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_specs": {
+                "TK1": null,
+                "TT1": "clear",
+                "HT1": "heat strengthened",
+                "TK2": null,
+                "TT2": "clear",
+                "HT2": "heat strengthened",
+                "interlayer_material": null,
+                "interlayer_thickness": null
+              },
+              "fabrication": {},
+              "found_fields": [
+                "dimensions"
+              ],
+              "missing_fields": [
+                "TK1",
+                "TK2",
+                "interlayer_thickness",
+                "interlayer_material"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "TT1": 0.95,
+                "HT1": 0.93,
+                "TT2": 0.95,
+                "HT2": 0.93
+              },
+              "notes": "Overall thickness stated as 9/16\". Individual ply thicknesses not specified; TK1 and TK2 set to null. HS construction applies to both plies. Interlayer material and thickness not specified. Item extracted from Message 1 of thread."
+            }
+          ]
+        },
+        {
+          "glass_type": "insulated",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 48.0,
+              "height": 84.0,
+              "quantity": 8,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_specs": {
+                "TK1": null,
+                "HT1": null,
+                "TK2": null,
+                "HT2": null,
+                "spacer_thickness": null,
+                "gas_fill": "argon",
+                "spacer_material": null
+              },
+              "fabrication": {
+                "coatings": "Low-E surface 2"
+              },
+              "found_fields": [
+                "dimensions"
+              ],
+              "missing_fields": [
+                "TK1",
+                "TK2",
+                "spacer_material",
+                "spacer_thickness",
+                "HT1",
+                "HT2"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "gas_fill": 0.9
+              },
+              "notes": "Overall thickness 1\" stated but individual lite thicknesses and spacer thickness not specified; TK1, TK2, spacer_thickness set to null. Low-E on surface 2 (outboard lite, second surface). Argon fill confirmed. HT and TT for each lite not specified. Item extracted from Message 1 of thread."
+            }
+          ]
+        },
+        {
+          "glass_type": "laminated-insulated",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 60.0,
+              "height": 120.0,
+              "quantity": 4,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_specs": {
+                "TK1": null,
+                "HT1": null,
+                "TK2": null,
+                "HT2": null,
+                "TK3": null,
+                "HT3": "tempered",
+                "spacer_thickness": null,
+                "spacer_material": null,
+                "interlayer_material": null,
+                "interlayer_thickness": null,
+                "laminated_lite": "outer"
+              },
+              "fabrication": {},
+              "found_fields": [
+                "laminated_lite",
+                "dimensions"
+              ],
+              "missing_fields": [
+                "TK1",
+                "TK2",
+                "TK3",
+                "HT1",
+                "HT2",
+                "interlayer_material",
+                "interlayer_thickness",
+                "spacer_material",
+                "spacer_thickness"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "HT3": 0.91,
+                "laminated_lite": 0.96
+              },
+              "notes": "Overall thickness 1-5/16\" stated. Laminated outboard lite (TK1, HT1, TT1, TK2, HT2, TT2) and interlayer specs not provided; set to null. Inboard lite (TK3) is tempered (HT3=tempered) but thickness and TT3 not specified. Spacer thickness and material not specified. Gas fill not stated. Item extracted from Message 1 of thread. Message 2 is a follow-up with no new specs."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d35aa49ee56",
+    "conv_id": "gmail-thread:19ec7d35aa49ee56",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "RFQ: Quote request below, four different glass types:",
+    "body_text": "Hello,\nQuote request below, four different glass types:\nMonolithic - Qty 2, 84\" x 108\", 1/2\" low-iron.\nLaminated - Qty 2, 60\" x 96\", 9/16\" clear laminated, HS construction.\nIGU - Qty 8, 48\" x 84\", 1\" overall, Low-E surface 2, argon filled.\nLIU - Qty 4, 60\" x 120\", 1-5/16\" overall, laminated outboard lite, tempered inboard lite.\nThank you",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:37+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:43:06.819705+00:00",
+    "status": "human_review_required",
+    "review": {
+      "reason": "Multiple items are missing critical spec details: laminated item is missing individual ply thicknesses and interlayer specs; IGU is missing individual lite thicknesses, heat treatments, and spacer thickness; LIU is missing all ply thicknesses, interlayer specs, and spacer thickness. Human review recommended to obtain complete specifications. One or more items are missing required fields: HT, TK1, TK2, interlayer_thickness, interlayer_material, spacer_material, spacer_thickness, HT1, HT2, TK3.",
+      "missing_fields": [
+        "HT",
+        "TK1",
+        "TK2",
+        "interlayer_thickness",
+        "interlayer_material",
+        "spacer_material",
+        "spacer_thickness",
+        "HT1",
+        "HT2",
+        "TK3"
+      ],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "mixed",
+      "glass_types": [
+        "monolithic",
+        "laminated",
+        "insulated",
+        "laminated-insulated"
+      ],
+      "is_complete": false,
+      "missing_fields": [
+        "HT",
+        "TK1",
+        "TK2",
+        "interlayer_thickness",
+        "interlayer_material",
+        "spacer_material",
+        "spacer_thickness",
+        "HT1",
+        "HT2",
+        "TK3"
+      ],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 84.0,
+              "height": 108.0,
+              "quantity": 2,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/2\"",
+                "HT": null,
+                "TT": "low-iron"
+              },
+              "fabrication": {},
+              "found_fields": [
+                "TK",
+                "dimensions"
+              ],
+              "missing_fields": [
+                "HT"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "TK": 0.97,
+                "TT": 0.97
+              },
+              "notes": "HT defaulted to annealed; no heat treatment specified. Low-iron is the glass type/color; no coating specified."
+            }
+          ]
+        },
+        {
+          "glass_type": "laminated",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 60.0,
+              "height": 96.0,
+              "quantity": 2,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_specs": {
+                "TK1": null,
+                "TT1": "clear",
+                "HT1": "heat strengthened",
+                "TK2": null,
+                "TT2": "clear",
+                "HT2": "heat strengthened",
+                "interlayer_material": null,
+                "interlayer_thickness": null
+              },
+              "fabrication": {},
+              "found_fields": [
+                "dimensions"
+              ],
+              "missing_fields": [
+                "TK1",
+                "TK2",
+                "interlayer_thickness",
+                "interlayer_material"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "TT1": 0.95,
+                "HT1": 0.93,
+                "TT2": 0.95,
+                "HT2": 0.93
+              },
+              "notes": "Overall laminated thickness stated as 9/16\". Individual ply thicknesses (TK1, TK2) not specified; cannot derive without knowing interlayer thickness. Interlayer material and thickness not specified. HS construction applies to both plies."
+            }
+          ]
+        },
+        {
+          "glass_type": "insulated",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 48.0,
+              "height": 84.0,
+              "quantity": 8,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_specs": {
+                "TK1": null,
+                "HT1": null,
+                "TK2": null,
+                "HT2": null,
+                "spacer_thickness": null,
+                "gas_fill": "argon",
+                "spacer_material": null
+              },
+              "fabrication": {
+                "coatings": "Low-E surface 2"
+              },
+              "found_fields": [
+                "dimensions"
+              ],
+              "missing_fields": [
+                "TK1",
+                "TK2",
+                "spacer_material",
+                "spacer_thickness",
+                "HT1",
+                "HT2"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "gas_fill": 0.9
+              },
+              "notes": "Individual lite thicknesses (TK1, TK2) and spacer thickness not specified; only overall 1\" thickness given. Heat treatment and glass type for each lite not specified. Low-E is on surface 2 (outboard lite, inboard surface). Spacer material not specified."
+            }
+          ]
+        },
+        {
+          "glass_type": "laminated-insulated",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 60.0,
+              "height": 120.0,
+              "quantity": 4,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_specs": {
+                "TK1": null,
+                "HT1": null,
+                "TK2": null,
+                "HT2": null,
+                "TK3": null,
+                "HT3": "tempered",
+                "spacer_thickness": null,
+                "spacer_material": null,
+                "interlayer_material": null,
+                "interlayer_thickness": null,
+                "laminated_lite": "outer"
+              },
+              "fabrication": {},
+              "found_fields": [
+                "laminated_lite",
+                "dimensions"
+              ],
+              "missing_fields": [
+                "TK1",
+                "TK2",
+                "TK3",
+                "HT1",
+                "HT2",
+                "interlayer_material",
+                "interlayer_thickness",
+                "spacer_material",
+                "spacer_thickness"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "HT3": 0.91,
+                "laminated_lite": 0.96
+              },
+              "notes": "Laminated outboard lite (TK1, TK2, interlayer) details not specified. Inboard lite (TK3) is tempered but thickness and glass type not specified. Spacer thickness and material not specified. Gas fill not specified. Overall thickness 1-5/16\" given but individual component thicknesses cannot be derived without more detail."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d3548bc5b76",
+    "conv_id": "gmail-thread:19ec7d3548bc5b76",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "RFQ: Per the architect's spec, here's what we need pricing on. Qu...",
+    "body_text": "Hello team,\nPer the architect's spec, here's what we need pricing on. Quantities and glass types below.\nMonolithic - Qty 2, 48\" x 96\", 1/2\" clear tempered, flat polished edges.\nLaminated - Qty 1, 60\" x 120\", 1/4\" clear HS + .060 PVB + 1/4\" clear HS, flat polished edges.\nInsulated unit - Qty 4, 36\" x 72\", 1\" overall, 1/4\" clear HS / 1/2\" airspace / 1/4\" clear HS, Low-E #2, argon filled.\nLaminated insulated unit - Qty 2, 48\" x 96\", 1-5/16\" overall. Outboard 1/4\" + .090 PVB + 1/4\", 1/2\" airspace, inboard 1/4\" HS, Low-E #2, argon filled.\nPricing and lead time please.\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:36+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:43:51.982554+00:00",
+    "status": "human_review_required",
+    "review": {
+      "reason": "Message 2 is a follow-up with no new item details; all RFQ items extracted from Message 1. Several fields are missing or ambiguous: outboard laminated-insulated plies lack heat treatment and glass type; inboard lite lacks glass type; spacer materials not specified for insulated and laminated-insulated items; Low-E #2 surface position should be confirmed. One or more items are missing required fields: spacer_material, HT1, HT2.",
+      "missing_fields": [
+        "spacer_material",
+        "HT1",
+        "HT2"
+      ],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "mixed",
+      "glass_types": [
+        "monolithic",
+        "laminated",
+        "insulated",
+        "laminated-insulated"
+      ],
+      "is_complete": false,
+      "missing_fields": [
+        "spacer_material",
+        "HT1",
+        "HT2"
+      ],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 48.0,
+              "height": 96.0,
+              "quantity": 2,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/2\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "flat polished"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              }
+            }
+          ]
+        },
+        {
+          "glass_type": "laminated",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 60.0,
+              "height": 120.0,
+              "quantity": 1,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_specs": {
+                "TK1": "1/4\"",
+                "TT1": "clear",
+                "HT1": "heat strengthened",
+                "TK2": "1/4\"",
+                "TT2": "clear",
+                "HT2": "heat strengthened",
+                "interlayer_material": "PVB",
+                "interlayer_thickness": ".060\""
+              },
+              "fabrication": {
+                "edge_work": "flat polished"
+              },
+              "found_fields": [
+                "TK1",
+                "TK2",
+                "interlayer_material",
+                "interlayer_thickness",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK1": 0.97,
+                "TT1": 0.95,
+                "HT1": 0.93,
+                "TK2": 0.97,
+                "TT2": 0.95,
+                "HT2": 0.93,
+                "interlayer_material": 0.96,
+                "interlayer_thickness": 0.94
+              }
+            }
+          ]
+        },
+        {
+          "glass_type": "insulated",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 36.0,
+              "height": 72.0,
+              "quantity": 4,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_specs": {
+                "TK1": "1/4\"",
+                "TT1": "clear",
+                "HT1": "heat strengthened",
+                "TK2": "1/4\"",
+                "TT2": "clear",
+                "HT2": "heat strengthened",
+                "spacer_thickness": "1/2\"",
+                "gas_fill": "argon",
+                "spacer_material": null
+              },
+              "fabrication": {
+                "coatings": "Low-E #2"
+              },
+              "found_fields": [
+                "TK",
+                "airspace",
+                "dimensions"
+              ],
+              "missing_fields": [
+                "spacer_material"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "TK1": 0.96,
+                "TT1": 0.94,
+                "HT1": 0.92,
+                "TK2": 0.96,
+                "TT2": 0.94,
+                "HT2": 0.92,
+                "spacer_thickness": 0.95,
+                "gas_fill": 0.9
+              },
+              "notes": "Spacer material not specified. Low-E #2 surface position noted; confirm which lite surface the coating is on."
+            }
+          ]
+        },
+        {
+          "glass_type": "laminated-insulated",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 48.0,
+              "height": 96.0,
+              "quantity": 2,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_specs": {
+                "TK1": "1/4\"",
+                "HT1": null,
+                "TK2": "1/4\"",
+                "TT2": "clear",
+                "HT2": null,
+                "TK3": "1/4\"",
+                "HT3": "heat strengthened",
+                "spacer_thickness": "1/2\"",
+                "gas_fill": "argon",
+                "spacer_material": null,
+                "interlayer_material": "PVB",
+                "interlayer_thickness": ".090\"",
+                "laminated_lite": "outer"
+              },
+              "fabrication": {
+                "coatings": "Low-E #2"
+              },
+              "found_fields": [
+                "TK1",
+                "TK2",
+                "TK3",
+                "spacer_thickness",
+                "interlayer_material",
+                "interlayer_thickness",
+                "laminated_lite",
+                "dimensions"
+              ],
+              "missing_fields": [
+                "HT1",
+                "HT2",
+                "spacer_material"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "TK1": 0.95,
+                "TK2": 0.95,
+                "TT2": 0.93,
+                "TK3": 0.95,
+                "HT3": 0.91,
+                "spacer_thickness": 0.94,
+                "gas_fill": 0.89,
+                "interlayer_material": 0.95,
+                "interlayer_thickness": 0.93,
+                "laminated_lite": 0.96
+              },
+              "notes": "Outboard laminated lite: '1/4\" + .090 PVB + 1/4\"' \u2014 heat treatment and glass type (clear/tinted) not specified for outboard plies (TK1/TK2, HT1/HT2, TT1/TT2). Inboard lite (TK3) is 1/4\" HS but glass type (TT3) not stated. Spacer material not specified. Low-E #2 surface position noted; confirm which surface the coating is on. HT1 and HT2 are null because the outboard laminated plies' heat treatment was not stated; the inboard HS designation was not inherited to the outboard lites per extraction rules."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "email_id": "19ec7d356d76f4d2",
+    "conv_id": "gmail-thread:19ec7d3548bc5b76",
+    "from_email": "devesettisrikar@gmail.com",
+    "to_email": "devesettisrikar@gmail.com",
+    "subject": "Re: RFQ: Per the architect's spec, here's what we need pricing on. Qu...",
+    "body_text": "Hi team,\n\nFollowing up on my RFQ below for this request: Per the architect's spec, here's what we need pricing on. Quantities and glass types below.... Please keep this in the same quote thread. If anything is missing, let me know what you need and I can send it over.\n\nThanks",
+    "emailbody_variant": "plain",
+    "received_at": "2026-06-14T20:29:36+00:00",
+    "has_attachments": false,
+    "extracted_at": "2026-06-25T07:43:29.489473+00:00",
+    "status": "human_review_required",
+    "review": {
+      "reason": "Message 2 is a follow-up with no new item details. All RFQ items extracted from Message 1. Outboard laminated plies in the laminated-insulated item are missing heat treatment and glass type/color \u2014 human review recommended. Low-E #2 surface position not specified for insulated and laminated-insulated items. Spacer material not stated for insulated or laminated-insulated items. One or more items are missing required fields: spacer_material, HT1, HT2.",
+      "missing_fields": [
+        "spacer_material",
+        "HT1",
+        "HT2"
+      ],
+      "conflicts": []
+    },
+    "attachments": [],
+    "llm_model": "claude-sonnet-4-6",
+    "extraction": {
+      "glass_type": "mixed",
+      "glass_types": [
+        "monolithic",
+        "laminated",
+        "insulated",
+        "laminated-insulated"
+      ],
+      "is_complete": false,
+      "missing_fields": [
+        "spacer_material",
+        "HT1",
+        "HT2"
+      ],
+      "glass_type_groups": [
+        {
+          "glass_type": "monolithic",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 48.0,
+              "height": 96.0,
+              "quantity": 2,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_type": "monolithic",
+              "glass_specs": {
+                "TK": "1/2\"",
+                "HT": "tempered"
+              },
+              "fabrication": {
+                "edge_work": "flat polished"
+              },
+              "found_fields": [
+                "TK",
+                "HT",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK": 0.97,
+                "HT": 0.97
+              },
+              "notes": "Extracted from Message 1 of thread. Message 2 is a follow-up with no new item details; base RFQ from Message 1 used."
+            }
+          ]
+        },
+        {
+          "glass_type": "laminated",
+          "is_complete": true,
+          "glass_units": [
+            {
+              "width": 60.0,
+              "height": 120.0,
+              "quantity": 1,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_specs": {
+                "TK1": "1/4\"",
+                "TT1": "clear",
+                "HT1": "heat strengthened",
+                "TK2": "1/4\"",
+                "TT2": "clear",
+                "HT2": "heat strengthened",
+                "interlayer_material": "PVB",
+                "interlayer_thickness": ".060\""
+              },
+              "fabrication": {
+                "edge_work": "flat polished"
+              },
+              "found_fields": [
+                "TK1",
+                "TK2",
+                "interlayer_material",
+                "interlayer_thickness",
+                "dimensions"
+              ],
+              "missing_fields": [],
+              "is_complete": true,
+              "field_confidence": {
+                "TK1": 0.97,
+                "TT1": 0.95,
+                "HT1": 0.93,
+                "TK2": 0.97,
+                "TT2": 0.95,
+                "HT2": 0.93,
+                "interlayer_material": 0.96,
+                "interlayer_thickness": 0.94
+              },
+              "notes": "Extracted from Message 1 of thread. Construction: 1/4\" clear HS + .060 PVB + 1/4\" clear HS."
+            }
+          ]
+        },
+        {
+          "glass_type": "insulated",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 36.0,
+              "height": 72.0,
+              "quantity": 4,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_specs": {
+                "TK1": "1/4\"",
+                "TT1": "clear",
+                "HT1": "heat strengthened",
+                "TK2": "1/4\"",
+                "TT2": "clear",
+                "HT2": "heat strengthened",
+                "spacer_thickness": "1/2\"",
+                "gas_fill": "argon",
+                "spacer_material": null
+              },
+              "fabrication": {
+                "coatings": "Low-E #2"
+              },
+              "found_fields": [
+                "TK",
+                "airspace",
+                "dimensions"
+              ],
+              "missing_fields": [
+                "spacer_material"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "TK1": 0.96,
+                "TT1": 0.94,
+                "HT1": 0.92,
+                "TK2": 0.96,
+                "TT2": 0.94,
+                "HT2": 0.92,
+                "spacer_thickness": 0.95,
+                "gas_fill": 0.9
+              },
+              "notes": "Extracted from Message 1 of thread. Construction: 1/4\" clear HS / 1/2\" airspace / 1/4\" clear HS. Low-E #2 surface position not specified. Spacer material not stated."
+            }
+          ]
+        },
+        {
+          "glass_type": "laminated-insulated",
+          "is_complete": false,
+          "glass_units": [
+            {
+              "width": 48.0,
+              "height": 96.0,
+              "quantity": 2,
+              "unit_of_measurement": "inch",
+              "shape": "rectangle",
+              "mark": null,
+              "glass_specs": {
+                "TK1": "1/4\"",
+                "HT1": null,
+                "TK2": "1/4\"",
+                "TT2": "clear",
+                "HT2": null,
+                "TK3": "1/4\"",
+                "HT3": "heat strengthened",
+                "spacer_thickness": "1/2\"",
+                "gas_fill": "argon",
+                "spacer_material": null,
+                "interlayer_material": "PVB",
+                "interlayer_thickness": ".090\"",
+                "laminated_lite": "outer"
+              },
+              "fabrication": {
+                "coatings": "Low-E #2"
+              },
+              "found_fields": [
+                "TK1",
+                "TK2",
+                "TK3",
+                "spacer_thickness",
+                "interlayer_material",
+                "interlayer_thickness",
+                "laminated_lite",
+                "dimensions"
+              ],
+              "missing_fields": [
+                "HT1",
+                "HT2",
+                "spacer_material"
+              ],
+              "is_complete": false,
+              "field_confidence": {
+                "TK1": 0.95,
+                "TK2": 0.95,
+                "TT2": 0.93,
+                "TK3": 0.95,
+                "HT3": 0.91,
+                "spacer_thickness": 0.94,
+                "gas_fill": 0.89,
+                "interlayer_material": 0.95,
+                "interlayer_thickness": 0.93,
+                "laminated_lite": 0.96
+              },
+              "notes": "Extracted from Message 1 of thread. Outboard laminated lite: 1/4\" + .090 PVB + 1/4\"; heat treatment and glass type (clear/tinted) for outboard plies not stated \u2014 HT1, HT2, TT1, TT2 set to null. Inboard lite: 1/4\" HS \u2014 TT3 (color/type) not stated, set to null. HT3 set to heat strengthened per 'HS' designation. Low-E #2 surface position not specified. Spacer material not stated. Per rules, HS from inboard lite not inherited by outboard laminated plies."
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

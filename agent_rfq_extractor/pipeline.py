@@ -102,7 +102,7 @@ def parse_fixture(path: str | Path) -> list[InboundEmail]:
         emails.append(
             InboundEmail(
                 email_id=f"fixture-{number:03d}",
-                conv_id=f"fixture-{number:03d}",
+                conv_id=f"fixture-thread-{number:03d}",
                 from_email="fixture@example.com",
                 to_email="fixture@example.com",
                 subject=subject,

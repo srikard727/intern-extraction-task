@@ -17,7 +17,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-from .models import AttachmentText, InboundEmail
+from .models import AttachmentText, ConversationMessage, InboundEmail
 
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
@@ -32,6 +32,7 @@ class GmailClient:
         self.credentials_path = Path(credentials_path)
         self.token_path = Path(token_path)
         self.service = self._build_service()
+        self._thread_cache: dict[str, list[ConversationMessage]] = {}
 
     def fetch_messages(self, query: str, limit: int) -> list[InboundEmail]:
         messages = self._list_message_ids(query=query, limit=limit)
@@ -48,9 +49,10 @@ class GmailClient:
         headers = _headers(payload)
         body_text, variant = _extract_body(payload)
         attachments = self._extract_attachments(message_id, payload)
+        conversation_messages = self._conversation_messages(message.get("threadId"))
         return InboundEmail(
             email_id=message.get("id", message_id),
-            conv_id=message.get("threadId"),
+            conv_id=_conversation_id(message.get("threadId")),
             from_email=_first_address(headers.get("from")),
             to_email=_first_address(headers.get("to")),
             subject=headers.get("subject"),
@@ -59,6 +61,7 @@ class GmailClient:
             received_at=_received_at(message, headers),
             has_attachments=bool(attachments),
             attachments=attachments,
+            conversation_messages=conversation_messages,
         )
 
     def _build_service(self):
@@ -96,6 +99,46 @@ class GmailClient:
             if not page_token:
                 break
         return ids[:limit]
+
+    def _conversation_messages(self, thread_id: str | None) -> list[ConversationMessage]:
+        if not thread_id:
+            return []
+        if thread_id in self._thread_cache:
+            return self._thread_cache[thread_id]
+
+        thread = (
+            self.service.users()
+            .threads()
+            .get(userId="me", id=thread_id, format="full")
+            .execute()
+        )
+        messages = sorted(thread.get("messages", []) or [], key=_message_timestamp)
+        conversation = [
+            self._conversation_message_from_gmail_message(message)
+            for message in messages
+        ]
+        self._thread_cache[thread_id] = conversation
+        return conversation
+
+    def _conversation_message_from_gmail_message(
+        self,
+        message: dict[str, Any],
+    ) -> ConversationMessage:
+        message_id = message.get("id", "")
+        payload = message.get("payload", {})
+        headers = _headers(payload)
+        body_text, variant = _extract_body(payload)
+        attachments = self._extract_attachments(message_id, payload)
+        return ConversationMessage(
+            email_id=message_id,
+            from_email=_first_address(headers.get("from")),
+            to_email=_first_address(headers.get("to")),
+            subject=headers.get("subject"),
+            body_text=body_text,
+            emailbody_variant=variant,
+            received_at=_received_at(message, headers),
+            attachments=attachments,
+        )
 
     def _extract_attachments(self, message_id: str, payload: dict[str, Any]) -> list[AttachmentText]:
         attachments: list[AttachmentText] = []
@@ -204,6 +247,12 @@ def _headers(payload: dict[str, Any]) -> dict[str, str]:
     }
 
 
+def _conversation_id(thread_id: str | None) -> str | None:
+    if not thread_id:
+        return None
+    return f"gmail-thread:{thread_id}"
+
+
 def _received_at(message: dict[str, Any], headers: dict[str, str]) -> str | None:
     if message.get("internalDate"):
         timestamp = int(message["internalDate"]) / 1000
@@ -217,6 +266,13 @@ def _received_at(message: dict[str, Any], headers: dict[str, str]) -> str | None
         except (TypeError, ValueError):
             return None
     return None
+
+
+def _message_timestamp(message: dict[str, Any]) -> int:
+    try:
+        return int(message.get("internalDate") or 0)
+    except (TypeError, ValueError):
+        return 0
 
 
 def _first_address(value: str | None) -> str | None:

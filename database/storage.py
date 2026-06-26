@@ -56,9 +56,11 @@ class ExtractionStore:
                 TK TEXT,
                 HT TEXT,
                 TT TEXT,
+                color TEXT,
                 glass_type TEXT,
                 airspace TEXT,
                 overall_thickness TEXT,
+                gas_fill TEXT,
                 coating TEXT,
                 edge_work TEXT,
                 interlayer TEXT,
@@ -74,6 +76,8 @@ class ExtractionStore:
             """
         )
         self._ensure_column("items", "shape", "TEXT")
+        self._ensure_column("items", "color", "TEXT")
+        self._ensure_column("items", "gas_fill", "TEXT")
         self._ensure_column("items", "spec_json", "TEXT")
         self.conn.commit()
 
@@ -151,12 +155,12 @@ class ExtractionStore:
         self.conn.execute(
             """
             INSERT INTO items (
-                email_id, mark, width, height, quantity, shape, TK, HT, TT, glass_type,
-                airspace, overall_thickness, coating, edge_work, interlayer,
+                email_id, mark, width, height, quantity, shape, TK, HT, TT, color, glass_type,
+                airspace, overall_thickness, gas_fill, coating, edge_work, interlayer,
                 lite_details_json, source, field_sources_json,
                 missing_fields_json, notes, spec_json, raw_json
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 email_id,
@@ -168,9 +172,11 @@ class ExtractionStore:
                 item.TK,
                 item.HT,
                 item.TT,
+                item.color,
                 item.glass_type,
                 item.spacer_thickness,
                 item.overall_thickness,
+                item.gas_fill,
                 item.coating,
                 item.edge_work,
                 _interlayer_summary(item),

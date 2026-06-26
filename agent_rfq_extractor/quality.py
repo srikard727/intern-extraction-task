@@ -16,7 +16,8 @@ from .units import (
 FIELD_ALIASES = {
     "TK": ("TK", "tk", "thickness", "glass_thickness"),
     "HT": ("HT", "ht", "heat_treatment", "heat_type", "treatment"),
-    "TT": ("TT", "tt", "tint", "color", "glass_color"),
+    "TT": ("TT", "tt", "tint", "glass_tint"),
+    "color": ("color", "glass_color", "tint_color"),
     "TK1": ("TK1", "tk1", "thickness1", "lite1_thickness", "outboard_thickness"),
     "HT1": ("HT1", "ht1", "heat_treatment1", "heat_type1", "lite1_HT", "outboard_HT"),
     "TT1": ("TT1", "tt1", "tint1", "color1", "lite1_TT", "outboard_TT"),
@@ -36,6 +37,7 @@ FIELD_ALIASES = {
         "gap",
         "cavity",
     ),
+    "gas_fill": ("gas_fill", "gas", "fill", "gas_type"),
     "interlayer_material": ("interlayer_material", "interlayer_type"),
     "interlayer_thickness": ("interlayer_thickness", "interlayer_width"),
     "laminate_lite": (
@@ -70,6 +72,7 @@ def normalize_items(raw_items: list[dict[str, Any]]) -> list[RFQItem]:
     for raw in raw_items:
         if not isinstance(raw, Mapping):
             continue
+        raw = _flatten_formatted_item(raw)
 
         quantity, quantity_note = _normalize_quantity_with_default(raw.get("quantity"))
         item = RFQItem(
@@ -80,6 +83,7 @@ def normalize_items(raw_items: list[dict[str, Any]]) -> list[RFQItem]:
             TK=_clean(_first(raw, FIELD_ALIASES["TK"])),
             HT=_normalize_ht(_clean(_first(raw, FIELD_ALIASES["HT"]))),
             TT=_clean(_first(raw, FIELD_ALIASES["TT"])),
+            color=_clean(_first(raw, FIELD_ALIASES["color"])),
             glass_type=_normalize_glass_type(raw.get("glass_type")),
             TK1=_clean(_first(raw, FIELD_ALIASES["TK1"])),
             HT1=_normalize_ht(_clean(_first(raw, FIELD_ALIASES["HT1"]))),
@@ -96,6 +100,7 @@ def normalize_items(raw_items: list[dict[str, Any]]) -> list[RFQItem]:
             spacer_thickness=_normalize_spacer_thickness(
                 _first(raw, FIELD_ALIASES["spacer_thickness"])
             ),
+            gas_fill=_normalize_gas_fill(_first(raw, FIELD_ALIASES["gas_fill"])),
             interlayer_material=_clean(_first(raw, FIELD_ALIASES["interlayer_material"])),
             interlayer_thickness=_normalize_interlayer_thickness(
                 _first(raw, FIELD_ALIASES["interlayer_thickness"])
@@ -128,6 +133,31 @@ def normalize_items(raw_items: list[dict[str, Any]]) -> list[RFQItem]:
         item.missing_fields = missing_fields_for_item(item)
         items.append(item)
     return items
+
+
+def _flatten_formatted_item(raw: Mapping[str, Any]) -> dict[str, Any]:
+    """Accept either Claude's flat item schema or the final formatted unit shape."""
+    item = dict(raw)
+    specs = raw.get("glass_specs")
+    if isinstance(specs, Mapping):
+        for field, value in specs.items():
+            item.setdefault(str(field), value)
+
+    fabrication = raw.get("fabrication")
+    if isinstance(fabrication, Mapping):
+        if "coatings" in fabrication:
+            item.setdefault("coating", fabrication.get("coatings"))
+        if "edge_work" in fabrication:
+            item.setdefault("edge_work", fabrication.get("edge_work"))
+
+    if "dimensions" not in item and ("width" in raw or "height" in raw):
+        item["dimensions"] = {
+            "width": raw.get("width"),
+            "height": raw.get("height"),
+            "shape": raw.get("shape"),
+        }
+
+    return item
 
 
 def missing_fields_for_item(item: RFQItem) -> list[str]:
@@ -198,8 +228,8 @@ def build_review(items: list[RFQItem], raw_review: dict[str, Any] | None = None)
     raw_reason = _strip_generated_missing_fields_sentence(_clean((raw_review or {}).get("reason")))
     if (
         raw_reason
-        and not _is_non_blocking_note(raw_reason)
         and not _is_ignorable_review_reason(raw_reason, items, conflicts)
+        and _raw_reason_requires_review(raw_reason, items, missing, conflicts)
     ):
         reasons.append(raw_reason)
 
@@ -357,6 +387,8 @@ def _apply_construction_text(item: RFQItem, raw: Mapping[str, Any]) -> None:
         _apply_insulated_sequence(item, text)
         if not item.spacer_material:
             item.spacer_material = _extract_spacer_material(text)
+        if not item.gas_fill:
+            item.gas_fill = _extract_gas_fill(text)
 
 
 def _apply_laminated_sequence(item: RFQItem, text: str) -> None:
@@ -514,6 +546,7 @@ def _apply_glass_type_scope(item: RFQItem) -> None:
         item.TK2 = item.HT2 = item.TT2 = None
         item.TK3 = item.HT3 = item.TT3 = None
         item.spacer_material = item.spacer_thickness = None
+        item.gas_fill = None
         item.interlayer_material = item.interlayer_thickness = None
         item.laminate_lite = None
         item.airspace = None
@@ -523,6 +556,7 @@ def _apply_glass_type_scope(item: RFQItem) -> None:
     elif item.glass_type == "laminated":
         item.TK3 = item.HT3 = item.TT3 = None
         item.spacer_material = item.spacer_thickness = None
+        item.gas_fill = None
         item.laminate_lite = None
         item.airspace = None
         item.overall_thickness = None
@@ -554,9 +588,15 @@ def _apply_no_guess_guards(item: RFQItem, raw: Mapping[str, Any]) -> None:
         if any(
             phrase in notes
             for phrase in (
+                "ht defaulted",
+                "heat treatment defaulted",
+                "defaulted to annealed",
+                "no heat treatment specified",
+                "no heat treatment stated",
                 "heat treatment not explicitly stated",
                 "ht not explicitly stated",
                 "heat treatment not stated",
+                "heat treatment not specified",
                 "tempered assumed",
             )
         ):
@@ -571,6 +611,10 @@ def _apply_no_guess_guards(item: RFQItem, raw: Mapping[str, Any]) -> None:
             )
         ):
             item.TT = None
+            item.color = None
+
+    if item.glass_type in {"laminated", "insulated", "laminated-insulated"}:
+        _clear_unspecified_multi_lite_heat_treatments(item, notes)
 
     if item.glass_type == "laminated-insulated" and item.laminate_lite == "outboard":
         outboard_segment = _outboard_laminate_segment(text)
@@ -583,12 +627,32 @@ def _apply_no_guess_guards(item: RFQItem, raw: Mapping[str, Any]) -> None:
         item.shape = "rectangle"
 
 
+def _clear_unspecified_multi_lite_heat_treatments(item: RFQItem, notes: str) -> None:
+    if any(
+        phrase in notes
+        for phrase in (
+            "heat treatment not specified for either lite",
+            "heat treatment not specified for both lites",
+            "heat treatment not specified for all lites",
+            "heat treatment not specified for any lite",
+            "heat treatment not specified",
+            "heat treatment not explicitly stated",
+            "ht not explicitly stated",
+        )
+    ):
+        item.HT1 = None
+        item.HT2 = None
+        if item.glass_type == "laminated-insulated":
+            item.HT3 = None
+
+
 def _clear_defaulted_spec_fields(item: RFQItem) -> None:
     allowed_default_fields = {"quantity", "shape"}
     spec_fields = (
         "TK",
         "HT",
         "TT",
+        "color",
         "TK1",
         "HT1",
         "TT1",
@@ -600,6 +664,7 @@ def _clear_defaulted_spec_fields(item: RFQItem) -> None:
         "TT3",
         "spacer_material",
         "spacer_thickness",
+        "gas_fill",
         "interlayer_material",
         "interlayer_thickness",
         "laminate_lite",
@@ -666,7 +731,9 @@ def _cleanup_field_sources(item: RFQItem) -> None:
             continue
         if field == "quantity":
             if item.quantity is not None:
-                if item.notes and "default" in item.notes.lower():
+                if source == "default" and not _quantity_was_defaulted(item):
+                    cleaned[field] = item.source or "body"
+                elif _quantity_was_defaulted(item):
                     cleaned[field] = "default"
                 else:
                     cleaned[field] = source
@@ -713,6 +780,27 @@ def _normalize_spacer_material(raw: object) -> str | None:
     ):
         return None
     return value
+
+
+def _normalize_gas_fill(raw: object) -> str | None:
+    value = _clean(raw)
+    if not value:
+        return None
+    lower = value.lower()
+    if any(phrase in lower for phrase in ("no gas", "not stated", "not specified", "unspecified")):
+        return None
+    if "argon" in lower:
+        return "argon"
+    if "krypton" in lower:
+        return "krypton"
+    if re.search(r"\bair(?:\s+fill(?:ed)?)?\b", lower):
+        return "air"
+    return None
+
+
+def _quantity_was_defaulted(item: RFQItem) -> bool:
+    note = (item.notes or "").lower()
+    return "quantity" in note and "default" in note
 
 
 def _normalize_interlayer_thickness(raw: object) -> str | None:
@@ -778,7 +866,7 @@ def _normalize_ht(raw: str | None) -> str | None:
     if value in {"ft", "fully tempered", "temp", "tempered"}:
         return "tempered"
     if value in {"hs", "heat strengthened", "heat-strengthened"}:
-        return "heat-strengthened"
+        return "heat strengthened"
     if value in {"ann", "annealed"}:
         return "annealed"
     return raw
@@ -839,24 +927,41 @@ def _is_same_body_correction(
     return bool(source == "body" and any(word in text for word in ("correct", "superseded", "changed")))
 
 
-def _is_non_blocking_note(reason: str) -> bool:
+def _raw_reason_requires_review(
+    reason: str,
+    items: list[RFQItem],
+    missing: list[str],
+    conflicts: list[Conflict],
+) -> bool:
+    if missing or conflicts or not items:
+        return True
     text = reason.lower()
-    blocking_words = (
-        "ambiguous",
-        "missing",
-        "cannot",
-        "can't",
-        "unclear",
-        "conflict",
-        "not final",
-        "not provided",
-        "needs review",
-        "required",
+    return any(
+        phrase in text
+        for phrase in (
+            "ambiguous",
+            "unresolved",
+            "tbd",
+            "unconfirmed",
+            "confirm",
+            "clarification",
+            "not specified",
+            "not provided",
+            "missing",
+            "incomplete",
+            "cannot",
+            "can't",
+            "unclear",
+            "conflict",
+            "not final",
+            "not attached",
+            "approximate",
+            "roughly",
+            "give or take",
+            "prior job",
+            "historical job",
+        )
     )
-    if any(word in text for word in blocking_words):
-        return False
-    correction_words = ("corrected", "correction", "changed", "superseded")
-    return any(word in text for word in correction_words)
 
 
 def _strip_generated_missing_fields_sentence(reason: str | None) -> str | None:
@@ -881,6 +986,33 @@ def _is_ignorable_review_reason(
     if "mirror" in text and "heat treatment" in text:
         return True
     if "quantity" in text and "default" in text and all(item.quantity == 1 for item in items):
+        return True
+    if "tt" in text and "bronze" in text and "color" in text:
+        return True
+    if "rush order" in text and "missing" not in text and "ambiguous" not in text:
+        return True
+    if "mixed unit" in text and "missing" not in text and "ambiguous" not in text:
+        return True
+    if "no conflicts" in text and "missing" not in text and "ambiguous" not in text:
+        return True
+    if "no modifications" in text and "missing" not in text and "ambiguous" not in text:
+        return True
+    if "all specs are clear" in text:
+        return True
+    if (
+        "follow-up" in text
+        and "no new item details" in text
+        and "missing" not in text
+        and "ambiguous" not in text
+        and "not specified" not in text
+    ):
+        return True
+    if (
+        "rfq extracted from message 1" in text
+        and "missing" not in text
+        and "ambiguous" not in text
+        and "not specified" not in text
+    ):
         return True
     return False
 
@@ -925,6 +1057,8 @@ def _raw_text(raw: Mapping[str, Any]) -> str:
         "spacer",
         "airspace",
         "overall_thickness",
+        "gas",
+        "gas_fill",
     ):
         value = raw.get(key)
         if value is not None:
@@ -956,7 +1090,7 @@ def _extract_ht(text: str) -> str | None:
     if re.search(r"\b(temp|tempered|fully tempered|ft)\b", lower):
         return "tempered"
     if re.search(r"\b(hs|heat[- ]strengthened)\b", lower):
-        return "heat-strengthened"
+        return "heat strengthened"
     if re.search(r"\b(ann|annealed)\b", lower):
         return "annealed"
     return None
@@ -976,6 +1110,10 @@ def _extract_spacer_material(text: str) -> str | None:
         if match:
             return match.group(0)
     return None
+
+
+def _extract_gas_fill(text: str) -> str | None:
+    return _normalize_gas_fill(text)
 
 
 def _infer_laminate_lite(text: str) -> str | None:
