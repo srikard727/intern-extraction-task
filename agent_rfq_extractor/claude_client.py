@@ -5,12 +5,12 @@ import os
 import re
 from typing import Any
 
-from anthropic import Anthropic, AnthropicError, AuthenticationError
+from anthropic import Anthropic, AnthropicError, AuthenticationError, BadRequestError
 
 from .models import InboundEmail
 
 
-DEFAULT_MODEL = "claude-sonnet-4-6"
+DEFAULT_MODEL = "claude-opus-4-8"
 
 
 class LLMConfigurationError(RuntimeError):
@@ -46,6 +46,8 @@ Core rules:
 - Put argon, krypton, or air fill in gas_fill when explicitly stated.
 - Overall thickness may be included as context for insulated or laminated-insulated items, but it does not replace the required per-lite fields unless spacer_thickness can be derived from known lites.
 - Do not inherit a heat treatment or color from a different item/lite unless the email clearly says it applies. For laminated-insulated glass, an inboard "1/4 HS" does not make the outboard laminated plies HS.
+- TT is a glass tint/type/finish field, not the construction glass_type field. Never put "monolithic", "laminated", "insulated", "IGU", "LIU", or similar construction labels in TT/TT1/TT2/TT3.
+- For monolithic color-only descriptions such as bronze, grey, gray, blue, green, black, or white glass, put the value in color and leave TT null unless a separate finish/type such as spandrel, mirror, or tinted is explicitly stated.
 
 Common item fields:
 {
@@ -161,13 +163,20 @@ class ClaudeExtractor:
             ) from exc
 
     def extract(self, email: InboundEmail) -> dict[str, Any]:
-        response = self.client.messages.create(
-            model=self.model,
-            max_tokens=5000,
-            temperature=0,
-            system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": self._prompt_for_email(email)}],
-        )
+        request = {
+            "model": self.model,
+            "max_tokens": 5000,
+            "temperature": 0,
+            "system": SYSTEM_PROMPT,
+            "messages": [{"role": "user", "content": self._prompt_for_email(email)}],
+        }
+        try:
+            response = self.client.messages.create(**request)
+        except BadRequestError as exc:
+            if not _temperature_is_deprecated(exc):
+                raise
+            request.pop("temperature", None)
+            response = self.client.messages.create(**request)
         text = _response_text(response)
         parsed = _parse_json(text)
         if not isinstance(parsed, dict):
@@ -269,6 +278,11 @@ def _parse_json(text: str) -> Any:
     if start != -1 and end != -1 and end > start:
         return json.loads(text[start : end + 1])
     raise ValueError("Could not parse JSON from Claude response")
+
+
+def _temperature_is_deprecated(exc: BadRequestError) -> bool:
+    message = str(exc).lower()
+    return "temperature" in message and "deprecated" in message
 
 
 def _clip(text: str, limit: int) -> str:

@@ -66,6 +66,45 @@ GLASS_TYPE_ALIASES = {
     "laminated_insulated": "laminated-insulated",
 }
 
+CONSTRUCTION_TT_VALUES = {
+    "glass",
+    "glass type",
+    "igu",
+    "insulated",
+    "insulated glass",
+    "insulated unit",
+    "inu",
+    "lam",
+    "laminated",
+    "laminated glass",
+    "laminated insulated",
+    "laminated insulated glass",
+    "laminated insulated unit",
+    "laminated-insulated",
+    "liu",
+    "mono",
+    "monolithic",
+    "monolithic glass",
+    "single",
+    "single glass",
+    "single lite",
+    "unit",
+}
+
+SOURCE_TT_VALUES = {"attachment", "attachments", "body", "source"}
+
+MONOLITHIC_COLOR_ONLY_TT_VALUES = {
+    "black",
+    "blue",
+    "bronze",
+    "gray",
+    "green",
+    "grey",
+    "warm gray",
+    "warm grey",
+    "white",
+}
+
 
 def normalize_items(raw_items: list[dict[str, Any]]) -> list[RFQItem]:
     items: list[RFQItem] = []
@@ -128,6 +167,7 @@ def normalize_items(raw_items: list[dict[str, Any]]) -> list[RFQItem]:
         _apply_legacy_parts(item)
         _derive_missing_spacer_thickness(item)
         _apply_no_guess_guards(item, raw)
+        _cleanup_tt_values(item)
         _apply_glass_type_scope(item)
         _cleanup_field_sources(item)
         item.missing_fields = missing_fields_for_item(item)
@@ -677,6 +717,66 @@ def _clear_defaulted_spec_fields(item: RFQItem) -> None:
             setattr(item, field, None)
 
 
+def _cleanup_tt_values(item: RFQItem) -> None:
+    for field in ("TT", "TT1", "TT2", "TT3"):
+        value = getattr(item, field)
+        if _is_invalid_tt_value(value):
+            setattr(item, field, None)
+
+    if item.glass_type != "monolithic" or not item.TT:
+        return
+
+    if _is_monolithic_color_only_tt(item.TT) or _same_clean_value(item.TT, item.color):
+        if not item.color:
+            item.color = _canonical_color_value(item.TT)
+            if item.field_sources.get("TT"):
+                item.field_sources.setdefault("color", item.field_sources["TT"])
+        item.TT = None
+
+
+def _is_invalid_tt_value(value: object) -> bool:
+    text = _normalized_label(value)
+    if not text:
+        return False
+    return (
+        text in CONSTRUCTION_TT_VALUES
+        or text in SOURCE_TT_VALUES
+        or text.startswith("attachment:")
+    )
+
+
+def _is_monolithic_color_only_tt(value: object) -> bool:
+    return _normalized_label(value) in MONOLITHIC_COLOR_ONLY_TT_VALUES
+
+
+def _same_clean_value(left: object, right: object) -> bool:
+    left_text = _normalized_label(left)
+    right_text = _normalized_label(right)
+    return bool(left_text and right_text and left_text == right_text)
+
+
+def _canonical_color_value(value: object) -> str | None:
+    text = _clean(value)
+    if not text:
+        return None
+    normalized = _normalized_label(text)
+    if normalized == "gray":
+        return "gray"
+    if normalized == "grey":
+        return "grey"
+    return normalized or text
+
+
+def _normalized_label(value: object) -> str:
+    text = _clean(value)
+    if not text:
+        return ""
+    text = text.lower().replace("_", " ")
+    text = re.sub(r"\s*-\s*", "-", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
 def _outboard_laminate_segment(text: str) -> str | None:
     if "outboard" not in text:
         return None
@@ -1018,7 +1118,7 @@ def _is_ignorable_review_reason(
 
 
 def _is_mirror(item: RFQItem) -> bool:
-    text = " ".join(part for part in (item.TT, item.notes, item.edge_work) if part).lower()
+    text = " ".join(part for part in (item.TT, item.mark, item.edge_work) if part).lower()
     return "mirror" in text
 
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -13,6 +14,45 @@ GlassType = Literal[
     "unknown",
 ]
 Shape = Literal["rectangle", "square", "circle"]
+
+CONSTRUCTION_TT_VALUES = {
+    "glass",
+    "glass type",
+    "igu",
+    "insulated",
+    "insulated glass",
+    "insulated unit",
+    "inu",
+    "lam",
+    "laminated",
+    "laminated glass",
+    "laminated insulated",
+    "laminated insulated glass",
+    "laminated insulated unit",
+    "laminated-insulated",
+    "liu",
+    "mono",
+    "monolithic",
+    "monolithic glass",
+    "single",
+    "single glass",
+    "single lite",
+    "unit",
+}
+
+SOURCE_TT_VALUES = {"attachment", "attachments", "body", "source"}
+
+MONOLITHIC_COLOR_ONLY_TT_VALUES = {
+    "black",
+    "blue",
+    "bronze",
+    "gray",
+    "green",
+    "grey",
+    "warm gray",
+    "warm grey",
+    "white",
+}
 
 
 class Dimensions(BaseModel):
@@ -248,7 +288,7 @@ def _glass_specs(item: RFQItem) -> dict[str, Any]:
     specs: dict[str, Any] = {}
     _set_if_present(specs, "TK", item.TK)
     _set_if_present(specs, "HT", item.HT)
-    _set_if_present(specs, "TT", item.TT)
+    _set_if_present(specs, "TT", _safe_tt_value(item.TT))
     _set_if_present(specs, "color", item.color)
     return specs
 
@@ -366,11 +406,12 @@ def _output_missing_fields(fields: list[str]) -> list[str]:
 
 
 def _monolithic_tt(item: RFQItem) -> str | None:
-    if item.TT and not _is_clear_value(item.TT):
-        return item.TT
+    tt = _safe_tt_value(item.TT)
+    if tt and not _is_clear_value(tt) and not _is_monolithic_color_only_tt(tt):
+        return tt
     if _is_glass_type_value(item.color):
         return item.color
-    text = " ".join(part for part in (item.coating, item.mark, item.notes) if part)
+    text = " ".join(part for part in (item.coating, item.mark) if part)
     if "spandrel" in text.lower():
         return "spandrel"
     return None
@@ -388,6 +429,32 @@ def _is_clear_value(value: str | None) -> bool:
 
 def _is_glass_type_value(value: str | None) -> bool:
     return bool(value and value.strip().lower() in {"low-iron", "low iron"})
+
+
+def _safe_tt_value(value: str | None) -> str | None:
+    label = _normalized_label(value)
+    if not label:
+        return value
+    if (
+        label in CONSTRUCTION_TT_VALUES
+        or label in SOURCE_TT_VALUES
+        or label.startswith("attachment:")
+    ):
+        return None
+    return value
+
+
+def _is_monolithic_color_only_tt(value: str | None) -> bool:
+    return _normalized_label(value) in MONOLITHIC_COLOR_ONLY_TT_VALUES
+
+
+def _normalized_label(value: str | None) -> str:
+    if not value:
+        return ""
+    text = value.lower().replace("_", " ")
+    text = re.sub(r"\s*-\s*", "-", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
 
 
 def _extract_color(value: str | None) -> str | None:
@@ -418,7 +485,7 @@ def _set_if_present(data: dict[str, Any], key: str, value: Any) -> None:
 def _set_lite_types(data: dict[str, Any], item: RFQItem, count: int) -> None:
     for index in range(1, count + 1):
         key = f"TT{index}"
-        value = getattr(item, key)
+        value = _safe_tt_value(getattr(item, key))
         _insert_after(data, key, value, after=f"TK{index}")
 
 

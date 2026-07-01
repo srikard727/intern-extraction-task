@@ -100,7 +100,7 @@ Create `.env` with:
 
 ```bash
 ANTHROPIC_API_KEY=...
-ANTHROPIC_MODEL=claude-sonnet-4-6
+ANTHROPIC_MODEL=claude-opus-4-8
 GMAIL_CREDENTIALS=credentials.json
 GMAIL_TOKEN=token_reader.json
 RFQ_DB_PATH=outputs/rfq_extractions.db
