@@ -39,7 +39,12 @@ def main() -> int:
     parser.add_argument(
         "--db",
         default=os.getenv("RFQ_DB_PATH", "outputs/rfq_extractions.db"),
-        help="SQLite output path.",
+        help="SQLite output path when DATABASE_URL is not set.",
+    )
+    parser.add_argument(
+        "--database-url",
+        default=os.getenv("DATABASE_URL"),
+        help="Optional PostgreSQL or sqlite:/// database URL.",
     )
     parser.add_argument("--json", default="outputs/rfq_extractions.json", help="JSON export path.")
     parser.add_argument(
@@ -71,6 +76,7 @@ def main() -> int:
             json_path=args.json,
             model=args.model,
             replace_existing=args.replace_existing,
+            database_url=args.database_url,
         )
     except StorageError as exc:
         print(f"Startup failed: {exc}")
@@ -108,7 +114,7 @@ def main() -> int:
     counts = Counter(record.status for record in records)
     print("\nDone.")
     print(f"Model: {args.model}")
-    print(f"SQLite: {args.db}")
+    print(f"Database: {pipeline.database_label}")
     print(f"JSON: {args.json}")
     print("Statuses: " + ", ".join(f"{status}={count}" for status, count in sorted(counts.items())))
     return 0

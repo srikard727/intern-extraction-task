@@ -85,6 +85,13 @@ The extractor uses Claude for semantic reading, then applies Python quality chec
 
 ## Orchestration
 
+The extraction path is exposed as the first registered agent:
+
+- `BaseAgent` defines the common run contract and wraps timing, status, errors, and metadata.
+- `AgentRegistry` registers and creates named agents.
+- `AgentWorkflow` runs ordered agent steps and passes each agent output to the next step.
+- `ExtractorAgent` is registered as `extractor` and wraps the existing LangGraph RFQ extraction graph.
+
 Each email runs through this LangGraph flow:
 
 ```text
@@ -92,7 +99,14 @@ prepare -> extract -> normalize -> review -> assemble
                     \-> failure
 ```
 
-The pipeline still owns Gmail/fixture loading and SQLite/JSON persistence. The graph owns the per-email extraction path.
+The pipeline still owns Gmail/fixture loading and database/JSON persistence. It
+creates the `extractor` agent from the default registry, places it into an
+`AgentWorkflow`, and sends each email through that workflow. The graph owns the
+per-email extraction path inside the agent. Each agent execution is recorded in
+the configured database with run timing, status, model, email id, review status,
+item count, error, and metadata.
+
+See `docs/multi_agent_framework.md` for the future-agent plug-in contract.
 
 ## Setup
 
@@ -104,6 +118,21 @@ ANTHROPIC_MODEL=claude-opus-4-8
 GMAIL_CREDENTIALS=credentials.json
 GMAIL_TOKEN=token_reader.json
 RFQ_DB_PATH=outputs/rfq_extractions.db
+RFQ_JSON_PATH=outputs/rfq_extractions.json
+```
+
+For PostgreSQL, set:
+
+```bash
+DATABASE_URL=postgresql://rfq:rfq@localhost:5432/rfq_extractions
+```
+
+For Redis/Celery, set:
+
+```bash
+REDIS_URL=redis://localhost:6379/0
+CELERY_BROKER_URL=redis://localhost:6379/0
+CELERY_RESULT_BACKEND=redis://localhost:6379/1
 ```
 
 Install dependencies:
@@ -123,6 +152,37 @@ For Gmail messages with an HTML body, `body_text` is populated from the visible
 HTML text and `emailbody_variant` is set to `html`. Plain-text-only messages and
 fixture emails use `plain`.
 
+## Run The API
+
+Start the FastAPI app with:
+
+```bash
+.venv/bin/uvicorn agent_rfq_extractor.api:app --host 127.0.0.1 --port 8000 --reload
+```
+
+Useful endpoints:
+
+- `GET /health`: database path, JSON path, model, and row counts
+- `GET /emails`: stored extraction email summaries
+- `GET /emails/{email_id}`: full stored extraction JSON for one email
+- `GET /agent-runs`: agent execution logs
+- `GET /agent-runs/{run_id}`: one agent execution log
+- `POST /extract/fixture`: run fixture extraction through the agent workflow
+- `POST /extract/gmail`: run Gmail extraction through the agent workflow
+- `POST /tasks/extract/fixture`: queue fixture extraction through Celery
+- `POST /tasks/extract/gmail`: queue Gmail extraction through Celery
+- `GET /tasks/{task_id}`: Celery task status/result
+
+## Run The Platform
+
+Docker Compose starts PostgreSQL, Redis, the API, and a Celery worker:
+
+```bash
+docker compose up --build
+```
+
+See `docs/platform.md` for PostgreSQL, Redis, Celery, and Docker details.
+
 ## Run Against Gmail
 
 ```bash
@@ -138,6 +198,13 @@ Useful options:
   --db outputs/rfq_extractions.db \
   --json outputs/rfq_extractions.json \
   --replace-existing
+```
+
+To target PostgreSQL from the CLI, set `DATABASE_URL` or pass:
+
+```bash
+.venv/bin/python -m agent_rfq_extractor \
+  --database-url postgresql://rfq:rfq@localhost:5432/rfq_extractions
 ```
 
 To update only specific Gmail messages, pass Gmail message IDs and do not use
@@ -225,7 +292,8 @@ Image-only attachments are intentionally out of scope for now.
 - SQLite: `outputs/rfq_extractions.db`
 - JSON: `outputs/rfq_extractions.json`
 
-The database has two tables:
+The database has three tables:
 
 - `emails`: one row per Gmail message
 - `items`: one row per extracted glass item
+- `agent_runs`: one row per agent execution

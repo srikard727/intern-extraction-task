@@ -7,11 +7,10 @@ from typing import Iterable
 
 from dotenv import load_dotenv
 
-from .claude_client import ClaudeExtractor
+from .agents import AgentWorkflow, AgentWorkflowStep, ExtractorAgent, build_default_registry
 from .gmail_client import GmailClient
-from .graph import RFQExtractionGraph
 from .models import EmailRecord, InboundEmail
-from database.storage import ExtractionStore
+from database.factory import create_store, storage_label
 
 
 class RFQPipeline:
@@ -21,25 +20,32 @@ class RFQPipeline:
         json_path: str | Path,
         model: str | None = None,
         replace_existing: bool = False,
+        database_url: str | None = None,
     ) -> None:
         load_dotenv(override=True)
         self.db_path = Path(db_path)
         self.json_path = Path(json_path)
-        self.extractor = ClaudeExtractor(model=model)
-        self.graph = RFQExtractionGraph(self.extractor)
-        self.store = ExtractionStore(self.db_path)
+        self.database_url = database_url
+        self.database_label = storage_label(self.db_path, self.database_url)
+        self.agent_registry = build_default_registry()
+        extractor_agent = self.agent_registry.create("extractor", model=model)
+        if not isinstance(extractor_agent, ExtractorAgent):
+            raise TypeError("default registry returned a non-extractor agent for 'extractor'")
+        self.extractor_agent = extractor_agent
+        self.agent_workflow = AgentWorkflow([AgentWorkflowStep(self.extractor_agent)])
+        self.store = create_store(self.db_path, database_url=self.database_url)
         if replace_existing:
             self.store.clear()
 
     @property
     def model(self) -> str:
-        return self.extractor.model
+        return self.extractor_agent.model or ""
 
     def close(self) -> None:
         self.store.close()
 
     def validate_llm(self) -> None:
-        self.extractor.validate_credentials()
+        self.extractor_agent.validate_credentials()
 
     def run_gmail(
         self,
@@ -86,7 +92,12 @@ class RFQPipeline:
         return records
 
     def process_email(self, email: InboundEmail) -> EmailRecord:
-        return self.graph.process_email(email)
+        result = self.agent_workflow.run(
+            email,
+            metadata=_email_workflow_metadata(email, self.model),
+            on_result=self.store.record_agent_run,
+        )
+        return result.require_output()
 
 
 def parse_fixture(path: str | Path) -> list[InboundEmail]:
@@ -130,3 +141,12 @@ def _subject_from_body(body: str) -> str:
     if any(ch.isdigit() for ch in first) or "glass" in first.lower():
         return "RFQ: " + first[:70]
     return "Request for Quote"
+
+
+def _email_workflow_metadata(email: InboundEmail, model: str) -> dict[str, str]:
+    metadata = {"email_id": email.email_id}
+    if email.conv_id:
+        metadata["conv_id"] = email.conv_id
+    if model:
+        metadata["model"] = model
+    return metadata

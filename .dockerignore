@@ -1,0 +1,13 @@
+.git
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+data
+outputs
+reports
+credentials.json
+token_reader.json
+token_send.json
+.env

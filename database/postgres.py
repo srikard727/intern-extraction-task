@@ -1,127 +1,46 @@
 from __future__ import annotations
 
 import json
-import sqlite3
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
+
+import psycopg
+from psycopg.rows import dict_row
+from psycopg.types.json import Jsonb
 
 from agent_rfq_extractor.agents.base import AgentResult
 from agent_rfq_extractor.models import EmailRecord, RFQItem
 
-
-class StorageError(RuntimeError):
-    pass
+from .storage import StorageError
 
 
-class ExtractionStore:
-    def __init__(self, db_path: str | Path) -> None:
-        self.db_path = Path(db_path)
-        self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        self.conn = sqlite3.connect(self.db_path, timeout=30)
-        self.conn.row_factory = sqlite3.Row
-        self.conn.execute("PRAGMA busy_timeout = 30000")
+class PostgresExtractionStore:
+    def __init__(self, database_url: str) -> None:
+        self.database_url = database_url
+        self.conn = psycopg.connect(database_url, row_factory=dict_row)
         self.init_schema()
 
     def close(self) -> None:
         self.conn.close()
 
     def init_schema(self) -> None:
-        self.conn.executescript(
-            """
-            CREATE TABLE IF NOT EXISTS emails (
-                email_id TEXT PRIMARY KEY,
-                conv_id TEXT,
-                from_email TEXT,
-                to_email TEXT,
-                subject TEXT,
-                body_text TEXT,
-                emailbody_variant TEXT,
-                received_at TEXT,
-                has_attachments INTEGER,
-                extracted_at TEXT,
-                status TEXT,
-                review_json TEXT,
-                attachments_json TEXT,
-                llm_model TEXT,
-                raw_json TEXT
-            );
-
-            CREATE TABLE IF NOT EXISTS items (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                email_id TEXT NOT NULL,
-                mark TEXT,
-                width REAL,
-                height REAL,
-                quantity INTEGER,
-                shape TEXT,
-                TK TEXT,
-                HT TEXT,
-                TT TEXT,
-                color TEXT,
-                glass_type TEXT,
-                airspace TEXT,
-                overall_thickness TEXT,
-                gas_fill TEXT,
-                coating TEXT,
-                edge_work TEXT,
-                interlayer TEXT,
-                lite_details_json TEXT,
-                source TEXT,
-                field_sources_json TEXT,
-                missing_fields_json TEXT,
-                notes TEXT,
-                spec_json TEXT,
-                raw_json TEXT,
-                FOREIGN KEY(email_id) REFERENCES emails(email_id)
-            );
-
-            CREATE TABLE IF NOT EXISTS agent_runs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                run_id TEXT NOT NULL UNIQUE,
-                parent_run_id TEXT,
-                agent_name TEXT NOT NULL,
-                status TEXT NOT NULL,
-                model TEXT,
-                started_at TEXT NOT NULL,
-                finished_at TEXT NOT NULL,
-                duration_ms INTEGER NOT NULL,
-                email_id TEXT,
-                conv_id TEXT,
-                error TEXT,
-                review_status TEXT,
-                item_count INTEGER,
-                metadata_json TEXT,
-                context_json TEXT
-            );
-
-            CREATE INDEX IF NOT EXISTS idx_agent_runs_email_id
-                ON agent_runs(email_id);
-            CREATE INDEX IF NOT EXISTS idx_agent_runs_agent_name
-                ON agent_runs(agent_name);
-            """
-        )
-        self._ensure_column("items", "shape", "TEXT")
-        self._ensure_column("items", "color", "TEXT")
-        self._ensure_column("items", "gas_fill", "TEXT")
-        self._ensure_column("items", "spec_json", "TEXT")
-        self._ensure_column("agent_runs", "parent_run_id", "TEXT")
-        self._ensure_column("agent_runs", "model", "TEXT")
-        self._ensure_column("agent_runs", "email_id", "TEXT")
-        self._ensure_column("agent_runs", "conv_id", "TEXT")
-        self._ensure_column("agent_runs", "review_status", "TEXT")
-        self._ensure_column("agent_runs", "item_count", "INTEGER")
-        self._ensure_column("agent_runs", "metadata_json", "TEXT")
-        self._ensure_column("agent_runs", "context_json", "TEXT")
-        self.conn.commit()
+        schema_path = Path(__file__).with_name("postgres_schema.sql")
+        try:
+            self.conn.execute(schema_path.read_text(encoding="utf-8"))
+            self.conn.commit()
+        except psycopg.Error as exc:
+            self.conn.rollback()
+            raise StorageError(f"could not initialize PostgreSQL schema: {exc}") from exc
 
     def clear(self) -> None:
         try:
-            with self.conn:
-                self.conn.execute("DELETE FROM items")
-                self.conn.execute("DELETE FROM emails")
-                self.conn.execute("DELETE FROM agent_runs")
-        except sqlite3.Error as exc:
-            raise StorageError(f"could not clear SQLite database {self.db_path}: {exc}") from exc
+            self.conn.execute("DELETE FROM items")
+            self.conn.execute("DELETE FROM emails")
+            self.conn.execute("DELETE FROM agent_runs")
+            self.conn.commit()
+        except psycopg.Error as exc:
+            self.conn.rollback()
+            raise StorageError(f"could not clear PostgreSQL database: {exc}") from exc
 
     def record_agent_run(self, result: AgentResult[Any]) -> None:
         email_id = _result_value(result, "email_id")
@@ -136,7 +55,7 @@ class ExtractionStore:
                 started_at, finished_at, duration_ms, email_id, conv_id,
                 error, review_status, item_count, metadata_json, context_json
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT(run_id) DO UPDATE SET
                 parent_run_id=excluded.parent_run_id,
                 agent_name=excluded.agent_name,
@@ -167,8 +86,8 @@ class ExtractionStore:
                 result.error,
                 review_status,
                 item_count,
-                _json(result.metadata),
-                _json(result.context.model_dump(mode="json")),
+                Jsonb(result.metadata),
+                Jsonb(result.context.model_dump(mode="json")),
             ),
         )
         self.conn.commit()
@@ -199,7 +118,7 @@ class ExtractionStore:
             LEFT JOIN items i ON i.email_id = e.email_id
             GROUP BY e.email_id
             ORDER BY e.received_at DESC, e.email_id
-            LIMIT ? OFFSET ?
+            LIMIT %s OFFSET %s
             """,
             (_safe_limit(limit), max(offset, 0)),
         ).fetchall()
@@ -207,12 +126,12 @@ class ExtractionStore:
 
     def get_email(self, email_id: str) -> dict[str, Any] | None:
         row = self.conn.execute(
-            "SELECT raw_json FROM emails WHERE email_id = ?",
+            "SELECT raw_json FROM emails WHERE email_id = %s",
             (email_id,),
         ).fetchone()
-        if row is None or not row["raw_json"]:
+        if row is None or row["raw_json"] is None:
             return None
-        return json.loads(row["raw_json"])
+        return row["raw_json"]
 
     def list_agent_runs(
         self,
@@ -220,7 +139,7 @@ class ExtractionStore:
         offset: int = 0,
         email_id: str | None = None,
     ) -> list[dict[str, Any]]:
-        where = "WHERE email_id = ?" if email_id else ""
+        where = "WHERE email_id = %s" if email_id else ""
         params: list[Any] = []
         if email_id:
             params.append(email_id)
@@ -246,7 +165,7 @@ class ExtractionStore:
             FROM agent_runs
             {where}
             ORDER BY started_at DESC, id DESC
-            LIMIT ? OFFSET ?
+            LIMIT %s OFFSET %s
             """,
             params,
         ).fetchall()
@@ -272,7 +191,7 @@ class ExtractionStore:
                 metadata_json,
                 context_json
             FROM agent_runs
-            WHERE run_id = ?
+            WHERE run_id = %s
             """,
             (run_id,),
         ).fetchone()
@@ -281,9 +200,9 @@ class ExtractionStore:
         return _agent_run_row(row)
 
     def upsert_record(self, record: EmailRecord) -> None:
-        review_json = _json(record.review.model_dump(mode="json") if record.review else None)
-        attachments_json = _json([att.model_dump(mode="json") for att in record.attachments])
-        raw_json = _json(record.to_jsonable())
+        review_json = record.review.model_dump(mode="json") if record.review else None
+        attachments_json = [att.model_dump(mode="json") for att in record.attachments]
+        raw_json = record.to_jsonable()
         self.conn.execute(
             """
             INSERT INTO emails (
@@ -291,7 +210,7 @@ class ExtractionStore:
                 emailbody_variant, received_at, has_attachments, extracted_at,
                 status, review_json, attachments_json, llm_model, raw_json
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT(email_id) DO UPDATE SET
                 conv_id=excluded.conv_id,
                 from_email=excluded.from_email,
@@ -317,16 +236,16 @@ class ExtractionStore:
                 record.body_text,
                 record.emailbody_variant,
                 record.received_at,
-                int(record.has_attachments),
+                record.has_attachments,
                 record.extracted_at,
                 record.status,
-                review_json,
-                attachments_json,
+                Jsonb(review_json) if review_json is not None else None,
+                Jsonb(attachments_json),
                 record.llm_model,
-                raw_json,
+                Jsonb(raw_json),
             ),
         )
-        self.conn.execute("DELETE FROM items WHERE email_id = ?", (record.email_id,))
+        self.conn.execute("DELETE FROM items WHERE email_id = %s", (record.email_id,))
         for item in record.items:
             self._insert_item(record.email_id, item)
         self.conn.commit()
@@ -335,14 +254,14 @@ class ExtractionStore:
         rows = self.conn.execute(
             "SELECT raw_json FROM emails ORDER BY received_at DESC, email_id"
         ).fetchall()
-        data = [json.loads(row["raw_json"]) for row in rows if row["raw_json"]]
+        data = [row["raw_json"] for row in rows if row["raw_json"] is not None]
         out = Path(out_path)
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
     def _insert_item(self, email_id: str, item: RFQItem) -> None:
         dimensions = item.dimensions
-        spec_json = _json(item.to_jsonable())
+        spec_json = item.to_jsonable()
         self.conn.execute(
             """
             INSERT INTO items (
@@ -351,7 +270,7 @@ class ExtractionStore:
                 lite_details_json, source, field_sources_json,
                 missing_fields_json, notes, spec_json, raw_json
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
                 email_id,
@@ -371,37 +290,18 @@ class ExtractionStore:
                 item.coating,
                 item.edge_work,
                 _interlayer_summary(item),
-                _json(item.lite_details),
+                Jsonb(item.lite_details),
                 item.source,
-                _json(item.field_sources),
-                _json(item.missing_fields),
+                Jsonb(item.field_sources),
+                Jsonb(item.missing_fields),
                 item.notes,
-                spec_json,
-                spec_json,
+                Jsonb(spec_json),
+                Jsonb(spec_json),
             ),
         )
 
-    def _ensure_column(self, table: str, column: str, ddl: str) -> None:
-        columns = {
-            row["name"]
-            for row in self.conn.execute(f"PRAGMA table_info({table})").fetchall()
-        }
-        if column not in columns:
-            self.conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {ddl}")
 
-
-def write_json(records: Iterable[EmailRecord], out_path: str | Path) -> None:
-    out = Path(out_path)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    data = [record.to_jsonable() for record in records]
-    out.write_text(json.dumps(data, indent=2), encoding="utf-8")
-
-
-def _json(value) -> str:
-    return json.dumps(value, ensure_ascii=False)
-
-
-def _count_rows(conn: sqlite3.Connection, table: str) -> int:
+def _count_rows(conn, table: str) -> int:
     return int(conn.execute(f"SELECT COUNT(*) AS count FROM {table}").fetchone()["count"])
 
 
@@ -409,27 +309,15 @@ def _safe_limit(limit: int) -> int:
     return min(max(limit, 1), 500)
 
 
-def _row_dict(row: sqlite3.Row) -> dict[str, Any]:
+def _row_dict(row: dict[str, Any]) -> dict[str, Any]:
+    return dict(row)
+
+
+def _agent_run_row(row: dict[str, Any]) -> dict[str, Any]:
     data = dict(row)
-    if "has_attachments" in data and data["has_attachments"] is not None:
-        data["has_attachments"] = bool(data["has_attachments"])
+    data["metadata"] = data.pop("metadata_json", None) or {}
+    data["context"] = data.pop("context_json", None) or {}
     return data
-
-
-def _agent_run_row(row: sqlite3.Row) -> dict[str, Any]:
-    data = _row_dict(row)
-    data["metadata"] = _loads_json(data.pop("metadata_json", None), default={})
-    data["context"] = _loads_json(data.pop("context_json", None), default={})
-    return data
-
-
-def _loads_json(value: str | None, default: Any) -> Any:
-    if not value:
-        return default
-    try:
-        return json.loads(value)
-    except json.JSONDecodeError:
-        return default
 
 
 def _result_value(result: AgentResult[Any], key: str) -> Any:

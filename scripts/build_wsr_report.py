@@ -152,16 +152,16 @@ REQUIREMENTS = [
     ("Requirements", "Glass type analysis and field identification", "June 08 - June 11", "Satisfied", "Glass type aliases, type-specific fields, and output grouping are implemented."),
     ("Requirements", "Define mandatory vs optional fields by glass type", "June 08 - June 11", "Satisfied", "Required fields are enforced for monolithic, laminated, insulated, and laminated-insulated units."),
     ("Requirements", "Define Human Review business rules", "June 08 - June 11", "Satisfied", "Missing required fields, no-items cases, and body/attachment conflicts trigger human_review_required."),
-    ("Requirements", "Define future agent architecture (Extractor as Agent 1)", "June 08 - June 11", "Partial", "Extractor graph exists, but a broader future-agent design is not yet formalized."),
-    ("Architecture", "Multi-Agent Framework Design", "June 12 - June 22", "Not Satisfied", "No generic multi-agent framework is present."),
-    ("Architecture", "Agent Base Class & Registry Design", "June 12 - June 22", "Not Satisfied", "No base agent class or registry implementation is present."),
+    ("Requirements", "Define future agent architecture (Extractor as Agent 1)", "June 08 - June 11", "Satisfied", "ExtractorAgent now wraps the LangGraph extractor as the first registered agent."),
+    ("Architecture", "Multi-Agent Framework Design", "June 12 - June 22", "Satisfied", "AgentWorkflow runs ordered agent steps, passes outputs between agents, shares workflow context, and supports per-step execution logging."),
+    ("Architecture", "Agent Base Class & Registry Design", "June 12 - June 22", "Satisfied", "BaseAgent, AgentContext, AgentResult, AgentRegistry, and registered ExtractorAgent are implemented."),
     ("Architecture", "LangGraph Orchestrator Setup", "June 12 - June 22", "Satisfied", "LangGraph flow runs prepare -> extract -> normalize -> review -> assemble."),
-    ("Architecture", "State Management & Agent Contracts", "June 12 - June 22", "Partial", "Pydantic models and ExtractionState exist, but generic multi-agent contracts are not complete."),
-    ("Infrastructure", "FastAPI Project Setup", "June 23 - June 29", "Not Satisfied", "No FastAPI app or routes are present."),
-    ("Infrastructure", "PostgreSQL Setup & Schema Design", "June 23 - June 29", "Not Satisfied", "Current persistence is SQLite, not PostgreSQL."),
-    ("Infrastructure", "Redis Setup", "June 23 - June 29", "Not Satisfied", "No Redis dependency, configuration, or service setup is present."),
-    ("Infrastructure", "Celery Queue Framework Setup", "June 23 - June 29", "Not Satisfied", "No Celery worker, task, or broker configuration is present."),
-    ("Infrastructure", "Docker Compose Setup", "June 23 - June 29", "Not Satisfied", "No Docker Compose file is present."),
+    ("Architecture", "State Management & Agent Contracts", "June 12 - June 22", "Satisfied", "AgentContext, AgentResult, AgentWorkflowResult, and sequential output handoff define the current cross-agent contract."),
+    ("Infrastructure", "FastAPI Project Setup", "June 23 - June 29", "Satisfied", "FastAPI app exposes health, stored emails, agent runs, and extraction trigger endpoints."),
+    ("Infrastructure", "PostgreSQL Setup & Schema Design", "June 23 - June 29", "Satisfied", "DATABASE_URL switches to PostgreSQL; schema defines emails, items, and agent_runs with JSONB payloads."),
+    ("Infrastructure", "Redis Setup", "June 23 - June 29", "Satisfied", "Redis dependency and REDIS_URL configuration support Celery broker/result backend usage."),
+    ("Infrastructure", "Celery Queue Framework Setup", "June 23 - June 29", "Satisfied", "Celery app and extraction tasks queue fixture/Gmail workflows through the existing RFQPipeline."),
+    ("Infrastructure", "Docker Compose Setup", "June 23 - June 29", "Satisfied", "Docker Compose starts PostgreSQL, Redis, FastAPI, and Celery worker services."),
     ("Mailbox Extraction", "Email data extraction", "June 30 - July 1", "Satisfied", "Gmail message fetch, HTML/plain body handling, thread context, and message metadata are implemented."),
     ("Mailbox Extraction", "Attachment data extraction", "June 30 - July 1", "Satisfied", "Text-layer PDF, DOCX, TXT, CSV, and TSV extraction are supported; image-only attachments remain out of scope."),
     ("Extractor Agent", "Email Classification Logic (Glass Type Detection)", "July 2 - July 19", "Satisfied", "Glass type normalization detects monolithic, laminated, insulated, and laminated-insulated requests."),
@@ -173,7 +173,7 @@ REQUIREMENTS = [
     ("Extractor Agent", "Testing and Improvements", "July 2 - July 19", "Partial", "A TT cleanup regression test exists; broader fixture and end-to-end test coverage is still needed."),
     ("Database Layer", "Store Emails", "July 22 - July 24", "Satisfied", "SQLite emails table stores message metadata, body text, status, review JSON, attachments JSON, and model."),
     ("Database Layer", "Store Extracted Units", "July 22 - July 24", "Satisfied", "SQLite items table stores item-level searchable fields plus type-specific spec_json."),
-    ("Database Layer", "Store Agent Execution Logs", "July 22 - July 24", "Not Satisfied", "No execution log table or structured per-agent run log is present."),
+    ("Database Layer", "Store Agent Execution Logs", "July 22 - July 24", "Satisfied", "SQLite agent_runs table stores agent name, status, model, timing, email id, error, review status, item count, and metadata."),
 ]
 
 
@@ -187,21 +187,21 @@ def status_counts() -> dict[str, int]:
 def document_xml() -> str:
     counts = status_counts()
     status_rows = [
-        ["Satisfied", str(counts["Satisfied"]), "Extraction core, mailbox flow, major glass logic, and SQLite persistence are in place."],
-        ["Partial", str(counts["Partial"]), "Agent architecture, contracts, attachment framework, and tests need expansion."],
-        ["Not Satisfied", str(counts["Not Satisfied"]), "Infrastructure stack and execution logging are not implemented."],
+        ["Satisfied", str(counts["Satisfied"]), "Extraction core, mailbox flow, agent scaffold, execution logging, and SQLite persistence are in place."],
+        ["Partial", str(counts["Partial"]), "Attachment framework and tests need expansion."],
+        ["Not Satisfied", str(counts["Not Satisfied"]), "UI, DevOps, and final documentation are not implemented."],
     ]
     matrix_rows = [[area, requirement, dates, status, note] for area, requirement, dates, status, note in REQUIREMENTS]
     next_steps = [
-        ["1", "Confirm scope", "Decide whether FastAPI/Postgres/Redis/Celery/Docker are required for this submission or later platform work."],
-        ["2", "Add agent scaffold", "Create BaseAgent, registry, execution contract, and Extractor Agent registration."],
-        ["3", "Add execution logs", "Persist agent run ID, model, timing, input source, status, error, and review metadata."],
-        ["4", "Broaden tests", "Add fixture-based regression coverage across all four glass types and text attachments."],
-        ["5", "Run Opus extraction", "Regenerate SQLite and JSON with claude-opus-4-8 and audit TT/color/source leakage."],
+        ["1", "Validate platform stack", "Run docker compose with real credentials and confirm API/worker extraction against PostgreSQL."],
+        ["2", "Broaden tests", "Add fixture-based regression coverage across all four glass types and text attachments."],
+        ["3", "Run Opus extraction", "Regenerate SQLite and JSON with claude-opus-4-8 and audit TT/color/source leakage."],
+        ["4", "Build UI", "Create the main opening page, email/attachment display, and extraction results view."],
+        ["5", "Plan DevOps", "Add GitHub Actions test/build automation once Docker behavior is confirmed."],
     ]
     risk_rows = [
-        ["Infrastructure gap", "High", "Checklist expects FastAPI, PostgreSQL, Redis, Celery, and Docker Compose; current app is a CLI pipeline with SQLite."],
-        ["Architecture gap", "Medium", "Current LangGraph flow is effective for extraction, but not a full multi-agent framework."],
+        ["Infrastructure validation", "Medium", "PostgreSQL, Redis, Celery, and Docker Compose scaffolds exist; they still need end-to-end validation with real secrets and Gmail access."],
+        ["Architecture expansion", "Medium", "The multi-agent workflow exists; future work should add real validator/review agents when needed."],
         ["Testing depth", "Medium", "Only focused regression coverage is present; extraction quality needs a broader benchmark suite."],
         ["Attachment scope", "Low", "Text attachments are handled; image-only attachments remain explicitly out of scope."],
     ]
@@ -214,7 +214,7 @@ def document_xml() -> str:
     body.append(label_para("Report date", "July 1, 2026"))
     body.append(label_para("Reporting window", "June 8 - July 1, 2026"))
     body.append(label_para("Current phase", "Mailbox extraction complete; extractor agent build begins July 2"))
-    body.append(callout("Executive Summary", "The extraction core is functional: Gmail ingestion, thread context, text attachment extraction, LangGraph orchestration, Opus as the default model, SQLite persistence, and JSON export are in place. The largest remaining gaps are platform infrastructure, reusable multi-agent scaffolding, execution logging, and broader regression testing."))
+    body.append(callout("Executive Summary", "The extraction core is functional: Gmail ingestion, thread context, text attachment extraction, LangGraph orchestration, Opus as the default model, reusable agent workflow, agent execution logging, FastAPI setup, PostgreSQL schema, Redis/Celery queue setup, Docker Compose, SQLite fallback, and JSON export are in place. The largest remaining gaps are UI, DevOps, final documentation, and broader regression testing."))
 
     body.append(para("Status Snapshot", style="Heading1", keep_next=True))
     body.append(table(["Status", "Count", "Summary"], status_rows, [1800, 1000, 6560]))
@@ -227,6 +227,11 @@ def document_xml() -> str:
             ["Attachment extraction", "Text-layer PDFs, DOCX, TXT, CSV, and TSV attachments can be read and attributed as attachment:<filename>."],
             ["Extraction quality", "Type-specific validation flags missing fields instead of guessing; quantity defaults to 1 only when count is not definite."],
             ["Model default", "Default Anthropic model is now claude-opus-4-8. The extractor also handles Opus models that reject temperature."],
+            ["Agent framework", "BaseAgent, AgentRegistry, and ExtractorAgent provide the first reusable agent interface."],
+            ["Multi-agent workflow", "AgentWorkflow supports ordered future agents with output handoff, workflow context, stop rules, and execution-log callbacks."],
+            ["Execution logging", "Agent runs are stored in SQLite with model, timing, status, email id, review status, item count, and error details."],
+            ["API setup", "FastAPI exposes health, stored extraction records, agent run logs, and extraction trigger endpoints."],
+            ["Platform setup", "PostgreSQL, Redis, Celery, and Docker Compose scaffolds are configured around the existing agent workflow."],
             ["TT cleanup", "Deterministic guards prevent construction labels such as monolithic, laminated, IGU, or body from appearing in TT output."],
         ],
         [2200, 7160],
@@ -242,7 +247,7 @@ def document_xml() -> str:
     body.append(table(["#", "Priority", "Action"], next_steps, [500, 2200, 6660]))
 
     body.append(para("Overall Assessment", style="Heading1", keep_next=True))
-    body.append(para("The project is ahead on extraction behavior relative to the later extractor-agent timeline, but behind on the platform infrastructure and generic multi-agent architecture listed for June 12 - June 29. If the assignment grading emphasizes extraction quality, the current implementation is strong. If it expects the full platform stack, the next work should focus on API, queue, database, Docker, and execution logging scaffolds."))
+    body.append(para("The project is ahead on extraction behavior relative to the later extractor-agent timeline, and the internal agent framework plus FastAPI/platform layer are now in place. If the assignment grading emphasizes extraction quality, the current implementation is strong. The next work should focus on UI, DevOps automation, final testing, and final documentation."))
 
     sect = (
         '<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" '
