@@ -71,9 +71,22 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(detail["agent_name"], "extractor")
         self.assertEqual(detail["review_status"], "not_required")
 
+    def test_output_view_pages_render(self):
+        index_response = self.client.get("/view")
+        detail_response = self.client.get("/view/emails/email-001")
+
+        self.assertEqual(index_response.status_code, 200)
+        self.assertIn("RFQ Extraction Results", index_response.text)
+        self.assertIn("email-001", index_response.text)
+
+        self.assertEqual(detail_response.status_code, 200)
+        self.assertIn("Human Review", detail_response.text)
+        self.assertIn("Not required.", detail_response.text)
+
     def test_missing_resources_return_404(self):
         self.assertEqual(self.client.get("/emails/missing").status_code, 404)
         self.assertEqual(self.client.get("/agent-runs/missing").status_code, 404)
+        self.assertEqual(self.client.get("/view/emails/missing").status_code, 404)
 
     def test_queue_fixture_endpoint_returns_task_id(self):
         with patch("agent_rfq_extractor.api.extract_fixture_task.delay") as delay:

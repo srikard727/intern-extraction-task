@@ -15,6 +15,8 @@ The app uses:
 ## Read Endpoints
 
 - `GET /health`
+- `GET /view`
+- `GET /view/emails/{email_id}`
 - `GET /emails?limit=100&offset=0`
 - `GET /emails/{email_id}`
 - `GET /agent-runs?limit=100&offset=0`
@@ -53,6 +55,24 @@ POST /extract/gmail
 
 Pass `email_ids` to reprocess specific Gmail messages. If `email_ids` is empty,
 the API uses the Gmail search query and limit.
+
+## Browser View
+
+Open the stored extraction results in a browser:
+
+```text
+GET /view
+```
+
+Open one stored extraction:
+
+```text
+GET /view/emails/{email_id}
+```
+
+The HTML view reads from the same configured database as the JSON endpoints and
+shows status, item count, glass types, review reason, missing fields, specs, and
+fabrication details.
 
 ## Queued Extraction
 

@@ -75,3 +75,15 @@ API docs:
 ```text
 http://127.0.0.1:8000/docs
 ```
+
+Output view:
+
+```text
+http://127.0.0.1:8000/view
+```
+
+Health check:
+
+```text
+http://127.0.0.1:8000/health
+```

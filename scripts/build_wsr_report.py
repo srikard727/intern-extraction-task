@@ -5,7 +5,7 @@ import zipfile
 from pathlib import Path
 
 
-OUT_PATH = Path("reports/WSR_RFQ_Extraction_Status_Report_2026-07-01.docx")
+OUT_PATH = Path("reports/WSR_RFQ_Extraction_Status_Report_2026-07-09.docx")
 
 NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 R_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -174,6 +174,25 @@ REQUIREMENTS = [
     ("Database Layer", "Store Emails", "July 22 - July 24", "Satisfied", "SQLite emails table stores message metadata, body text, status, review JSON, attachments JSON, and model."),
     ("Database Layer", "Store Extracted Units", "July 22 - July 24", "Satisfied", "SQLite items table stores item-level searchable fields plus type-specific spec_json."),
     ("Database Layer", "Store Agent Execution Logs", "July 22 - July 24", "Satisfied", "SQLite agent_runs table stores agent name, status, model, timing, email id, error, review status, item count, and metadata."),
+    ("UI", "Main opening page", "July 27 - July 31", "Not Satisfied", "No UI surface has been implemented yet."),
+    ("UI", "Email & Attachments Display", "July 27 - July 31", "Not Satisfied", "API exposes stored records, but there is no user-facing email/attachment view."),
+    ("UI", "Extraction Results View", "July 27 - July 31", "Not Satisfied", "JSON/API output exists; a simple visual results page is still needed."),
+    ("UI", "Validation of UI", "July 27 - July 31", "Not Satisfied", "UI validation cannot start until a UI exists."),
+    ("UI", "Fix the validation findings", "July 27 - July 31", "Not Satisfied", "No UI validation findings exist yet."),
+    ("Testing", "Unit Tests - Classification Logic", "Aug 03 - Aug 07", "Partial", "Focused TT/classification guard tests exist; broader glass-type fixture tests are still needed."),
+    ("Testing", "Unit Tests - Extraction Logic", "Aug 03 - Aug 07", "Partial", "Normalization and cleanup tests exist, but full per-glass-type extraction fixture coverage is incomplete."),
+    ("Testing", "API Tests", "Aug 03 - Aug 07", "Satisfied", "FastAPI read endpoints, task endpoint shape, and missing-resource responses are covered."),
+    ("Testing", "Celery Worker Tests", "Aug 03 - Aug 07", "Partial", "Task endpoint and task wiring are tested with mocks; live worker/Redis integration is not yet validated."),
+    ("Testing", "Testing and Improvements", "Aug 03 - Aug 07", "Partial", "24 unit tests pass; extraction quality still needs full 20-email regression/audit coverage."),
+    ("DevOps", "GitHub Actions CI Setup", "Aug 10 - Aug 14", "Not Satisfied", "No GitHub Actions workflow is present."),
+    ("DevOps", "Automated Test Pipeline", "Aug 10 - Aug 14", "Not Satisfied", "Tests run locally, but no automated CI pipeline is configured."),
+    ("DevOps", "Docker Build Pipeline", "Aug 10 - Aug 14", "Not Satisfied", "Dockerfile and Compose exist, but no CI build pipeline exists."),
+    ("DevOps", "Testing and Improvements", "Aug 10 - Aug 14", "Not Satisfied", "DevOps validation has not started."),
+    ("Final Testing", "Testing and Improvements", "Aug 17 - Aug 21", "Not Satisfied", "Final regression testing has not started."),
+    ("Documentation", "Architecture Documentation", "Aug 24 - Aug 28", "Partial", "README and multi-agent/platform docs exist; final architecture documentation still needs polish."),
+    ("Documentation", "API Documentation", "Aug 24 - Aug 28", "Partial", "FastAPI docs and docs/api.md exist; final API documentation is not complete."),
+    ("Documentation", "Deployment Guide", "Aug 24 - Aug 28", "Partial", "docs/platform.md and Docker Compose instructions exist; deployment guide needs end-to-end validation notes."),
+    ("Demo", "End to end demo preparation", "Aug 24 - Aug 28", "Not Satisfied", "No final demo script or walkthrough has been prepared."),
 ]
 
 
@@ -187,23 +206,23 @@ def status_counts() -> dict[str, int]:
 def document_xml() -> str:
     counts = status_counts()
     status_rows = [
-        ["Satisfied", str(counts["Satisfied"]), "Extraction core, mailbox flow, agent scaffold, execution logging, and SQLite persistence are in place."],
-        ["Partial", str(counts["Partial"]), "Attachment framework and tests need expansion."],
-        ["Not Satisfied", str(counts["Not Satisfied"]), "UI, DevOps, and final documentation are not implemented."],
+        ["Satisfied", str(counts["Satisfied"]), "Extraction core, mailbox flow, agent framework, API, platform scaffolding, and database persistence are in place."],
+        ["Partial", str(counts["Partial"]), "Attachment OCR/vision, broader extraction tests, Celery live validation, and final docs need expansion."],
+        ["Not Satisfied", str(counts["Not Satisfied"]), "UI, DevOps automation, final testing, and final demo preparation are not implemented."],
     ]
     matrix_rows = [[area, requirement, dates, status, note] for area, requirement, dates, status, note in REQUIREMENTS]
     next_steps = [
-        ["1", "Validate platform stack", "Run docker compose with real credentials and confirm API/worker extraction against PostgreSQL."],
-        ["2", "Broaden tests", "Add fixture-based regression coverage across all four glass types and text attachments."],
-        ["3", "Run Opus extraction", "Regenerate SQLite and JSON with claude-opus-4-8 and audit TT/color/source leakage."],
-        ["4", "Build UI", "Create the main opening page, email/attachment display, and extraction results view."],
-        ["5", "Plan DevOps", "Add GitHub Actions test/build automation once Docker behavior is confirmed."],
+        ["1", "Run full extraction audit", "Regenerate output for all provided emails and manually audit per-item accuracy, missing fields, and source attribution."],
+        ["2", "Broaden regression tests", "Add fixture-based tests across monolithic, laminated, insulated, laminated-insulated, and text attachments."],
+        ["3", "Build simple output view", "Create a minimal results view for email details, attachments, extracted units, and human-review flags."],
+        ["4", "Validate platform stack", "Run docker compose with real credentials and confirm API/worker extraction against PostgreSQL."],
+        ["5", "Prepare final docs/demo", "Write architecture/API/deployment notes and a repeatable demo script with at least one flagged case."],
     ]
     risk_rows = [
-        ["Infrastructure validation", "Medium", "PostgreSQL, Redis, Celery, and Docker Compose scaffolds exist; they still need end-to-end validation with real secrets and Gmail access."],
-        ["Architecture expansion", "Medium", "The multi-agent workflow exists; future work should add real validator/review agents when needed."],
-        ["Testing depth", "Medium", "Only focused regression coverage is present; extraction quality needs a broader benchmark suite."],
-        ["Attachment scope", "Low", "Text attachments are handled; image-only attachments remain explicitly out of scope."],
+        ["Extraction accuracy", "High", "The assignment is graded primarily on extraction quality; run full 20-email audits before adding more infrastructure."],
+        ["Testing depth", "High", "Only focused regression coverage is present; classification and extraction need broader benchmark tests."],
+        ["Attachment scope", "Medium", "Text attachments are handled; image-only attachment extraction is not implemented and should be called out as stretch/out-of-scope if not attempted."],
+        ["Platform validation", "Medium", "PostgreSQL, Redis, Celery, and Docker Compose scaffolds exist but still need real end-to-end service validation."],
     ]
 
     body = []
@@ -211,10 +230,10 @@ def document_xml() -> str:
     body.append(para("Glass RFQ Extraction System", style="Subtitle", after=220))
     body.append(label_para("Prepared for", "Bilvantis Internship Project"))
     body.append(label_para("Prepared by", "Srikar Devesetti"))
-    body.append(label_para("Report date", "July 1, 2026"))
-    body.append(label_para("Reporting window", "June 8 - July 1, 2026"))
-    body.append(label_para("Current phase", "Mailbox extraction complete; extractor agent build begins July 2"))
-    body.append(callout("Executive Summary", "The extraction core is functional: Gmail ingestion, thread context, text attachment extraction, LangGraph orchestration, Opus as the default model, reusable agent workflow, agent execution logging, FastAPI setup, PostgreSQL schema, Redis/Celery queue setup, Docker Compose, SQLite fallback, and JSON export are in place. The largest remaining gaps are UI, DevOps, final documentation, and broader regression testing."))
+    body.append(label_para("Report date", "July 9, 2026"))
+    body.append(label_para("Reporting window", "June 8 - July 9, 2026"))
+    body.append(label_para("Current phase", "Extraction core and platform scaffolding complete; quality audit, UI, tests, and final docs remain"))
+    body.append(callout("Executive Summary", "The project now has a functional extraction core: Gmail ingestion, chronological thread context, text attachment extraction, LangGraph orchestration, Opus as the default model, source-aware structured JSON, human-review rules, SQLite persistence, agent execution logs, FastAPI endpoints, PostgreSQL schema support, Redis/Celery queue scaffolding, and Docker Compose. The assignment text makes clear that extraction quality is the main grading focus; the next work should prioritize full-output auditing, broader regression tests, a simple result view, final documentation, and a repeatable demo."))
 
     body.append(para("Status Snapshot", style="Heading1", keep_next=True))
     body.append(table(["Status", "Count", "Summary"], status_rows, [1800, 1000, 6560]))
@@ -233,6 +252,7 @@ def document_xml() -> str:
             ["API setup", "FastAPI exposes health, stored extraction records, agent run logs, and extraction trigger endpoints."],
             ["Platform setup", "PostgreSQL, Redis, Celery, and Docker Compose scaffolds are configured around the existing agent workflow."],
             ["TT cleanup", "Deterministic guards prevent construction labels such as monolithic, laminated, IGU, or body from appearing in TT output."],
+            ["Verification", "Current local test suite passes with 24 tests covering agents, API read endpoints, task wiring, storage factory behavior, and TT cleanup."],
         ],
         [2200, 7160],
     ))
@@ -247,7 +267,7 @@ def document_xml() -> str:
     body.append(table(["#", "Priority", "Action"], next_steps, [500, 2200, 6660]))
 
     body.append(para("Overall Assessment", style="Heading1", keep_next=True))
-    body.append(para("The project is ahead on extraction behavior relative to the later extractor-agent timeline, and the internal agent framework plus FastAPI/platform layer are now in place. If the assignment grading emphasizes extraction quality, the current implementation is strong. The next work should focus on UI, DevOps automation, final testing, and final documentation."))
+    body.append(para("The project is ahead on infrastructure relative to the assignment's minimum expectations, but the assignment should be evaluated primarily on extraction quality. The system is demonstrable today through CLI, JSON, SQLite, and FastAPI. The highest-value next step is to regenerate and audit extraction output for all provided emails, then turn those examples into regression tests before investing further in UI polish or DevOps automation."))
 
     sect = (
         '<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" '

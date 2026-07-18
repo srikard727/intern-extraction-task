@@ -167,6 +167,7 @@ def normalize_items(raw_items: list[dict[str, Any]]) -> list[RFQItem]:
         _apply_legacy_parts(item)
         _derive_missing_spacer_thickness(item)
         _apply_no_guess_guards(item, raw)
+        _apply_multi_lite_color(item, raw)
         _cleanup_tt_values(item)
         _apply_glass_type_scope(item)
         _cleanup_field_sources(item)
@@ -668,6 +669,16 @@ def _apply_no_guess_guards(item: RFQItem, raw: Mapping[str, Any]) -> None:
 
 
 def _clear_unspecified_multi_lite_heat_treatments(item: RFQItem, notes: str) -> None:
+    if item.glass_type == "laminated-insulated" and _mentions_laminated_ply_heat_only(notes):
+        if "outboard" in notes or item.laminate_lite == "outboard":
+            item.HT1 = None
+            item.HT2 = None
+            return
+        if "inboard" in notes or item.laminate_lite == "inboard":
+            item.HT2 = None
+            item.HT3 = None
+            return
+
     if any(
         phrase in notes
         for phrase in (
@@ -684,6 +695,14 @@ def _clear_unspecified_multi_lite_heat_treatments(item: RFQItem, notes: str) -> 
         item.HT2 = None
         if item.glass_type == "laminated-insulated":
             item.HT3 = None
+
+
+def _mentions_laminated_ply_heat_only(notes: str) -> bool:
+    return bool(
+        "laminated" in notes
+        and "heat treatment not specified" in notes
+        and any(word in notes for word in ("ply", "plies", "lite"))
+    )
 
 
 def _clear_defaulted_spec_fields(item: RFQItem) -> None:
@@ -732,6 +751,65 @@ def _cleanup_tt_values(item: RFQItem) -> None:
             if item.field_sources.get("TT"):
                 item.field_sources.setdefault("color", item.field_sources["TT"])
         item.TT = None
+
+
+def _apply_multi_lite_color(item: RFQItem, raw: Mapping[str, Any]) -> None:
+    if item.glass_type not in {"laminated", "insulated", "laminated-insulated"}:
+        return
+    color = _clean(item.color)
+    if not color or _is_invalid_tt_value(color):
+        return
+
+    source = item.field_sources.get("color") or item.source or "body"
+    text = " ".join(
+        part
+        for part in (
+            _raw_text(raw),
+            _clean(raw.get("color")),
+            item.notes,
+            item.mark,
+        )
+        if part
+    ).lower()
+
+    target = _multi_lite_color_target(item, text)
+    if target is not None:
+        _set_lite_tt_if_empty(item, target, color, source)
+
+
+def _multi_lite_color_target(item: RFQItem, text: str) -> int | None:
+    if item.glass_type in {"laminated", "insulated"}:
+        if "outboard" in text or "outer" in text or "exterior" in text:
+            return 1
+        if "inboard" in text or "inner" in text or "interior" in text:
+            return 2
+
+    if item.glass_type == "laminated-insulated":
+        if "outboard" in text or "outer" in text or "exterior" in text:
+            return 1
+        if "inboard" in text or "inner" in text or "interior" in text:
+            return 3 if item.laminate_lite == "outboard" else 2
+
+    lite_fields = _lite_tt_fields(item)
+    present = [field for field in lite_fields if _clean(getattr(item, field))]
+    missing = [field for field in lite_fields if not _clean(getattr(item, field))]
+    if len(missing) == 1 and present:
+        return int(missing[0][-1])
+    return None
+
+
+def _lite_tt_fields(item: RFQItem) -> tuple[str, ...]:
+    if item.glass_type == "laminated-insulated":
+        return ("TT1", "TT2", "TT3")
+    return ("TT1", "TT2")
+
+
+def _set_lite_tt_if_empty(item: RFQItem, lite_index: int, value: str, source: str) -> None:
+    key = f"TT{lite_index}"
+    if not hasattr(item, key) or _clean(getattr(item, key)):
+        return
+    setattr(item, key, value)
+    item.field_sources.setdefault(key, source)
 
 
 def _is_invalid_tt_value(value: object) -> bool:

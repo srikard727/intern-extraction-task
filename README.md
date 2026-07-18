@@ -163,6 +163,8 @@ Start the FastAPI app with:
 Useful endpoints:
 
 - `GET /health`: database path, JSON path, model, and row counts
+- `GET /view`: browser view of stored extraction results
+- `GET /view/emails/{email_id}`: browser detail view for one extraction
 - `GET /emails`: stored extraction email summaries
 - `GET /emails/{email_id}`: full stored extraction JSON for one email
 - `GET /agent-runs`: agent execution logs
@@ -182,6 +184,41 @@ docker compose up --build
 ```
 
 See `docs/platform.md` for PostgreSQL, Redis, Celery, and Docker details.
+
+## Run The Fixture Demo
+
+Refresh the provided fixture extraction outputs:
+
+```bash
+.venv/bin/python -m agent_rfq_extractor \
+  --source fixture \
+  --fixture Emails.txt \
+  --limit 100 \
+  --db outputs/rfq_extractions.db \
+  --json outputs/rfq_extractions.json \
+  --replace-existing
+```
+
+Audit the regenerated JSON and SQLite outputs:
+
+```bash
+.venv/bin/python scripts/audit_extraction_outputs.py \
+  --json outputs/rfq_extractions.json \
+  --db outputs/rfq_extractions.db \
+  --fixture-expectations
+```
+
+Start the API and open the browser view:
+
+```bash
+.venv/bin/uvicorn agent_rfq_extractor.api:app --host 127.0.0.1 --port 8000
+```
+
+Then visit:
+
+```text
+http://127.0.0.1:8000/view
+```
 
 ## Run Against Gmail
 
