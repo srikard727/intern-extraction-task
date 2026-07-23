@@ -6,6 +6,7 @@ from collections.abc import Iterator
 from html import escape
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlencode
 
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
@@ -46,7 +47,7 @@ def create_app(
     json_path: str | Path | None = None,
     project_root: str | Path | None = None,
 ) -> FastAPI:
-    load_dotenv(override=True)
+    load_dotenv(override=False)
     app = FastAPI(
         title="Glass RFQ Extraction API",
         version="0.1.0",
@@ -64,6 +65,7 @@ def create_app(
             "service": "glass-rfq-extraction-api",
             "status": "ok",
             "docs": "/docs",
+            "view": "/view",
         }
 
     @app.get("/health")
@@ -116,16 +118,25 @@ def create_app(
         return run
 
     @app.get("/view", response_class=HTMLResponse)
-    def view_emails(store=Depends(_store)) -> HTMLResponse:
-        emails = store.list_emails(limit=500, offset=0)
-        return HTMLResponse(_render_email_index(emails))
+    def view_emails(
+        status: str = "",
+        glass_type: str = "",
+        q: str = "",
+        store=Depends(_store),
+    ) -> HTMLResponse:
+        summaries = store.list_emails(limit=500, offset=0)
+        records = [_view_record(summary, store.get_email(summary["email_id"])) for summary in summaries]
+        filters = {"status": status.strip(), "glass_type": glass_type.strip(), "q": q.strip()}
+        visible_records = _filter_view_records(records, filters)
+        return HTMLResponse(_render_email_index(records, visible_records, filters))
 
     @app.get("/view/emails/{email_id}", response_class=HTMLResponse)
-    def view_email(email_id: str, store=Depends(_store)) -> HTMLResponse:
+    def view_email(email_id: str, request: Request, store=Depends(_store)) -> HTMLResponse:
         record = store.get_email(email_id)
         if record is None:
             raise HTTPException(status_code=404, detail=f"email not found: {email_id}")
-        return HTMLResponse(_render_email_detail(record))
+        runs = store.list_agent_runs(limit=20, offset=0, email_id=email_id)
+        return HTMLResponse(_render_email_detail(record, runs, str(request.url.query)))
 
     @app.post("/extract/fixture")
     def extract_fixture(payload: FixtureExtractionRequest) -> dict[str, Any]:
@@ -255,54 +266,216 @@ def _resolve_path(path: str, project_root: Path) -> Path:
     return project_root / resolved
 
 
-def _render_email_index(emails: list[dict[str, Any]]) -> str:
-    rows = "\n".join(_email_row(email) for email in emails)
+def _render_email_index(
+    records: list[dict[str, Any]],
+    visible_records: list[dict[str, Any]],
+    filters: dict[str, str],
+) -> str:
+    rows = "\n".join(_email_row(record, filters) for record in visible_records)
     if not rows:
-        rows = '<tr><td colspan="6" class="empty">No extracted emails found.</td></tr>'
+        rows = '<tr><td colspan="8" class="empty">No extracted emails match the current filters.</td></tr>'
+    metrics = _index_metrics(records)
+    filter_bar = _filter_bar(records, filters)
     return _html_page(
-        "RFQ Extraction Results",
+        "RFQ Review Dashboard",
         f"""
-        <header>
-          <h1>RFQ Extraction Results</h1>
-          <p>{len(emails)} stored email records</p>
+        <header class="app-header">
+          <div>
+            <p class="eyebrow">Glass RFQ Extraction</p>
+            <h1>Review Dashboard</h1>
+            <p>{len(visible_records)} of {len(records)} stored email records shown</p>
+          </div>
+          <nav aria-label="Primary">
+            <a href="/health">Health</a>
+            <a href="/docs">API Docs</a>
+          </nav>
         </header>
         <main>
-          <table>
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Items</th>
-                <th>Subject</th>
-                <th>Received</th>
-                <th>Model</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows}
-            </tbody>
-          </table>
+          {metrics}
+          {filter_bar}
+          <section class="surface">
+            <div class="section-title">
+              <div>
+                <h2>Email Queue</h2>
+                <p>Sorted by extraction time and email id</p>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Status</th>
+                  <th>Glass</th>
+                  <th>Items</th>
+                  <th>Missing</th>
+                  <th>Attach</th>
+                  <th>Subject</th>
+                  <th>Extracted</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows}
+              </tbody>
+            </table>
+          </section>
         </main>
         """,
     )
 
 
-def _email_row(email: dict[str, Any]) -> str:
-    email_id = str(email.get("email_id") or "")
-    status = str(email.get("status") or "unknown")
+def _view_record(summary: dict[str, Any], record: dict[str, Any] | None) -> dict[str, Any]:
+    extraction = record.get("extraction") if isinstance(record, dict) else {}
+    if not isinstance(extraction, dict):
+        extraction = {}
+    review = record.get("review") if isinstance(record, dict) else None
+    if not isinstance(review, dict):
+        review = {}
+    attachments = record.get("attachments") if isinstance(record, dict) else []
+    if not isinstance(attachments, list):
+        attachments = []
+    glass_types = extraction.get("glass_types") if isinstance(extraction.get("glass_types"), list) else []
+    missing = extraction.get("missing_fields") if isinstance(extraction.get("missing_fields"), list) else []
+    return {
+        **summary,
+        "glass_type": extraction.get("glass_type") or "unknown",
+        "glass_types": [str(item) for item in glass_types],
+        "missing_fields": [str(item) for item in missing],
+        "review_reason": str(review.get("reason") or ""),
+        "attachment_count": len(attachments),
+        "body_text": str(record.get("body_text") or "") if isinstance(record, dict) else "",
+    }
+
+
+def _filter_view_records(records: list[dict[str, Any]], filters: dict[str, str]) -> list[dict[str, Any]]:
+    status_filter = filters.get("status", "")
+    type_filter = filters.get("glass_type", "")
+    query = filters.get("q", "").lower()
+    visible = []
+    for record in records:
+        if status_filter and record.get("status") != status_filter:
+            continue
+        if type_filter and type_filter not in record.get("glass_types", []):
+            continue
+        if query and query not in _search_blob(record):
+            continue
+        visible.append(record)
+    return visible
+
+
+def _search_blob(record: dict[str, Any]) -> str:
+    parts = [
+        record.get("email_id"),
+        record.get("conv_id"),
+        record.get("from_email"),
+        record.get("to_email"),
+        record.get("subject"),
+        record.get("status"),
+        record.get("glass_type"),
+        record.get("review_reason"),
+        record.get("body_text"),
+        " ".join(record.get("glass_types") or []),
+        " ".join(record.get("missing_fields") or []),
+    ]
+    return " ".join(str(part or "") for part in parts).lower()
+
+
+def _index_metrics(records: list[dict[str, Any]]) -> str:
+    statuses = Counter(str(record.get("status") or "unknown") for record in records)
+    item_count = sum(int(record.get("item_count") or 0) for record in records)
+    attachment_count = sum(int(record.get("attachment_count") or 0) for record in records)
+    missing_count = sum(1 for record in records if record.get("missing_fields"))
+    return f"""
+    <section class="metrics" aria-label="Extraction summary">
+      {_metric("Emails", len(records))}
+      {_metric("Items", item_count)}
+      {_metric("Completed", statuses.get("completed", 0), "ok")}
+      {_metric("Human Review", statuses.get("human_review_required", 0), "warn")}
+      {_metric("Failed", statuses.get("extraction_failed", 0), "fail")}
+      {_metric("With Missing Fields", missing_count)}
+      {_metric("Attachments", attachment_count)}
+    </section>
+    """
+
+
+def _metric(label: str, value: int, tone: str = "") -> str:
+    tone_class = f" {tone}" if tone else ""
+    return f"""
+    <div class="metric{tone_class}">
+      <dt>{escape(label)}</dt>
+      <dd>{escape(str(value))}</dd>
+    </div>
+    """
+
+
+def _filter_bar(records: list[dict[str, Any]], filters: dict[str, str]) -> str:
+    statuses = sorted({str(record.get("status") or "unknown") for record in records})
+    glass_types = sorted({glass_type for record in records for glass_type in record.get("glass_types", [])})
+    return f"""
+    <section class="surface filters">
+      <form method="get" action="/view">
+        <label>
+          <span>Search</span>
+          <input name="q" value="{escape(filters.get("q", ""))}" placeholder="email, subject, sender, missing field">
+        </label>
+        <label>
+          <span>Status</span>
+          <select name="status">
+            <option value="">All statuses</option>
+            {_options(statuses, filters.get("status", ""))}
+          </select>
+        </label>
+        <label>
+          <span>Glass Type</span>
+          <select name="glass_type">
+            <option value="">All glass types</option>
+            {_options(glass_types, filters.get("glass_type", ""))}
+          </select>
+        </label>
+        <div class="filter-actions">
+          <button type="submit">Apply</button>
+          <a href="/view">Reset</a>
+        </div>
+      </form>
+    </section>
+    """
+
+
+def _options(values: list[str], selected: str) -> str:
+    return "\n".join(
+        f'<option value="{escape(value)}"{" selected" if value == selected else ""}>{escape(value)}</option>'
+        for value in values
+    )
+
+
+def _email_row(record: dict[str, Any], filters: dict[str, str]) -> str:
+    email_id = str(record.get("email_id") or "")
+    status = str(record.get("status") or "unknown")
+    detail_href = f"/view/emails/{escape(email_id)}"
+    back_query = urlencode({key: value for key, value in filters.items() if value})
+    if back_query:
+        detail_href += f"?{escape(back_query)}"
+    missing = record.get("missing_fields") or []
     return f"""
     <tr>
-      <td><a href="/view/emails/{escape(email_id)}">{escape(email_id)}</a></td>
+      <td><a href="{detail_href}">{escape(email_id)}</a></td>
       <td>{_status_badge(status)}</td>
-      <td>{escape(str(email.get("item_count") or 0))}</td>
-      <td>{escape(str(email.get("subject") or ""))}</td>
-      <td>{escape(str(email.get("received_at") or ""))}</td>
-      <td>{escape(str(email.get("llm_model") or ""))}</td>
+      <td>{escape(", ".join(record.get("glass_types") or []) or "unknown")}</td>
+      <td>{escape(str(record.get("item_count") or 0))}</td>
+      <td>{_missing_label(missing)}</td>
+      <td>{escape(str(record.get("attachment_count") or 0))}</td>
+      <td>{escape(str(record.get("subject") or ""))}</td>
+      <td>{escape(str(record.get("extracted_at") or record.get("received_at") or ""))}</td>
     </tr>
     """
 
 
-def _render_email_detail(record: dict[str, Any]) -> str:
+def _missing_label(missing: list[str]) -> str:
+    if not missing:
+        return '<span class="ok">None</span>'
+    return escape(", ".join(missing))
+
+
+def _render_email_detail(record: dict[str, Any], runs: list[dict[str, Any]], back_query: str = "") -> str:
     email_id = str(record.get("email_id") or "")
     status = str(record.get("status") or "unknown")
     extraction = record.get("extraction") if isinstance(record.get("extraction"), dict) else {}
@@ -310,34 +483,130 @@ def _render_email_detail(record: dict[str, Any]) -> str:
     groups = extraction.get("glass_type_groups") if isinstance(extraction.get("glass_type_groups"), list) else []
     group_sections = "\n".join(_group_section(group) for group in groups if isinstance(group, dict))
     review_panel = _review_panel(review)
+    back_href = "/view" + (f"?{escape(back_query)}" if back_query else "")
+    attachments = record.get("attachments") if isinstance(record.get("attachments"), list) else []
+    item_count = _record_item_count(record)
     return _html_page(
         f"RFQ {email_id}",
         f"""
-        <header>
-          <a class="back" href="/view">Back to results</a>
-          <h1>{escape(email_id)}</h1>
-          <p>{_status_badge(status)} <span>{escape(str(record.get("subject") or ""))}</span></p>
+        <header class="app-header">
+          <div>
+            <a class="back" href="{back_href}">Back to queue</a>
+            <p class="eyebrow">Email Detail</p>
+            <h1>{escape(email_id)}</h1>
+            <p>{_status_badge(status)} <span>{escape(str(record.get("subject") or ""))}</span></p>
+          </div>
+          <nav aria-label="Primary">
+            <a href="/view">Dashboard</a>
+            <a href="/emails/{escape(email_id)}">JSON</a>
+          </nav>
         </header>
         <main class="detail">
-          <section>
+          <section class="metrics" aria-label="Email summary">
+            {_metric("Items", item_count)}
+            {_metric("Attachments", len(attachments))}
+            {_metric("Groups", len(groups))}
+            {_metric("Missing Fields", len(extraction.get("missing_fields") or []), "warn" if extraction.get("missing_fields") else "")}
+            {_metric("Agent Runs", len(runs))}
+          </section>
+          <section class="surface">
             <h2>Summary</h2>
             <dl class="summary">
               <div><dt>Glass Type</dt><dd>{escape(str(extraction.get("glass_type") or "unknown"))}</dd></div>
               <div><dt>Types</dt><dd>{escape(", ".join(extraction.get("glass_types") or []))}</dd></div>
               <div><dt>Missing</dt><dd>{escape(", ".join(extraction.get("missing_fields") or []) or "None")}</dd></div>
               <div><dt>Model</dt><dd>{escape(str(record.get("llm_model") or ""))}</dd></div>
+              <div><dt>Conversation</dt><dd>{escape(str(record.get("conv_id") or ""))}</dd></div>
+              <div><dt>Extracted</dt><dd>{escape(str(record.get("extracted_at") or ""))}</dd></div>
             </dl>
           </section>
+          {_email_panel(record)}
+          {_attachments_panel(attachments)}
           {review_panel}
-          {group_sections or '<section><h2>Glass Units</h2><p class="empty">No glass units extracted.</p></section>'}
+          {group_sections or '<section class="surface"><h2>Glass Units</h2><p class="empty">No glass units extracted.</p></section>'}
+          {_agent_runs_panel(runs)}
         </main>
         """,
     )
 
 
+def _record_item_count(record: dict[str, Any]) -> int:
+    groups = record.get("extraction", {}).get("glass_type_groups", [])
+    if not isinstance(groups, list):
+        return 0
+    count = 0
+    for group in groups:
+        if isinstance(group, dict) and isinstance(group.get("glass_units"), list):
+            count += len(group["glass_units"])
+    return count
+
+
+def _email_panel(record: dict[str, Any]) -> str:
+    body_text = str(record.get("body_text") or "")
+    return f"""
+    <section class="surface">
+      <div class="section-title">
+        <div>
+          <h2>Email</h2>
+          <p>{escape(str(record.get("emailbody_variant") or "plain"))} body</p>
+        </div>
+      </div>
+      <dl class="summary">
+        <div><dt>From</dt><dd>{escape(str(record.get("from_email") or ""))}</dd></div>
+        <div><dt>To</dt><dd>{escape(str(record.get("to_email") or ""))}</dd></div>
+        <div><dt>Received</dt><dd>{escape(str(record.get("received_at") or ""))}</dd></div>
+        <div><dt>Subject</dt><dd>{escape(str(record.get("subject") or ""))}</dd></div>
+      </dl>
+      <pre class="email-body">{escape(body_text)}</pre>
+    </section>
+    """
+
+
+def _attachments_panel(attachments: list[Any]) -> str:
+    rows = "\n".join(_attachment_row(item) for item in attachments if isinstance(item, dict))
+    if not rows:
+        rows = '<tr><td colspan="5" class="empty">No attachments stored for this email.</td></tr>'
+    return f"""
+    <section class="surface">
+      <div class="section-title">
+        <div>
+          <h2>Attachments</h2>
+          <p>{len(attachments)} stored attachment record(s)</p>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Type</th>
+            <th>Source</th>
+            <th>Text</th>
+            <th>Preview / Error</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </section>
+    """
+
+
+def _attachment_row(attachment: dict[str, Any]) -> str:
+    preview = attachment.get("text_preview") or attachment.get("error") or ""
+    text_state = "yes" if attachment.get("text_extracted") else "no"
+    return f"""
+    <tr>
+      <td>{escape(str(attachment.get("filename") or ""))}</td>
+      <td>{escape(str(attachment.get("mime_type") or ""))}</td>
+      <td>{escape(str(attachment.get("source") or ""))}</td>
+      <td>{escape(text_state)}</td>
+      <td>{escape(str(preview))}</td>
+    </tr>
+    """
+
+
 def _review_panel(review: dict[str, Any] | None) -> str:
     if not review:
-        return '<section><h2>Human Review</h2><p class="ok">Not required.</p></section>'
+        return '<section class="surface"><h2>Human Review</h2><p class="ok">Not required.</p></section>'
     conflicts = review.get("conflicts") if isinstance(review.get("conflicts"), list) else []
     conflict_rows = "\n".join(
         f"""
@@ -359,7 +628,7 @@ def _review_panel(review: dict[str, Any] | None) -> str:
         </table>
         """
     return f"""
-    <section>
+    <section class="surface review-panel">
       <h2>Human Review</h2>
       <p>{escape(str(review.get("reason") or "Review required."))}</p>
       {conflict_table}
@@ -372,10 +641,15 @@ def _group_section(group: dict[str, Any]) -> str:
     units = group.get("glass_units") if isinstance(group.get("glass_units"), list) else []
     unit_rows = "\n".join(_unit_row(unit) for unit in units if isinstance(unit, dict))
     if not unit_rows:
-        unit_rows = '<tr><td colspan="8" class="empty">No units in this group.</td></tr>'
+        unit_rows = '<tr><td colspan="9" class="empty">No units in this group.</td></tr>'
     return f"""
-    <section>
-      <h2>{escape(glass_type.title())}</h2>
+    <section class="surface">
+      <div class="section-title">
+        <div>
+          <h2>{escape(glass_type.title())}</h2>
+          <p>{len(units)} extracted unit(s)</p>
+        </div>
+      </div>
       <table>
         <thead>
           <tr>
@@ -387,6 +661,7 @@ def _group_section(group: dict[str, Any]) -> str:
             <th>Fabrication</th>
             <th>Missing</th>
             <th>Complete</th>
+            <th>Notes</th>
           </tr>
         </thead>
         <tbody>
@@ -409,6 +684,7 @@ def _unit_row(unit: dict[str, Any]) -> str:
       <td>{_dict_list(unit.get("fabrication"))}</td>
       <td>{escape(", ".join(unit.get("missing_fields") or []) or "None")}</td>
       <td>{escape("yes" if unit.get("is_complete") else "no")}</td>
+      <td>{escape(str(unit.get("notes") or ""))}</td>
     </tr>
     """
 
@@ -433,6 +709,52 @@ def _dict_list(value: Any) -> str:
     return f"<ul>{items}</ul>" if items else '<span class="muted">None</span>'
 
 
+def _agent_runs_panel(runs: list[dict[str, Any]]) -> str:
+    rows = "\n".join(_agent_run_row(run) for run in runs)
+    if not rows:
+        rows = '<tr><td colspan="8" class="empty">No agent runs found for this email.</td></tr>'
+    return f"""
+    <section class="surface">
+      <div class="section-title">
+        <div>
+          <h2>Agent Runs</h2>
+          <p>{len(runs)} execution log record(s)</p>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Started</th>
+            <th>Agent</th>
+            <th>Status</th>
+            <th>Review</th>
+            <th>Items</th>
+            <th>Duration</th>
+            <th>Model</th>
+            <th>Error</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </section>
+    """
+
+
+def _agent_run_row(run_data: dict[str, Any]) -> str:
+    return f"""
+    <tr>
+      <td>{escape(str(run_data.get("started_at") or ""))}</td>
+      <td>{escape(str(run_data.get("agent_name") or ""))}</td>
+      <td>{_status_badge(str(run_data.get("status") or "unknown"))}</td>
+      <td>{escape(str(run_data.get("review_status") or ""))}</td>
+      <td>{escape(str(run_data.get("item_count") or 0))}</td>
+      <td>{escape(str(run_data.get("duration_ms") or 0))} ms</td>
+      <td>{escape(str(run_data.get("model") or ""))}</td>
+      <td>{escape(str(run_data.get("error") or ""))}</td>
+    </tr>
+    """
+
+
 def _status_badge(status: str) -> str:
     class_name = "review" if status == "human_review_required" else status.replace("_", "-")
     return f'<span class="status {escape(class_name)}">{escape(status)}</span>'
@@ -448,15 +770,18 @@ def _html_page(title: str, body: str) -> str:
   <style>
     :root {{
       color-scheme: light;
-      --bg: #f6f7f9;
+      --bg: #f5f7fa;
       --panel: #ffffff;
+      --panel-soft: #f9fafb;
       --text: #17202a;
       --muted: #65717f;
       --line: #d8dee6;
+      --line-strong: #b9c3d0;
       --ok: #146c43;
       --warn: #9a5b00;
       --fail: #b42318;
       --link: #1458a8;
+      --focus: #2f6fed;
     }}
     body {{
       margin: 0;
@@ -469,8 +794,28 @@ def _html_page(title: str, body: str) -> str:
       margin: 0 auto;
       padding: 24px;
     }}
-    header {{
+    .app-header {{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
       padding-bottom: 8px;
+    }}
+    .app-header nav {{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }}
+    .app-header nav a {{
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--text);
     }}
     h1 {{
       margin: 0 0 6px;
@@ -485,6 +830,14 @@ def _html_page(title: str, body: str) -> str:
       margin: 0;
       color: var(--muted);
     }}
+    .eyebrow {{
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }}
     a {{
       color: var(--link);
       text-decoration: none;
@@ -496,14 +849,24 @@ def _html_page(title: str, body: str) -> str:
       display: inline-block;
       margin-bottom: 12px;
     }}
-    section, table {{
+    table {{
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 8px;
     }}
-    section {{
+    .surface {{
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
       margin-bottom: 18px;
       padding: 18px;
+    }}
+    .section-title {{
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 14px;
     }}
     table {{
       width: 100%;
@@ -521,6 +884,9 @@ def _html_page(title: str, body: str) -> str:
       color: var(--muted);
       font-size: 12px;
       text-transform: uppercase;
+    }}
+    tbody tr:hover {{
+      background: #fbfcfe;
     }}
     tr:last-child td {{
       border-bottom: 0;
@@ -552,6 +918,89 @@ def _html_page(title: str, body: str) -> str:
       border-color: #f1b8b3;
       background: #fff0ee;
     }}
+    .metrics {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }}
+    .metric {{
+      min-height: 72px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }}
+    .metric dt {{
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }}
+    .metric dd {{
+      margin: 4px 0 0;
+      font-size: 24px;
+      font-weight: 700;
+    }}
+    .metric.ok {{
+      border-color: #a9d6bc;
+    }}
+    .metric.warn {{
+      border-color: #f0d39a;
+    }}
+    .metric.fail {{
+      border-color: #f1b8b3;
+    }}
+    .filters form {{
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) minmax(160px, 220px) minmax(160px, 220px) auto;
+      gap: 14px;
+      align-items: end;
+    }}
+    label span {{
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }}
+    input, select, button {{
+      width: 100%;
+      min-height: 38px;
+      box-sizing: border-box;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--text);
+      font: inherit;
+    }}
+    input, select {{
+      padding: 0 10px;
+    }}
+    input:focus, select:focus, button:focus {{
+      outline: 2px solid var(--focus);
+      outline-offset: 1px;
+    }}
+    button {{
+      padding: 0 14px;
+      border-color: #1458a8;
+      background: #1458a8;
+      color: #ffffff;
+      cursor: pointer;
+    }}
+    .filter-actions {{
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }}
+    .filter-actions a {{
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 10px;
+      color: var(--muted);
+    }}
     .summary {{
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -576,9 +1025,38 @@ def _html_page(title: str, body: str) -> str:
     .ok {{
       color: var(--ok);
     }}
+    .review-panel {{
+      border-color: #f0d39a;
+      background: #fffdf7;
+    }}
+    .email-body {{
+      max-height: 420px;
+      overflow: auto;
+      margin: 16px 0 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel-soft);
+      color: var(--text);
+      font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      white-space: pre-wrap;
+    }}
     @media (max-width: 780px) {{
       header, main {{
         padding: 16px;
+      }}
+      .app-header {{
+        display: block;
+      }}
+      .app-header nav {{
+        justify-content: flex-start;
+        margin-top: 14px;
+      }}
+      .filters form {{
+        grid-template-columns: 1fr;
+      }}
+      .filter-actions {{
+        justify-content: flex-start;
       }}
       table {{
         display: block;

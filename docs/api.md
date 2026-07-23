@@ -15,7 +15,9 @@ The app uses:
 ## Read Endpoints
 
 - `GET /health`
+- `GET /`
 - `GET /view`
+- `GET /view?status=<status>&glass_type=<type>&q=<search>`
 - `GET /view/emails/{email_id}`
 - `GET /emails?limit=100&offset=0`
 - `GET /emails/{email_id}`
@@ -64,6 +66,18 @@ Open the stored extraction results in a browser:
 GET /view
 ```
 
+The dashboard includes summary cards, status and glass-type filters, text
+search, the email queue, item counts, attachment counts, missing fields, and
+human-review status.
+
+Filter examples:
+
+```text
+GET /view?status=human_review_required
+GET /view?glass_type=insulated
+GET /view?status=human_review_required&glass_type=insulated&q=spacer
+```
+
 Open one stored extraction:
 
 ```text
@@ -71,8 +85,9 @@ GET /view/emails/{email_id}
 ```
 
 The HTML view reads from the same configured database as the JSON endpoints and
-shows status, item count, glass types, review reason, missing fields, specs, and
-fabrication details.
+shows status, email metadata, body text, attachment info, extracted units,
+missing fields, human-review flags, fabrication details, and agent execution
+logs.
 
 ## Queued Extraction
 
@@ -85,4 +100,15 @@ The response includes a `task_id`. Poll task status with:
 
 ```text
 GET /tasks/{task_id}
+```
+
+## UI Validation
+
+Run the repeatable UI route check against the stored fixture outputs:
+
+```bash
+.venv/bin/python scripts/validate_ui.py \
+  --db outputs/rfq_extractions.db \
+  --json outputs/rfq_extractions.json \
+  --fixture-expectations
 ```

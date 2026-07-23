@@ -12,7 +12,7 @@ from database.storage import StorageError
 
 
 def main() -> int:
-    load_dotenv(override=True)
+    load_dotenv(override=False)
     parser = argparse.ArgumentParser(description="Extract structured glass RFQs from Gmail.")
     parser.add_argument("--source", choices=["gmail", "fixture"], default="gmail")
     parser.add_argument("--fixture", default="Emails.txt", help="Fixture file for --source fixture.")

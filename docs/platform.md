@@ -57,6 +57,12 @@ Synchronous extraction endpoints remain available:
 
 ## Docker Compose
 
+Validate the Compose file:
+
+```bash
+docker compose config --quiet
+```
+
 Start the platform:
 
 ```bash
@@ -87,3 +93,30 @@ Health check:
 ```text
 http://127.0.0.1:8000/health
 ```
+
+## Final QA
+
+Run the local QA suite:
+
+```bash
+.venv/bin/python scripts/final_qa.py
+```
+
+The script runs:
+
+- unit tests
+- Python compile checks
+- JSON/SQLite output audit
+- `/view` UI validation
+- Docker Compose config validation when Docker is available
+
+## GitHub Actions
+
+The CI workflow is defined in:
+
+```text
+.github/workflows/ci.yml
+```
+
+It runs the Python tests, compile checks, output audit, UI validation, Docker
+Compose validation, and Docker image build.

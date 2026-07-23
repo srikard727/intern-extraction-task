@@ -52,7 +52,7 @@ def extract_gmail_task(
 
 
 def _run_pipeline(runner, *, model: str | None, replace_existing: bool) -> dict[str, Any]:
-    load_dotenv(override=True)
+    load_dotenv(override=False)
     pipeline = RFQPipeline(
         db_path=os.getenv("RFQ_DB_PATH", "outputs/rfq_extractions.db"),
         json_path=os.getenv("RFQ_JSON_PATH", "outputs/rfq_extractions.json"),

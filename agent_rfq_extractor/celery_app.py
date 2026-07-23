@@ -6,7 +6,7 @@ from celery import Celery
 from dotenv import load_dotenv
 
 
-load_dotenv(override=True)
+load_dotenv(override=False)
 
 
 def redis_url(default_db: int) -> str:

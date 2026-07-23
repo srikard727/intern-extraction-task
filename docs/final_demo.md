@@ -85,7 +85,30 @@ Useful demo records:
 - `fixture-023`: reorder-only request correctly produces no invented item and requires human review.
 - `fixture-024`: metric dimensions normalize from `600mm x 1500mm` to decimal inches.
 
-## 5. Docker Compose Validation
+## 5. Validate UI Routes
+
+```bash
+.venv/bin/python scripts/validate_ui.py \
+  --db outputs/rfq_extractions.db \
+  --json outputs/rfq_extractions.json \
+  --fixture-expectations
+```
+
+Expected result:
+
+```text
+UI validation passed.
+```
+
+## 6. Run Final QA
+
+```bash
+.venv/bin/python scripts/final_qa.py
+```
+
+Use `--skip-docker` only when Docker is unavailable.
+
+## 7. Docker Compose Validation
 
 After local extraction, validate the platform:
 

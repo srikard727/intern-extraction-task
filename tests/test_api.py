@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from agent_rfq_extractor.agents import AgentContext, AgentResult
 from agent_rfq_extractor.api import create_app
-from agent_rfq_extractor.models import EmailRecord
+from agent_rfq_extractor.models import AttachmentInfo, Dimensions, EmailRecord, RFQItem
 from database.storage import ExtractionStore
 
 
@@ -41,6 +41,14 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(data["counts"]["emails"], 1)
         self.assertEqual(data["counts"]["agent_runs"], 1)
 
+    def test_root_links_docs_and_view(self):
+        response = self.client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["docs"], "/docs")
+        self.assertEqual(data["view"], "/view")
+
     def test_list_and_get_emails(self):
         list_response = self.client.get("/emails")
         detail_response = self.client.get("/emails/email-001")
@@ -49,7 +57,7 @@ class ApiTests(unittest.TestCase):
         emails = list_response.json()["emails"]
         self.assertEqual(len(emails), 1)
         self.assertEqual(emails[0]["email_id"], "email-001")
-        self.assertEqual(emails[0]["item_count"], 0)
+        self.assertEqual(emails[0]["item_count"], 1)
 
         self.assertEqual(detail_response.status_code, 200)
         detail = detail_response.json()
@@ -76,12 +84,29 @@ class ApiTests(unittest.TestCase):
         detail_response = self.client.get("/view/emails/email-001")
 
         self.assertEqual(index_response.status_code, 200)
-        self.assertIn("RFQ Extraction Results", index_response.text)
+        self.assertIn("Review Dashboard", index_response.text)
+        self.assertIn("Email Queue", index_response.text)
         self.assertIn("email-001", index_response.text)
+        self.assertIn("monolithic", index_response.text)
 
         self.assertEqual(detail_response.status_code, 200)
+        self.assertIn("Email", detail_response.text)
+        self.assertIn("Attachments", detail_response.text)
+        self.assertIn("quote.pdf", detail_response.text)
         self.assertIn("Human Review", detail_response.text)
         self.assertIn("Not required.", detail_response.text)
+        self.assertIn("Agent Runs", detail_response.text)
+        self.assertIn("1/4&quot;", detail_response.text)
+
+    def test_output_view_filters_render(self):
+        response = self.client.get("/view?status=completed&glass_type=monolithic&q=requester")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Review Dashboard", response.text)
+        self.assertIn("value=\"requester\"", response.text)
+        self.assertIn("selected>completed", response.text)
+        self.assertIn("selected>monolithic", response.text)
+        self.assertIn("email-001", response.text)
 
     def test_missing_resources_return_404(self):
         self.assertEqual(self.client.get("/emails/missing").status_code, 404)
@@ -136,7 +161,7 @@ class ApiTests(unittest.TestCase):
                     metadata={
                         "email_id": "email-001",
                         "conv_id": "thread-001",
-                        "item_count": 0,
+                        "item_count": 1,
                         "review_required": False,
                         "llm_model": "fake-model",
                     },
@@ -156,12 +181,30 @@ def _record() -> EmailRecord:
         body_text='1/4" clear tempered 12 x 24',
         emailbody_variant="plain",
         received_at="2026-07-08T00:00:00+00:00",
-        has_attachments=False,
+        has_attachments=True,
+        attachments=[
+            AttachmentInfo(
+                filename="quote.pdf",
+                mime_type="application/pdf",
+                source="attachment:quote.pdf",
+                text_extracted=True,
+                text_preview="RFQ attachment text",
+            )
+        ],
         extracted_at=datetime.now(timezone.utc).isoformat(),
         status="completed",
-        items=[],
+        items=[
+            RFQItem(
+                mark="GL-1",
+                dimensions=Dimensions(width=12, height=24),
+                quantity=1,
+                shape="rectangle",
+                glass_type="monolithic",
+                TK='1/4"',
+                HT="tempered",
+            )
+        ],
         review=None,
-        attachments=[],
         llm_model="fake-model",
     )
 

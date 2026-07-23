@@ -162,8 +162,10 @@ Start the FastAPI app with:
 
 Useful endpoints:
 
+- `GET /`: service metadata, docs link, and browser view link
 - `GET /health`: database path, JSON path, model, and row counts
-- `GET /view`: browser view of stored extraction results
+- `GET /view`: browser dashboard for stored extraction results
+- `GET /view?status=human_review_required&glass_type=insulated&q=spacer`: filtered dashboard view
 - `GET /view/emails/{email_id}`: browser detail view for one extraction
 - `GET /emails`: stored extraction email summaries
 - `GET /emails/{email_id}`: full stored extraction JSON for one email
@@ -206,6 +208,21 @@ Audit the regenerated JSON and SQLite outputs:
   --json outputs/rfq_extractions.json \
   --db outputs/rfq_extractions.db \
   --fixture-expectations
+```
+
+Validate the browser review UI routes:
+
+```bash
+.venv/bin/python scripts/validate_ui.py \
+  --db outputs/rfq_extractions.db \
+  --json outputs/rfq_extractions.json \
+  --fixture-expectations
+```
+
+Run the local final QA checks:
+
+```bash
+.venv/bin/python scripts/final_qa.py
 ```
 
 Start the API and open the browser view:

@@ -22,7 +22,7 @@ class RFQPipeline:
         replace_existing: bool = False,
         database_url: str | None = None,
     ) -> None:
-        load_dotenv(override=True)
+        load_dotenv(override=False)
         self.db_path = Path(db_path)
         self.json_path = Path(json_path)
         self.database_url = database_url
