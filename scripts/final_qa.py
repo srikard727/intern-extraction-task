@@ -15,6 +15,11 @@ def main() -> int:
     parser.add_argument("--db", default="outputs/rfq_extractions.db")
     parser.add_argument("--json", default="outputs/rfq_extractions.json")
     parser.add_argument("--skip-docker", action="store_true")
+    parser.add_argument(
+        "--docker-build",
+        action="store_true",
+        help="Also build the Docker image. Requires a running Docker daemon.",
+    )
     args = parser.parse_args()
 
     checks = [
@@ -52,6 +57,8 @@ def main() -> int:
     if not args.skip_docker:
         if shutil.which("docker"):
             checks.append(("Docker Compose config", ["docker", "compose", "config", "--quiet"]))
+            if args.docker_build:
+                checks.append(("Docker image build", ["docker", "build", "-t", "glass-rfq-extractor:local-qa", "."]))
         else:
             print("Skipping Docker Compose config: docker is not installed.")
 

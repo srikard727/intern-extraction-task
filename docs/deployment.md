@@ -85,12 +85,29 @@ Stop the platform:
 docker compose down
 ```
 
+Latest local validation on August 6, 2026:
+
+- `docker info` succeeded after Docker Desktop was started.
+- `.venv/bin/python scripts/final_qa.py --docker-build` passed.
+- `docker compose up --build -d` started PostgreSQL, Redis, API, and worker.
+- `GET /health` returned PostgreSQL-backed counts.
+- `GET /view` rendered the dashboard.
+- `POST /extract/fixture` completed a one-email fixture extraction through the containerized API.
+- `POST /tasks/extract/fixture` completed through Redis and the Celery worker.
+- PostgreSQL contained one email row, one item row, and one agent run row after the validation extraction.
+
 ## Validation
 
 Run the local final QA suite:
 
 ```bash
 .venv/bin/python scripts/final_qa.py
+```
+
+When Docker Desktop is running, include the image build:
+
+```bash
+.venv/bin/python scripts/final_qa.py --docker-build
 ```
 
 If Docker is unavailable and you only want Python/API/UI checks:
@@ -107,6 +124,22 @@ Validate only the UI:
   --json outputs/rfq_extractions.json \
   --fixture-expectations
 ```
+
+The UI validation checks dashboard rendering, detail pages, human-review pages,
+and filter behavior for status, glass type, and search queries.
+
+## Celery Worker Test Coverage
+
+The local test suite includes task-level Celery coverage in eager execution
+mode. These tests verify that:
+
+- fixture tasks execute `RFQPipeline` and return extraction summaries
+- Gmail tasks use explicit message IDs when provided
+- Gmail tasks fall back to search query extraction when message IDs are absent
+- pipelines are closed even when validation fails
+
+Live Redis/worker validation is still covered by Docker Compose rather than by
+the isolated unit tests.
 
 ## CI
 

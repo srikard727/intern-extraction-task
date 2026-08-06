@@ -106,7 +106,22 @@ UI validation passed.
 .venv/bin/python scripts/final_qa.py
 ```
 
+When Docker Desktop is running, use:
+
+```bash
+.venv/bin/python scripts/final_qa.py --docker-build
+```
+
 Use `--skip-docker` only when Docker is unavailable.
+
+Expected local result before Docker:
+
+```text
+Final QA passed.
+```
+
+The local QA suite includes unit tests, attachment tests, Celery task tests,
+compile checks, JSON/SQLite audit, and UI validation.
 
 ## 7. Docker Compose Validation
 
@@ -128,3 +143,12 @@ Stop services after the demo:
 ```bash
 docker compose down
 ```
+
+Latest local Docker validation completed on August 6, 2026:
+
+- Docker image build passed through `scripts/final_qa.py --docker-build`.
+- Compose started PostgreSQL, Redis, API, and worker.
+- API health and `/view` returned successfully.
+- A synchronous fixture extraction completed through the API.
+- A queued fixture extraction completed through Redis/Celery.
+- PostgreSQL row counts confirmed `emails=1`, `items=1`, and `agent_runs=1` for the validation run.

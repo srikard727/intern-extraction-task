@@ -225,6 +225,21 @@ Run the local final QA checks:
 .venv/bin/python scripts/final_qa.py
 ```
 
+After Docker Desktop is running, include the Docker image build:
+
+```bash
+.venv/bin/python scripts/final_qa.py --docker-build
+```
+
+The local test suite includes classification, extraction, API, attachment, and
+Celery task coverage. The UI validation script checks rendering and filter
+behavior for status, glass type, and search queries.
+
+Latest local Docker validation completed on August 6, 2026: image build passed,
+Compose started PostgreSQL/Redis/API/worker, `/health` and `/view` responded,
+one synchronous fixture extraction completed, and one queued Celery fixture
+extraction completed with rows persisted to PostgreSQL.
+
 Start the API and open the browser view:
 
 ```bash

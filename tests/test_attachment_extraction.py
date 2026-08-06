@@ -1,9 +1,11 @@
 import unittest
+import base64
 from io import BytesIO
+from types import SimpleNamespace
 from unittest.mock import patch
 from zipfile import ZipFile
 
-from agent_rfq_extractor.gmail_client import _docx_text, _extract_attachment_text
+from agent_rfq_extractor.gmail_client import GmailClient, _docx_text, _extract_attachment_text
 
 
 class AttachmentExtractionTests(unittest.TestCase):
@@ -65,6 +67,32 @@ class AttachmentExtractionTests(unittest.TestCase):
         self.assertEqual(text, "")
         self.assertEqual(error, "Unsupported attachment type: image/png")
 
+    def test_gmail_attachment_fetch_extracts_text_and_preview(self):
+        raw_text = b"GL-1, 2 pcs, 1/4 clear tempered, 12 x 24"
+        service = _fake_gmail_attachment_service("att-1", raw_text)
+        client = object.__new__(GmailClient)
+        client.service = service
+
+        attachments = client._extract_attachments(
+            "message-001",
+            {
+                "parts": [
+                    {
+                        "filename": "schedule.txt",
+                        "mimeType": "text/plain",
+                        "body": {"attachmentId": "att-1"},
+                    }
+                ]
+            },
+        )
+
+        self.assertEqual(len(attachments), 1)
+        self.assertEqual(attachments[0].filename, "schedule.txt")
+        self.assertEqual(attachments[0].source, "attachment:schedule.txt")
+        self.assertTrue(attachments[0].text_extracted)
+        self.assertIn("clear tempered", attachments[0].text)
+        self.assertIn("GL-1", attachments[0].text_preview)
+
 
 def _minimal_docx(*paragraphs: str) -> bytes:
     document_xml = (
@@ -78,6 +106,23 @@ def _minimal_docx(*paragraphs: str) -> bytes:
     with ZipFile(buffer, "w") as docx:
         docx.writestr("word/document.xml", document_xml)
     return buffer.getvalue()
+
+
+def _fake_gmail_attachment_service(attachment_id: str, raw_bytes: bytes):
+    data = base64.urlsafe_b64encode(raw_bytes).decode("ascii").rstrip("=")
+    request = SimpleNamespace(execute=lambda: {"data": data})
+    attachments = SimpleNamespace(
+        get=lambda userId, messageId, id: request
+        if (userId, messageId, id) == ("me", "message-001", attachment_id)
+        else (_raise_assertion("unexpected attachment request"))
+    )
+    messages = SimpleNamespace(attachments=lambda: attachments)
+    users = SimpleNamespace(messages=lambda: messages)
+    return SimpleNamespace(users=lambda: users)
+
+
+def _raise_assertion(message: str):
+    raise AssertionError(message)
 
 
 if __name__ == "__main__":

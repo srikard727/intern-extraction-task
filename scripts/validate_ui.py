@@ -34,6 +34,7 @@ def main() -> int:
 
     _check_health(client, errors)
     emails = _email_summaries(client, errors)
+    details = _email_details(client, emails, errors)
     detail_email = _choose_detail_email(emails, args.detail_email)
 
     _check_page(
@@ -48,12 +49,42 @@ def main() -> int:
         ["Review Dashboard", "Email Queue", "human_review_required"],
         errors,
     )
+    _check_filtered_email_ids(
+        client,
+        "/view?status=human_review_required",
+        {
+            str(email.get("email_id"))
+            for email in emails
+            if email.get("status") == "human_review_required"
+        },
+        "status=human_review_required",
+        errors,
+    )
     _check_page(
         client,
         "/view?glass_type=insulated",
         ["Review Dashboard", "Glass Type", "insulated"],
         errors,
     )
+    _check_filtered_email_ids(
+        client,
+        "/view?glass_type=insulated",
+        {
+            email_id
+            for email_id, detail in details.items()
+            if "insulated" in _glass_types(detail)
+        },
+        "glass_type=insulated",
+        errors,
+    )
+    if any(email.get("email_id") == "fixture-023" for email in emails):
+        _check_filtered_email_ids(
+            client,
+            "/view?q=fixture-023",
+            {"fixture-023"},
+            "q=fixture-023",
+            errors,
+        )
     if detail_email:
         _check_page(
             client,
@@ -114,6 +145,26 @@ def _email_summaries(client: TestClient, errors: list[str]) -> list[dict[str, An
     return [email for email in emails if isinstance(email, dict)]
 
 
+def _email_details(
+    client: TestClient,
+    emails: list[dict[str, Any]],
+    errors: list[str],
+) -> dict[str, dict[str, Any]]:
+    details: dict[str, dict[str, Any]] = {}
+    for email in emails:
+        email_id = str(email.get("email_id") or "")
+        if not email_id:
+            continue
+        response = client.get(f"/emails/{email_id}")
+        if response.status_code != 200:
+            errors.append(f"GET /emails/{email_id} returned {response.status_code}")
+            continue
+        data = response.json()
+        if isinstance(data, dict):
+            details[email_id] = data
+    return details
+
+
 def _choose_detail_email(emails: list[dict[str, Any]], preferred: str) -> str | None:
     ids = [str(email.get("email_id") or "") for email in emails]
     if preferred in ids:
@@ -134,6 +185,47 @@ def _check_page(
     for text in expected_text:
         if text not in response.text:
             errors.append(f"GET {path} missing text: {text}")
+
+
+def _check_filtered_email_ids(
+    client: TestClient,
+    path: str,
+    expected_ids: set[str],
+    label: str,
+    errors: list[str],
+) -> None:
+    response = client.get(path)
+    if response.status_code != 200:
+        errors.append(f"GET {path} returned {response.status_code}")
+        return
+    actual_ids = _email_ids_from_view(response.text)
+    if actual_ids != expected_ids:
+        errors.append(
+            f"filter {label} returned {len(actual_ids)} email id(s), expected {len(expected_ids)}"
+        )
+
+
+def _email_ids_from_view(html: str) -> set[str]:
+    marker = 'href="/view/emails/'
+    ids: set[str] = set()
+    start = 0
+    while True:
+        index = html.find(marker, start)
+        if index < 0:
+            break
+        value_start = index + len(marker)
+        value_end = html.find('"', value_start)
+        if value_end < 0:
+            break
+        ids.add(html[value_start:value_end].split("?", 1)[0])
+        start = value_end + 1
+    return ids
+
+
+def _glass_types(record: dict[str, Any]) -> list[str]:
+    extraction = record.get("extraction") if isinstance(record.get("extraction"), dict) else {}
+    glass_types = extraction.get("glass_types") if isinstance(extraction.get("glass_types"), list) else []
+    return [str(glass_type) for glass_type in glass_types]
 
 
 if __name__ == "__main__":
