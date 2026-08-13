@@ -4,6 +4,7 @@ import json
 import sqlite3
 from pathlib import Path
 from typing import Any, Iterable
+from uuid import uuid4
 
 from agent_rfq_extractor.agents.base import AgentResult
 from agent_rfq_extractor.models import EmailRecord, RFQItem
@@ -19,6 +20,7 @@ class ExtractionStore:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(self.db_path, timeout=30)
         self.conn.row_factory = sqlite3.Row
+        self.conn.execute("PRAGMA foreign_keys = ON")
         self.conn.execute("PRAGMA busy_timeout = 30000")
         self.init_schema()
 
@@ -98,6 +100,12 @@ class ExtractionStore:
                 ON agent_runs(email_id);
             CREATE INDEX IF NOT EXISTS idx_agent_runs_agent_name
                 ON agent_runs(agent_name);
+            CREATE INDEX IF NOT EXISTS idx_agent_runs_started_at
+                ON agent_runs(started_at);
+            CREATE INDEX IF NOT EXISTS idx_items_email_id
+                ON items(email_id);
+            CREATE INDEX IF NOT EXISTS idx_items_glass_type
+                ON items(glass_type);
             """
         )
         self._ensure_column("items", "shape", "TEXT")
@@ -213,6 +221,26 @@ class ExtractionStore:
         if row is None or not row["raw_json"]:
             return None
         return json.loads(row["raw_json"])
+
+    def list_item_sources(self, email_id: str) -> list[dict[str, Any]]:
+        rows = self.conn.execute(
+            """
+            SELECT id, mark, glass_type, source, field_sources_json
+            FROM items
+            WHERE email_id = ?
+            ORDER BY id
+            """,
+            (email_id,),
+        ).fetchall()
+        results: list[dict[str, Any]] = []
+        for row in rows:
+            data = _row_dict(row)
+            data["field_sources"] = _loads_json(
+                data.pop("field_sources_json", None),
+                default={},
+            )
+            results.append(data)
+        return results
 
     def list_agent_runs(
         self,
@@ -336,13 +364,12 @@ class ExtractionStore:
             "SELECT raw_json FROM emails ORDER BY received_at DESC, email_id"
         ).fetchall()
         data = [json.loads(row["raw_json"]) for row in rows if row["raw_json"]]
-        out = Path(out_path)
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        _write_json_atomic(Path(out_path), data)
 
     def _insert_item(self, email_id: str, item: RFQItem) -> None:
         dimensions = item.dimensions
         spec_json = _json(item.to_jsonable())
+        raw_json = _json(item.model_dump(mode="json"))
         self.conn.execute(
             """
             INSERT INTO items (
@@ -377,7 +404,7 @@ class ExtractionStore:
                 _json(item.missing_fields),
                 item.notes,
                 spec_json,
-                spec_json,
+                raw_json,
             ),
         )
 
@@ -391,14 +418,25 @@ class ExtractionStore:
 
 
 def write_json(records: Iterable[EmailRecord], out_path: str | Path) -> None:
-    out = Path(out_path)
-    out.parent.mkdir(parents=True, exist_ok=True)
     data = [record.to_jsonable() for record in records]
-    out.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    _write_json_atomic(Path(out_path), data)
 
 
 def _json(value) -> str:
     return json.dumps(value, ensure_ascii=False)
+
+
+def _write_json_atomic(out: Path, data: Any) -> None:
+    out.parent.mkdir(parents=True, exist_ok=True)
+    temporary = out.with_name(f".{out.name}.{uuid4().hex}.tmp")
+    try:
+        temporary.write_text(
+            json.dumps(data, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        temporary.replace(out)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def _count_rows(conn: sqlite3.Connection, table: str) -> int:

@@ -42,6 +42,16 @@ WORD_FRACTIONS = {
     "five-eighths": 0.625,
 }
 
+NUMBER_PATTERN = r"\d+(?:\.\d+|\s*-\s*\d+/\d+|\s+\d+/\d+|/\d+)?"
+FEET_INCHES_PATTERN = (
+    rf"{NUMBER_PATTERN}\s*(?:ft|feet|foot|')"
+    rf"(?:(?:\s*-\s*|\s+){NUMBER_PATTERN}\s*(?:inches|inch|in|\"))?"
+)
+SIMPLE_MEASUREMENT_PATTERN = (
+    rf"{NUMBER_PATTERN}\s*(?:mm|cm|m|ft|feet|foot|inches|inch|in|[\"'])?"
+)
+MEASUREMENT_PATTERN = rf"(?:{FEET_INCHES_PATTERN}|{SIMPLE_MEASUREMENT_PATTERN})"
+
 
 def normalize_measurement(value: object, default_unit: str = "inch") -> float | None:
     """Normalize a linear measurement to decimal inches."""
@@ -57,6 +67,10 @@ def normalize_measurement(value: object, default_unit: str = "inch") -> float | 
         return None
 
     text = _replace_unicode_fractions(text)
+    feet_and_inches = _parse_feet_and_inches(text)
+    if feet_and_inches is not None:
+        return round(feet_and_inches, 4)
+
     unit = _detect_unit(text, default_unit)
     number = _parse_number(text)
     if number is None:
@@ -66,6 +80,8 @@ def normalize_measurement(value: object, default_unit: str = "inch") -> float | 
         number = number / 25.4
     elif unit == "cm":
         number = number / 2.54
+    elif unit == "m":
+        number = number / 0.0254
     elif unit == "ft":
         number = number * 12
     return round(number, 4)
@@ -102,9 +118,10 @@ def split_dimension_pair(value: str) -> tuple[str, str] | None:
     text = _replace_unicode_fractions(value.lower())
     text = re.sub(r"\bby\b", "x", text)
     text = text.replace("*", "x").replace("×", "x")
-    number = r"\d+(?:\s*-\s*\d+/\d+|\s+\d+/\d+|/\d+|\.\d+)?"
-    unit = r"(?:\s*(?:mm|cm|ft|in|inch|inches)|\s*[\"'])?"
-    match = re.search(rf"(?P<width>{number}{unit})\s*x\s*(?P<height>{number}{unit})", text)
+    match = re.search(
+        rf"(?P<width>{MEASUREMENT_PATTERN})\s*x\s*(?P<height>{MEASUREMENT_PATTERN})",
+        text,
+    )
     if match:
         return match.group("width").strip(), match.group("height").strip()
     return None
@@ -126,6 +143,8 @@ def parse_measurements_in_text(value: object) -> list[float]:
             number = number / 25.4
         elif unit == "cm":
             number = number / 2.54
+        elif unit == "m":
+            number = number / 0.0254
         elif unit == "ft":
             number = number * 12
         measurements.append(round(number, 4))
@@ -152,11 +171,30 @@ def _detect_unit(text: str, default_unit: str) -> str:
         return "mm"
     if re.search(r"\d\s*cm\b|\bcm\b|centimeter", text):
         return "cm"
+    if re.search(r"\d\s*m\b|\bm\b|\bmeters?\b|\bmetres?\b", text):
+        return "m"
     if re.search(r"\d\s*ft\b|\bft\b|feet|foot|'", text):
         return "ft"
     if re.search(r"\d\s*in\b|\bin\b|inch|inches|\"", text):
         return "inch"
     return default_unit
+
+
+def _parse_feet_and_inches(text: str) -> float | None:
+    match = re.search(
+        rf"(?P<feet>{NUMBER_PATTERN})\s*(?:ft|feet|foot|')"
+        rf"(?:(?:\s*-\s*|\s+)(?P<inches>{NUMBER_PATTERN})\s*(?:inches|inch|in|\"))?",
+        text,
+    )
+    if not match:
+        return None
+
+    feet = _parse_number(match.group("feet"))
+    inches_text = match.group("inches")
+    inches = _parse_number(inches_text) if inches_text else 0.0
+    if feet is None or inches is None:
+        return None
+    return feet * 12 + inches
 
 
 def _parse_number(text: str) -> float | None:

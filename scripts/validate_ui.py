@@ -35,6 +35,7 @@ def main() -> int:
     _check_health(client, errors)
     emails = _email_summaries(client, errors)
     details = _email_details(client, emails, errors)
+    _check_source_endpoints(client, emails, errors)
     detail_email = _choose_detail_email(emails, args.detail_email)
 
     _check_page(
@@ -170,6 +171,31 @@ def _choose_detail_email(emails: list[dict[str, Any]], preferred: str) -> str | 
     if preferred in ids:
         return preferred
     return ids[0] if ids else None
+
+
+def _check_source_endpoints(
+    client: TestClient,
+    emails: list[dict[str, Any]],
+    errors: list[str],
+) -> None:
+    for email in emails:
+        email_id = str(email.get("email_id") or "")
+        if not email_id:
+            continue
+        response = client.get(f"/emails/{email_id}/sources")
+        if response.status_code != 200:
+            errors.append(f"GET /emails/{email_id}/sources returned {response.status_code}")
+            continue
+        items = response.json().get("items", [])
+        if not isinstance(items, list):
+            errors.append(f"GET /emails/{email_id}/sources did not return an items list")
+            continue
+        expected_count = int(email.get("item_count") or 0)
+        if len(items) != expected_count:
+            errors.append(
+                f"GET /emails/{email_id}/sources returned {len(items)} item(s), "
+                f"expected {expected_count}"
+            )
 
 
 def _check_page(

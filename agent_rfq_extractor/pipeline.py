@@ -2,14 +2,15 @@ from __future__ import annotations
 
 import os
 import re
+from mimetypes import guess_type
 from pathlib import Path
 from typing import Iterable
 
 from dotenv import load_dotenv
 
 from .agents import AgentWorkflow, AgentWorkflowStep, ExtractorAgent, build_default_registry
-from .gmail_client import GmailClient
-from .models import EmailRecord, InboundEmail
+from .gmail_client import GmailClient, extract_attachment_text
+from .models import AttachmentText, EmailRecord, InboundEmail
 from database.factory import create_store, storage_label
 
 
@@ -34,8 +35,8 @@ class RFQPipeline:
         self.extractor_agent = extractor_agent
         self.agent_workflow = AgentWorkflow([AgentWorkflowStep(self.extractor_agent)])
         self.store = create_store(self.db_path, database_url=self.database_url)
-        if replace_existing:
-            self.store.clear()
+        self.replace_existing = replace_existing
+        self._run_prepared = False
 
     @property
     def model(self) -> str:
@@ -76,11 +77,14 @@ class RFQPipeline:
 
     def run_fixture(self, path: str | Path, limit: int | None = None) -> list[EmailRecord]:
         emails = parse_fixture(path)
-        if limit:
+        if limit is not None:
+            if limit < 1:
+                raise ValueError("fixture limit must be at least 1")
             emails = emails[:limit]
         return self.run_emails(emails)
 
     def run_emails(self, emails: Iterable[InboundEmail]) -> list[EmailRecord]:
+        self._prepare_run()
         records: list[EmailRecord] = []
         for index, email in enumerate(emails, start=1):
             print(f"[{index}] extracting {email.email_id}: {email.subject or '(no subject)'}", flush=True)
@@ -90,6 +94,13 @@ class RFQPipeline:
             print(f"    -> {record.status} / {len(record.items)} item(s)", flush=True)
         self.store.export_json(self.json_path)
         return records
+
+    def _prepare_run(self) -> None:
+        if self._run_prepared:
+            return
+        if self.replace_existing:
+            self.store.clear()
+        self._run_prepared = True
 
     def process_email(self, email: InboundEmail) -> EmailRecord:
         result = self.agent_workflow.run(
@@ -101,7 +112,8 @@ class RFQPipeline:
 
 
 def parse_fixture(path: str | Path) -> list[InboundEmail]:
-    text = Path(path).read_text(encoding="utf-8")
+    fixture_path = Path(path)
+    text = fixture_path.read_text(encoding="utf-8")
     parts = re.split(r"Email:\s*(\d+)", text)
     emails: list[InboundEmail] = []
     for i in range(1, len(parts), 2):
@@ -109,6 +121,7 @@ def parse_fixture(path: str | Path) -> list[InboundEmail]:
         body = _strip_fixture_body(parts[i + 1])
         if not body:
             continue
+        body, attachments = _fixture_attachments(body, fixture_path.parent)
         subject = _subject_from_body(body)
         emails.append(
             InboundEmail(
@@ -120,8 +133,8 @@ def parse_fixture(path: str | Path) -> list[InboundEmail]:
                 body_text=body,
                 emailbody_variant="plain",
                 received_at=None,
-                has_attachments=False,
-                attachments=[],
+                has_attachments=bool(attachments),
+                attachments=attachments,
             )
         )
     return emails
@@ -134,6 +147,53 @@ def _strip_fixture_body(value: str) -> str:
             continue
         lines.append(line)
     return "\n".join(lines).strip()
+
+
+def _fixture_attachments(
+    body: str,
+    fixture_directory: Path,
+) -> tuple[str, list[AttachmentText]]:
+    attachments: list[AttachmentText] = []
+    body_lines: list[str] = []
+    fixture_root = fixture_directory.resolve()
+
+    for line in body.splitlines():
+        match = re.fullmatch(r"\s*Fixture-Attachment:\s*(.+?)\s*", line)
+        if not match:
+            body_lines.append(line)
+            continue
+
+        relative_path = Path(match.group(1))
+        if relative_path.is_absolute():
+            raise ValueError("fixture attachment paths must be relative to the fixture file")
+        attachment_path = (fixture_root / relative_path).resolve()
+        if not attachment_path.is_relative_to(fixture_root):
+            raise ValueError("fixture attachment path must stay inside the fixture directory")
+
+        filename = attachment_path.name
+        mime_type = guess_type(filename)[0]
+        if attachment_path.exists():
+            text, error = extract_attachment_text(
+                filename,
+                mime_type,
+                attachment_path.read_bytes(),
+            )
+        else:
+            text = ""
+            error = f"Fixture attachment not found: {relative_path}"
+        attachments.append(
+            AttachmentText(
+                filename=filename,
+                mime_type=mime_type,
+                source=f"attachment:{filename}",
+                text=text,
+                text_extracted=bool(text),
+                text_preview=" ".join(text.split())[:500] or None,
+                error=error,
+            )
+        )
+
+    return "\n".join(body_lines).strip(), attachments
 
 
 def _subject_from_body(body: str) -> str:

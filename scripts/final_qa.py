@@ -23,6 +23,7 @@ def main() -> int:
     args = parser.parse_args()
 
     checks = [
+        ("project configuration", [sys.executable, "scripts/check_project_config.py"]),
         ("unit tests", [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"]),
         (
             "compile check",
@@ -57,6 +58,21 @@ def main() -> int:
     if not args.skip_docker:
         if shutil.which("docker"):
             checks.append(("Docker Compose config", ["docker", "compose", "config", "--quiet"]))
+            checks.append(
+                (
+                    "Docker Gmail override config",
+                    [
+                        "docker",
+                        "compose",
+                        "-f",
+                        "docker-compose.yml",
+                        "-f",
+                        "docker-compose.gmail.yml",
+                        "config",
+                        "--quiet",
+                    ],
+                )
+            )
             if args.docker_build:
                 checks.append(("Docker image build", ["docker", "build", "-t", "glass-rfq-extractor:local-qa", "."]))
         else:

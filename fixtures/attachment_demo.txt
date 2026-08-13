@@ -1,0 +1,12 @@
+Email: 1
+
+Hello,
+
+Please quote the two glass items in the attached schedule. The attachment is the
+source of truth for dimensions, quantities, glass specifications, and
+fabrication.
+
+Fixture-Attachment: attachments/glass_schedule.txt
+
+Thank you,
+Attachment Demo Customer

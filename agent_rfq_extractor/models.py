@@ -15,6 +15,43 @@ GlassType = Literal[
 ]
 Shape = Literal["rectangle", "square", "circle"]
 
+REQUIRED_FIELDS_BY_GLASS_TYPE: dict[str, tuple[str, ...]] = {
+    "monolithic": ("TK", "HT", "dimensions"),
+    "laminated": (
+        "TK1",
+        "TK2",
+        "interlayer_thickness",
+        "interlayer_material",
+        "HT1",
+        "HT2",
+        "dimensions",
+    ),
+    "insulated": (
+        "TK1",
+        "TK2",
+        "spacer_material",
+        "spacer_thickness",
+        "HT1",
+        "HT2",
+        "dimensions",
+    ),
+    "laminated-insulated": (
+        "TK1",
+        "TK2",
+        "TK3",
+        "HT1",
+        "HT2",
+        "HT3",
+        "interlayer_material",
+        "interlayer_thickness",
+        "spacer_material",
+        "spacer_thickness",
+        "laminate_lite",
+        "dimensions",
+    ),
+    "unknown": ("glass_type", "dimensions"),
+}
+
 CONSTRUCTION_TT_VALUES = {
     "glass",
     "glass type",
@@ -78,6 +115,7 @@ class AttachmentInfo(BaseModel):
     filename: str
     mime_type: str | None = None
     source: str
+    message_email_id: str | None = None
     text_extracted: bool = False
     text_preview: str | None = None
     error: str | None = None
@@ -143,6 +181,7 @@ class RFQItem(BaseModel):
     overall_thickness: str | None = None
     coating: str | None = None
     edge_work: str | None = None
+    fabrication_details: str | None = None
     interlayer: str | None = None
     lite_details: list[dict[str, Any]] = Field(default_factory=list)
     source: str = "body"
@@ -297,48 +336,12 @@ def _fabrication(item: RFQItem) -> dict[str, Any]:
     fabrication: dict[str, Any] = {}
     _set_if_present(fabrication, "coatings", item.coating)
     _set_if_present(fabrication, "edge_work", item.edge_work)
+    _set_if_present(fabrication, "details", item.fabrication_details)
     return fabrication
 
 
 def _required_field_order(item: RFQItem) -> tuple[str, ...]:
-    if item.glass_type == "monolithic":
-        return ("TK", "HT", "dimensions")
-    if item.glass_type == "laminated":
-        return (
-            "TK1",
-            "TK2",
-            "interlayer_thickness",
-            "interlayer_material",
-            "HT1",
-            "HT2",
-            "dimensions",
-        )
-    if item.glass_type == "insulated":
-        return (
-            "TK1",
-            "TK2",
-            "spacer_material",
-            "spacer_thickness",
-            "HT1",
-            "HT2",
-            "dimensions",
-        )
-    if item.glass_type == "laminated-insulated":
-        return (
-            "TK1",
-            "TK2",
-            "TK3",
-            "HT1",
-            "HT2",
-            "HT3",
-            "interlayer_material",
-            "interlayer_thickness",
-            "spacer_material",
-            "spacer_thickness",
-            "laminate_lite",
-            "dimensions",
-        )
-    return ("glass_type", "dimensions")
+    return REQUIRED_FIELDS_BY_GLASS_TYPE[item.glass_type]
 
 
 def _found_fields(item: RFQItem) -> list[str]:
@@ -407,9 +410,9 @@ def _output_missing_fields(fields: list[str]) -> list[str]:
 
 def _monolithic_tt(item: RFQItem) -> str | None:
     tt = _safe_tt_value(item.TT)
-    if tt and not _is_clear_value(tt) and not _is_monolithic_color_only_tt(tt):
+    if tt and not _is_monolithic_color_only_tt(tt):
         return tt
-    if _is_glass_type_value(item.color):
+    if _is_clear_value(item.color) or _is_glass_type_value(item.color):
         return item.color
     text = " ".join(part for part in (item.coating, item.mark) if part)
     if "spandrel" in text.lower():

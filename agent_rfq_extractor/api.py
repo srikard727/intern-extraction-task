@@ -95,6 +95,15 @@ def create_app(
             raise HTTPException(status_code=404, detail=f"email not found: {email_id}")
         return record
 
+    @app.get("/emails/{email_id}/sources")
+    def get_email_sources(email_id: str, store=Depends(_store)) -> dict[str, Any]:
+        if store.get_email(email_id) is None:
+            raise HTTPException(status_code=404, detail=f"email not found: {email_id}")
+        return {
+            "email_id": email_id,
+            "items": store.list_item_sources(email_id),
+        }
+
     @app.get("/agent-runs")
     def list_agent_runs(
         limit: int = Query(default=100, ge=1, le=500),
@@ -136,7 +145,10 @@ def create_app(
         if record is None:
             raise HTTPException(status_code=404, detail=f"email not found: {email_id}")
         runs = store.list_agent_runs(limit=20, offset=0, email_id=email_id)
-        return HTMLResponse(_render_email_detail(record, runs, str(request.url.query)))
+        item_sources = store.list_item_sources(email_id)
+        return HTMLResponse(
+            _render_email_detail(record, runs, item_sources, str(request.url.query))
+        )
 
     @app.post("/extract/fixture")
     def extract_fixture(payload: FixtureExtractionRequest) -> dict[str, Any]:
@@ -184,7 +196,9 @@ def create_app(
         fixture_path = _resolve_path(payload.fixture_path, app.state.project_root)
         if not fixture_path.exists():
             raise HTTPException(status_code=404, detail=f"fixture not found: {payload.fixture_path}")
-        task = extract_fixture_task.delay(**payload.model_dump())
+        task_payload = payload.model_dump()
+        task_payload["fixture_path"] = str(fixture_path)
+        task = extract_fixture_task.delay(**task_payload)
         return {"task_id": task.id, "status": "queued", "task": "rfq.extract_fixture"}
 
     @app.post("/tasks/extract/gmail")
@@ -260,10 +274,15 @@ def _extraction_response(records: list[EmailRecord], app: FastAPI) -> dict[str, 
 
 
 def _resolve_path(path: str, project_root: Path) -> Path:
-    resolved = Path(path)
-    if resolved.is_absolute():
-        return resolved
-    return project_root / resolved
+    root = project_root.resolve()
+    candidate = Path(path)
+    resolved = candidate.resolve() if candidate.is_absolute() else (root / candidate).resolve()
+    if not resolved.is_relative_to(root):
+        raise HTTPException(
+            status_code=400,
+            detail="fixture_path must stay inside the configured project root",
+        )
+    return resolved
 
 
 def _render_email_index(
@@ -475,13 +494,23 @@ def _missing_label(missing: list[str]) -> str:
     return escape(", ".join(missing))
 
 
-def _render_email_detail(record: dict[str, Any], runs: list[dict[str, Any]], back_query: str = "") -> str:
+def _render_email_detail(
+    record: dict[str, Any],
+    runs: list[dict[str, Any]],
+    item_sources: list[dict[str, Any]],
+    back_query: str = "",
+) -> str:
     email_id = str(record.get("email_id") or "")
     status = str(record.get("status") or "unknown")
     extraction = record.get("extraction") if isinstance(record.get("extraction"), dict) else {}
     review = record.get("review") if isinstance(record.get("review"), dict) else None
     groups = extraction.get("glass_type_groups") if isinstance(extraction.get("glass_type_groups"), list) else []
-    group_sections = "\n".join(_group_section(group) for group in groups if isinstance(group, dict))
+    sources_by_type = _sources_by_glass_type(item_sources)
+    group_sections = "\n".join(
+        _group_section(group, sources_by_type)
+        for group in groups
+        if isinstance(group, dict)
+    )
     review_panel = _review_panel(review)
     back_href = "/view" + (f"?{escape(back_query)}" if back_query else "")
     attachments = record.get("attachments") if isinstance(record.get("attachments"), list) else []
@@ -499,6 +528,7 @@ def _render_email_detail(record: dict[str, Any], runs: list[dict[str, Any]], bac
           <nav aria-label="Primary">
             <a href="/view">Dashboard</a>
             <a href="/emails/{escape(email_id)}">JSON</a>
+            <a href="/emails/{escape(email_id)}/sources">Sources</a>
           </nav>
         </header>
         <main class="detail">
@@ -565,7 +595,7 @@ def _email_panel(record: dict[str, Any]) -> str:
 def _attachments_panel(attachments: list[Any]) -> str:
     rows = "\n".join(_attachment_row(item) for item in attachments if isinstance(item, dict))
     if not rows:
-        rows = '<tr><td colspan="5" class="empty">No attachments stored for this email.</td></tr>'
+        rows = '<tr><td colspan="6" class="empty">No attachments stored for this email.</td></tr>'
     return f"""
     <section class="surface">
       <div class="section-title">
@@ -580,6 +610,7 @@ def _attachments_panel(attachments: list[Any]) -> str:
             <th>File</th>
             <th>Type</th>
             <th>Source</th>
+            <th>Message</th>
             <th>Text</th>
             <th>Preview / Error</th>
           </tr>
@@ -598,6 +629,7 @@ def _attachment_row(attachment: dict[str, Any]) -> str:
       <td>{escape(str(attachment.get("filename") or ""))}</td>
       <td>{escape(str(attachment.get("mime_type") or ""))}</td>
       <td>{escape(str(attachment.get("source") or ""))}</td>
+      <td>{escape(str(attachment.get("message_email_id") or ""))}</td>
       <td>{escape(text_state)}</td>
       <td>{escape(str(preview))}</td>
     </tr>
@@ -636,12 +668,20 @@ def _review_panel(review: dict[str, Any] | None) -> str:
     """
 
 
-def _group_section(group: dict[str, Any]) -> str:
+def _group_section(
+    group: dict[str, Any],
+    sources_by_type: dict[str, list[dict[str, Any]]],
+) -> str:
     glass_type = str(group.get("glass_type") or "unknown")
     units = group.get("glass_units") if isinstance(group.get("glass_units"), list) else []
-    unit_rows = "\n".join(_unit_row(unit) for unit in units if isinstance(unit, dict))
+    source_rows = sources_by_type.get(glass_type, [])
+    unit_rows = "\n".join(
+        _unit_row(unit, source_rows[index] if index < len(source_rows) else None)
+        for index, unit in enumerate(units)
+        if isinstance(unit, dict)
+    )
     if not unit_rows:
-        unit_rows = '<tr><td colspan="9" class="empty">No units in this group.</td></tr>'
+        unit_rows = '<tr><td colspan="10" class="empty">No units in this group.</td></tr>'
     return f"""
     <section class="surface">
       <div class="section-title">
@@ -659,6 +699,7 @@ def _group_section(group: dict[str, Any]) -> str:
             <th>Mark</th>
             <th>Specs</th>
             <th>Fabrication</th>
+            <th>Sources</th>
             <th>Missing</th>
             <th>Complete</th>
             <th>Notes</th>
@@ -672,8 +713,9 @@ def _group_section(group: dict[str, Any]) -> str:
     """
 
 
-def _unit_row(unit: dict[str, Any]) -> str:
+def _unit_row(unit: dict[str, Any], item_source: dict[str, Any] | None) -> str:
     size = _size_label(unit)
+    field_sources = item_source.get("field_sources") if isinstance(item_source, dict) else None
     return f"""
     <tr>
       <td>{escape(str(unit.get("quantity") or ""))}</td>
@@ -682,11 +724,22 @@ def _unit_row(unit: dict[str, Any]) -> str:
       <td>{escape(str(unit.get("mark") or ""))}</td>
       <td>{_dict_list(unit.get("glass_specs"))}</td>
       <td>{_dict_list(unit.get("fabrication"))}</td>
+      <td>{_dict_list(field_sources)}</td>
       <td>{escape(", ".join(unit.get("missing_fields") or []) or "None")}</td>
       <td>{escape("yes" if unit.get("is_complete") else "no")}</td>
       <td>{escape(str(unit.get("notes") or ""))}</td>
     </tr>
     """
+
+
+def _sources_by_glass_type(
+    item_sources: list[dict[str, Any]],
+) -> dict[str, list[dict[str, Any]]]:
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for item in item_sources:
+        glass_type = str(item.get("glass_type") or "unknown")
+        grouped.setdefault(glass_type, []).append(item)
+    return grouped
 
 
 def _size_label(unit: dict[str, Any]) -> str:

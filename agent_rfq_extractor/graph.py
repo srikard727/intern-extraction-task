@@ -71,7 +71,7 @@ class RFQExtractionGraph:
 
     def _prepare_node(self, state: ExtractionState) -> ExtractionState:
         email = state["email"]
-        return {"attachment_infos": [_attachment_info(attachment) for attachment in email.attachments]}
+        return {"attachment_infos": _attachment_infos(email)}
 
     def _extract_node(self, state: ExtractionState) -> ExtractionState:
         try:
@@ -176,8 +176,28 @@ def _email_base(email: InboundEmail, attachments: list[AttachmentInfo]) -> dict[
     }
 
 
-def _attachment_info(attachment) -> AttachmentInfo:
+def _attachment_infos(email: InboundEmail) -> list[AttachmentInfo]:
+    attachments: list[AttachmentInfo] = []
+    seen: set[tuple[str, str, str]] = set()
+
+    def add(message_email_id: str, attachment) -> None:
+        key = (message_email_id, attachment.source, attachment.filename)
+        if key in seen:
+            return
+        seen.add(key)
+        attachments.append(_attachment_info(attachment, message_email_id))
+
+    for attachment in email.attachments:
+        add(email.email_id, attachment)
+    for message in email.conversation_messages:
+        for attachment in message.attachments:
+            add(message.email_id, attachment)
+    return attachments
+
+
+def _attachment_info(attachment, message_email_id: str) -> AttachmentInfo:
     data = attachment.model_dump(exclude={"text"})
+    data["message_email_id"] = message_email_id
     return AttachmentInfo(**data)
 
 

@@ -4,7 +4,14 @@ import re
 from collections.abc import Mapping
 from typing import Any
 
-from .models import Conflict, Dimensions, RFQItem, ReviewInfo, Shape
+from .models import (
+    REQUIRED_FIELDS_BY_GLASS_TYPE,
+    Conflict,
+    Dimensions,
+    RFQItem,
+    ReviewInfo,
+    Shape,
+)
 from .units import (
     normalize_measurement,
     normalize_quantity,
@@ -105,6 +112,18 @@ MONOLITHIC_COLOR_ONLY_TT_VALUES = {
     "white",
 }
 
+GENERIC_TT_VALUES = {"color", "colored", "coloured", "tint", "tinted"}
+
+FABRICATION_DETAIL_PATTERN = re.compile(
+    r"\b(?:holes?|notches?|cut[ -]?outs?|drill(?:ed|ing)?|radii|radius|radiused|backing)\b",
+    re.IGNORECASE,
+)
+UNRESOLVED_FABRICATION_PATTERN = re.compile(
+    r"(?:~\s*\d|\b(?:about|approximate|approximately|pending|to follow|"
+    r"not finalized|not final|tbd|to be confirmed)\b)",
+    re.IGNORECASE,
+)
+
 
 def normalize_items(raw_items: list[dict[str, Any]]) -> list[RFQItem]:
     items: list[RFQItem] = []
@@ -114,6 +133,9 @@ def normalize_items(raw_items: list[dict[str, Any]]) -> list[RFQItem]:
         raw = _flatten_formatted_item(raw)
 
         quantity, quantity_note = _normalize_quantity_with_default(raw.get("quantity"))
+        if _quantity_is_ambiguous(raw):
+            quantity = 1
+            quantity_note = "Quantity was ambiguous; defaulted to 1 piece pending confirmation."
         item = RFQItem(
             mark=_clean(raw.get("mark")),
             dimensions=_normalize_dimensions(raw.get("dimensions")),
@@ -151,9 +173,10 @@ def normalize_items(raw_items: list[dict[str, Any]]) -> list[RFQItem]:
             overall_thickness=_clean(raw.get("overall_thickness")),
             coating=_clean(raw.get("coating")),
             edge_work=_clean(raw.get("edge_work")),
+            fabrication_details=_fabrication_details(raw),
             interlayer=_clean(raw.get("interlayer")),
             lite_details=_normalize_lite_details(raw.get("lite_details")),
-            source=_clean(raw.get("source")) or "body",
+            source=_normalize_source(raw.get("source")) or "body",
             field_sources=_normalize_field_sources(raw.get("field_sources"), raw.get("source")),
             notes=_clean(raw.get("notes")),
         )
@@ -171,6 +194,7 @@ def normalize_items(raw_items: list[dict[str, Any]]) -> list[RFQItem]:
         _cleanup_tt_values(item)
         _apply_glass_type_scope(item)
         _cleanup_field_sources(item)
+        _backfill_field_sources(item)
         item.missing_fields = missing_fields_for_item(item)
         items.append(item)
     return items
@@ -190,6 +214,10 @@ def _flatten_formatted_item(raw: Mapping[str, Any]) -> dict[str, Any]:
             item.setdefault("coating", fabrication.get("coatings"))
         if "edge_work" in fabrication:
             item.setdefault("edge_work", fabrication.get("edge_work"))
+        if "details" in fabrication:
+            item.setdefault("fabrication_details", fabrication.get("details"))
+    elif fabrication not in (None, ""):
+        item.setdefault("fabrication_details", fabrication)
 
     if "dimensions" not in item and ("width" in raw or "height" in raw):
         item["dimensions"] = {
@@ -201,62 +229,54 @@ def _flatten_formatted_item(raw: Mapping[str, Any]) -> dict[str, Any]:
     return item
 
 
+def _fabrication_details(raw: Mapping[str, Any]) -> str | None:
+    explicit = _clean(raw.get("fabrication_details"))
+    if explicit:
+        return explicit
+    fabrication = raw.get("fabrication")
+    if isinstance(fabrication, Mapping):
+        explicit = _clean(fabrication.get("details"))
+        if explicit:
+            return explicit
+    else:
+        explicit = _clean(fabrication)
+        if explicit:
+            return explicit
+    return _infer_fabrication_details(_clean(raw.get("notes")))
+
+
+def _infer_fabrication_details(notes: str | None) -> str | None:
+    if not notes:
+        return None
+    sentences = re.split(r"(?<=[.!?])\s+", notes)
+    matches = [
+        sentence.strip()
+        for sentence in sentences
+        if FABRICATION_DETAIL_PATTERN.search(sentence)
+    ]
+    return " ".join(_dedupe(matches)) or None
+
+
+def _fabrication_requires_review(item: RFQItem) -> bool:
+    details = item.fabrication_details
+    return bool(details and UNRESOLVED_FABRICATION_PATTERN.search(details))
+
+
 def missing_fields_for_item(item: RFQItem) -> list[str]:
     missing: list[str] = []
-    if item.dimensions is None:
+    required_fields = REQUIRED_FIELDS_BY_GLASS_TYPE[item.glass_type]
+    if "dimensions" in required_fields and item.dimensions is None:
         missing.append("dimensions")
-    if item.glass_type == "unknown":
-        missing.append("glass_type")
-
-    if item.glass_type == "monolithic":
-        if not item.TK:
-            missing.append("TK")
-        if not item.HT and not _is_mirror(item):
-            missing.append("HT")
-    elif item.glass_type == "laminated":
-        missing.extend(
-            field
-            for field in (
-                "TK1",
-                "TK2",
-                "interlayer_thickness",
-                "interlayer_material",
-                "HT1",
-                "HT2",
-            )
-            if not getattr(item, field)
-        )
-    elif item.glass_type == "insulated":
-        missing.extend(
-            field
-            for field in (
-                "TK1",
-                "TK2",
-                "spacer_material",
-                "spacer_thickness",
-                "HT1",
-                "HT2",
-            )
-            if not getattr(item, field)
-        )
-    elif item.glass_type == "laminated-insulated":
-        missing.extend(
-            field
-            for field in (
-                "TK1",
-                "TK2",
-                "TK3",
-                "HT1",
-                "HT2",
-                "HT3",
-                "interlayer_material",
-                "interlayer_thickness",
-                "spacer_material",
-                "spacer_thickness",
-                "laminate_lite",
-            )
-            if not getattr(item, field)
-        )
+    for field in required_fields:
+        if field == "dimensions":
+            continue
+        if field == "glass_type":
+            if item.glass_type == "unknown":
+                missing.append(field)
+        elif field == "HT" and item.glass_type == "monolithic" and _is_mirror(item):
+            continue
+        elif not getattr(item, field):
+            missing.append(field)
 
     return _dedupe(missing)
 
@@ -282,6 +302,8 @@ def build_review(items: list[RFQItem], raw_review: dict[str, Any] | None = None)
         reasons.append("No glass items were extracted from the message.")
     if conflicts:
         reasons.append("One or more body/attachment conflicts require review.")
+    if any(_fabrication_requires_review(item) for item in items):
+        reasons.append("Fabrication details are approximate or pending confirmation.")
 
     if not reasons and not missing and not conflicts:
         return None
@@ -295,6 +317,33 @@ def _normalize_quantity_with_default(raw: object) -> tuple[int, str | None]:
     if raw in (None, ""):
         return 1, "Quantity was not specified; defaulted to 1 piece."
     return 1, f"Quantity was ambiguous ({raw}); defaulted to minimum 1 piece."
+
+
+def _quantity_is_ambiguous(raw: Mapping[str, Any]) -> bool:
+    quantity = raw.get("quantity")
+    if isinstance(quantity, str) and normalize_quantity(quantity) is None:
+        return quantity.strip() not in ("", "1")
+
+    notes = " ".join(
+        str(value)
+        for value in (raw.get("notes"), raw.get("quantity_notes"))
+        if value not in (None, "")
+    ).lower()
+    if not notes:
+        return False
+    quantity_context = re.search(
+        r"\b(?:qty|quantity|quantities)\b.{0,100}",
+        notes,
+    )
+    if not quantity_context:
+        return False
+    return bool(
+        re.search(
+            r"(?:~\s*\d|\b(?:approximate|approximately|around|roughly|range|"
+            r"unconfirmed|to be confirmed|could (?:increase|change|go up)|give or take)\b)",
+            quantity_context.group(0),
+        )
+    )
 
 
 def _normalize_dimensions(raw: object) -> Dimensions | None:
@@ -728,6 +777,7 @@ def _clear_defaulted_spec_fields(item: RFQItem) -> None:
         "interlayer_thickness",
         "laminate_lite",
         "overall_thickness",
+        "fabrication_details",
     )
     for field in spec_fields:
         if field in allowed_default_fields:
@@ -756,11 +806,22 @@ def _cleanup_tt_values(item: RFQItem) -> None:
 def _apply_multi_lite_color(item: RFQItem, raw: Mapping[str, Any]) -> None:
     if item.glass_type not in {"laminated", "insulated", "laminated-insulated"}:
         return
-    color = _clean(item.color)
+    color = _clean(item.color) or _infer_tt_from_text(item.notes)
     if not color or _is_invalid_tt_value(color):
         return
 
     source = item.field_sources.get("color") or item.source or "body"
+    generic_fields = [
+        field
+        for field in _lite_tt_fields(item)
+        if _normalized_label(getattr(item, field)) in GENERIC_TT_VALUES
+    ]
+    if generic_fields:
+        for field in generic_fields:
+            setattr(item, field, color)
+            item.field_sources[field] = source
+        return
+
     text = " ".join(
         part
         for part in (
@@ -900,6 +961,9 @@ def _cleanup_field_sources(item: RFQItem) -> None:
         return
     cleaned: dict[str, str] = {}
     for field, source in item.field_sources.items():
+        source = _normalize_source(source, allow_default=True)
+        if not source:
+            continue
         if field == "item":
             cleaned[field] = source
             continue
@@ -922,6 +986,73 @@ def _cleanup_field_sources(item: RFQItem) -> None:
         if value not in (None, "", []):
             cleaned[field] = source
     item.field_sources = cleaned
+
+
+def _backfill_field_sources(item: RFQItem) -> None:
+    explicit_sources = {
+        source
+        for source in item.field_sources.values()
+        if _normalize_source(source) is not None
+    }
+    item_source = _normalize_source(item.source)
+    if len(explicit_sources) == 1 and item_source == "body":
+        only_source = next(iter(explicit_sources))
+        fallback = only_source if only_source.startswith("attachment:") else item_source
+    else:
+        fallback = item_source or (next(iter(explicit_sources)) if len(explicit_sources) == 1 else "body")
+
+    source_fields = (
+        "mark",
+        "quantity",
+        "shape",
+        "glass_type",
+        "TK",
+        "HT",
+        "TT",
+        "color",
+        "TK1",
+        "HT1",
+        "TT1",
+        "TK2",
+        "HT2",
+        "TT2",
+        "TK3",
+        "HT3",
+        "TT3",
+        "spacer_material",
+        "spacer_thickness",
+        "gas_fill",
+        "interlayer_material",
+        "interlayer_thickness",
+        "laminate_lite",
+        "overall_thickness",
+        "coating",
+        "edge_work",
+        "fabrication_details",
+    )
+    if item.dimensions is not None:
+        item.field_sources.setdefault("dimensions", fallback)
+    for field in source_fields:
+        if getattr(item, field, None) not in (None, "", []):
+            item.field_sources.setdefault(field, fallback)
+
+    if item.glass_type == "monolithic" and _monolithic_has_output_tt(item):
+        item.field_sources.setdefault(
+            "TT",
+            item.field_sources.get("color")
+            or item.field_sources.get("coating")
+            or item.field_sources.get("mark")
+            or fallback,
+        )
+
+
+def _monolithic_has_output_tt(item: RFQItem) -> bool:
+    if item.TT and not _is_invalid_tt_value(item.TT) and not _is_monolithic_color_only_tt(item.TT):
+        return True
+    if _normalized_label(item.color) in {"clear", "clear glass", "low iron", "low-iron"}:
+        return True
+    text = " ".join(part for part in (item.coating, item.mark) if part).lower()
+    return "spandrel" in text
 
 
 def _normalize_spacer_thickness(raw: object) -> str | None:
@@ -1062,9 +1193,23 @@ def _normalize_lite_details(raw: object) -> list[dict[str, Any]]:
 
 def _normalize_field_sources(raw: object, item_source: object) -> dict[str, str]:
     if isinstance(raw, Mapping):
-        return {str(k): str(v) for k, v in raw.items() if v is not None}
-    source = _clean(item_source) or "body"
+        sources: dict[str, str] = {}
+        for key, value in raw.items():
+            source = _normalize_source(value, allow_default=True)
+            if source:
+                sources[str(key)] = source
+        return sources
+    source = _normalize_source(item_source) or "body"
     return {"item": source}
+
+
+def _normalize_source(raw: object, *, allow_default: bool = False) -> str | None:
+    source = _clean(raw)
+    if source == "body" or (source and source.startswith("attachment:")):
+        return source
+    if allow_default and source == "default":
+        return source
+    return None
 
 
 def _normalize_conflicts(raw: object) -> list[Conflict]:
@@ -1237,6 +1382,7 @@ def _raw_text(raw: Mapping[str, Any]) -> str:
         "overall_thickness",
         "gas",
         "gas_fill",
+        "fabrication_details",
     ):
         value = raw.get(key)
         if value is not None:

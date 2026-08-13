@@ -16,7 +16,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Extract structured glass RFQs from Gmail.")
     parser.add_argument("--source", choices=["gmail", "fixture"], default="gmail")
     parser.add_argument("--fixture", default="Emails.txt", help="Fixture file for --source fixture.")
-    parser.add_argument("--limit", type=int, default=int(os.getenv("RFQ_LIMIT", "30")))
+    parser.add_argument("--limit", type=_positive_int, default=int(os.getenv("RFQ_LIMIT", "30")))
     parser.add_argument(
         "--query",
         default=os.getenv(
@@ -46,7 +46,11 @@ def main() -> int:
         default=os.getenv("DATABASE_URL"),
         help="Optional PostgreSQL or sqlite:/// database URL.",
     )
-    parser.add_argument("--json", default="outputs/rfq_extractions.json", help="JSON export path.")
+    parser.add_argument(
+        "--json",
+        default=os.getenv("RFQ_JSON_PATH", "outputs/rfq_extractions.json"),
+        help="JSON export path.",
+    )
     parser.add_argument(
         "--replace-existing",
         action="store_true",
@@ -128,6 +132,13 @@ def _parse_message_ids(repeated_ids: list[str], csv_ids: str) -> list[str]:
             if message_id and message_id not in ids:
                 ids.append(message_id)
     return ids
+
+
+def _positive_int(value: str) -> int:
+    parsed = int(value)
+    if parsed < 1:
+        raise argparse.ArgumentTypeError("must be at least 1")
+    return parsed
 
 
 if __name__ == "__main__":

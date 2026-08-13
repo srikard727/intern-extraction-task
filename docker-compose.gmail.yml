@@ -1,0 +1,36 @@
+services:
+  api:
+    environment:
+      GMAIL_CREDENTIALS: /run/secrets/gmail_credentials.json
+      GMAIL_TOKEN: /run/secrets/gmail_token.json
+    volumes:
+      - type: bind
+        source: ${GMAIL_CREDENTIALS_PATH:-./credentials.json}
+        target: /run/secrets/gmail_credentials.json
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${GMAIL_TOKEN_PATH:-./token_reader.json}
+        target: /run/secrets/gmail_token.json
+        read_only: true
+        bind:
+          create_host_path: false
+
+  worker:
+    environment:
+      GMAIL_CREDENTIALS: /run/secrets/gmail_credentials.json
+      GMAIL_TOKEN: /run/secrets/gmail_token.json
+    volumes:
+      - type: bind
+        source: ${GMAIL_CREDENTIALS_PATH:-./credentials.json}
+        target: /run/secrets/gmail_credentials.json
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${GMAIL_TOKEN_PATH:-./token_reader.json}
+        target: /run/secrets/gmail_token.json
+        read_only: true
+        bind:
+          create_host_path: false

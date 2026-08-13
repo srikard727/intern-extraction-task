@@ -77,6 +77,10 @@ formatted like:
 SQLite keeps common searchable columns and stores the type-specific item payload
 in `items.spec_json`.
 
+Field-level provenance remains internal to SQLite and is available through
+`GET /emails/{email_id}/sources` and the browser detail view. It is intentionally
+not duplicated into exported quote JSON.
+
 `field_confidence` is populated by deterministic downstream scoring for fields
 that are actually present in `glass_specs`. Claude is not asked to invent
 confidence scores.
@@ -169,6 +173,7 @@ Useful endpoints:
 - `GET /view/emails/{email_id}`: browser detail view for one extraction
 - `GET /emails`: stored extraction email summaries
 - `GET /emails/{email_id}`: full stored extraction JSON for one email
+- `GET /emails/{email_id}/sources`: internal per-field provenance for one email
 - `GET /agent-runs`: agent execution logs
 - `GET /agent-runs/{run_id}`: one agent execution log
 - `POST /extract/fixture`: run fixture extraction through the agent workflow
@@ -183,6 +188,37 @@ Docker Compose starts PostgreSQL, Redis, the API, and a Celery worker:
 
 ```bash
 docker compose up --build
+```
+
+The API and worker run as an unprivileged `app` user and share the
+`rfq_outputs` named volume. PostgreSQL and RFQ outputs therefore survive
+container replacement. The default Compose file does not mount Gmail secrets.
+
+For Gmail extraction in Docker, mount the OAuth files read-only with the
+credential override:
+
+```bash
+GMAIL_CREDENTIALS_PATH="$PWD/credentials.json" \
+GMAIL_TOKEN_PATH="$PWD/token_reader.json" \
+docker compose -f docker-compose.yml -f docker-compose.gmail.yml up --build
+```
+
+An expired token can refresh in memory, but the read-only mount intentionally
+prevents the container from modifying the host token. Refresh or replace the
+host token outside Docker when persistence is needed.
+
+Seed the running PostgreSQL demo from the accepted SQLite results without an
+LLM call:
+
+```bash
+.venv/bin/python scripts/import_sqlite_results.py \
+  --source-db outputs/rfq_extractions.db \
+  --database-url postgresql://rfq:rfq@127.0.0.1:5432/rfq_extractions \
+  --json /tmp/rfq_postgres_export.json \
+  --replace
+docker compose cp \
+  /tmp/rfq_postgres_export.json \
+  api:/app/outputs/rfq_extractions.json
 ```
 
 See `docs/platform.md` for PostgreSQL, Redis, Celery, and Docker details.
@@ -235,10 +271,16 @@ The local test suite includes classification, extraction, API, attachment, and
 Celery task coverage. The UI validation script checks rendering and filter
 behavior for status, glass type, and search queries.
 
-Latest local Docker validation completed on August 6, 2026: image build passed,
-Compose started PostgreSQL/Redis/API/worker, `/health` and `/view` responded,
-one synchronous fixture extraction completed, and one queued Celery fixture
-extraction completed with rows persisted to PostgreSQL.
+The fixture acceptance audit compares all 28 provided emails and all 40 expected
+items against `tests/fixtures/expected_fixture_extractions.json`; it is not only
+a row-count check.
+
+Docker acceptance was revalidated on August 12, 2026: all four services started,
+the API became healthy, Redis and Celery responded, PostgreSQL retained its
+records, the API and worker ran as non-root, and both processes shared the
+output volume. The accepted 28-email/40-item/28-run dataset and matching JSON
+export were loaded into the live platform. Synchronous and queued extraction
+paths were previously validated with rows persisted to PostgreSQL.
 
 Start the API and open the browser view:
 
@@ -251,6 +293,10 @@ Then visit:
 ```text
 http://127.0.0.1:8000/view
 ```
+
+For a repeatable text-attachment input, use `fixtures/attachment_demo.txt`.
+Its referenced schedule is loaded from `fixtures/attachments/` and passed to
+the extractor with `attachment:<filename>` provenance.
 
 ## Run Against Gmail
 
@@ -355,6 +401,10 @@ The current build supports text extraction from:
 - DOCX files
 
 Image-only attachments are intentionally out of scope for now.
+
+See `docs/product_acceptance.md` for the product decision and
+`docs/requirement_traceability.md` for the complete A1-K4 task-to-evidence
+matrix, remaining delivery confirmations, and optional stretch scope.
 
 ## Outputs
 

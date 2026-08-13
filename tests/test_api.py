@@ -63,6 +63,15 @@ class ApiTests(unittest.TestCase):
         detail = detail_response.json()
         self.assertEqual(detail["email_id"], "email-001")
         self.assertIn("extraction", detail)
+        self.assertNotIn("field_sources", detail["extraction"]["glass_type_groups"][0]["glass_units"][0])
+
+    def test_item_sources_are_available_separately_from_exported_json(self):
+        response = self.client.get("/emails/email-001/sources")
+
+        self.assertEqual(response.status_code, 200)
+        sources = response.json()["items"][0]["field_sources"]
+        self.assertEqual(sources["TK"], "attachment:quote.pdf")
+        self.assertEqual(sources["dimensions"], "attachment:quote.pdf")
 
     def test_list_and_get_agent_runs(self):
         list_response = self.client.get("/agent-runs")
@@ -96,6 +105,8 @@ class ApiTests(unittest.TestCase):
         self.assertIn("Human Review", detail_response.text)
         self.assertIn("Not required.", detail_response.text)
         self.assertIn("Agent Runs", detail_response.text)
+        self.assertIn("Sources", detail_response.text)
+        self.assertIn("attachment:quote.pdf", detail_response.text)
         self.assertIn("1/4&quot;", detail_response.text)
 
     def test_output_view_filters_render(self):
@@ -125,6 +136,14 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["task_id"], "task-001")
         delay.assert_called_once()
+
+    def test_fixture_path_cannot_escape_project_root(self):
+        response = self.client.post(
+            "/tasks/extract/fixture",
+            json={"fixture_path": "../outside.txt", "limit": 1},
+        )
+
+        self.assertEqual(response.status_code, 400)
 
     def test_task_status_endpoint_returns_celery_state(self):
         with patch("agent_rfq_extractor.api.celery_app.AsyncResult") as async_result:
@@ -202,6 +221,16 @@ def _record() -> EmailRecord:
                 glass_type="monolithic",
                 TK='1/4"',
                 HT="tempered",
+                source="attachment:quote.pdf",
+                field_sources={
+                    "mark": "attachment:quote.pdf",
+                    "dimensions": "attachment:quote.pdf",
+                    "quantity": "attachment:quote.pdf",
+                    "shape": "attachment:quote.pdf",
+                    "glass_type": "attachment:quote.pdf",
+                    "TK": "attachment:quote.pdf",
+                    "HT": "attachment:quote.pdf",
+                },
             )
         ],
         review=None,

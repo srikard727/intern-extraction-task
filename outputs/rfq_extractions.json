@@ -10,8 +10,12 @@
     "received_at": null,
     "has_attachments": false,
     "extracted_at": "2026-07-17T04:30:52.355649+00:00",
-    "status": "completed",
-    "review": null,
+    "status": "human_review_required",
+    "review": {
+      "reason": "Fabrication details are approximate or pending confirmation.",
+      "missing_fields": [],
+      "conflicts": []
+    },
     "attachments": [],
     "llm_model": "claude-opus-4-8",
     "extraction": {
@@ -36,10 +40,12 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "3/8\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
-                "edge_work": "flat polished all around"
+                "edge_work": "flat polished all around",
+                "details": "Two 1\" pull holes ~4\" down from each top corner; holes do not change rectangle shape. Hole detail to follow once hardware finalized."
               },
               "found_fields": [
                 "TK",
@@ -50,9 +56,10 @@
               "is_complete": true,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
-              "notes": "Quantity not explicitly stated ('a few door lites'); defaulted to 1. Two 1\" pull holes ~4\" down from each top corner; holes do not change rectangle shape. Hole detail to follow once hardware finalized. Budgetary pricing and lead time requested."
+              "notes": "Quantity not explicitly stated ('a few door lites'); defaulted to 1. Two 1\" pull holes ~4\" down from each top corner; holes do not change rectangle shape. Hole detail to follow once hardware finalized. Budgetary pricing and lead time requested. Quantity was ambiguous; defaulted to 1 piece pending confirmation."
             }
           ]
         }
@@ -70,8 +77,12 @@
     "received_at": null,
     "has_attachments": false,
     "extracted_at": "2026-07-17T04:30:56.894311+00:00",
-    "status": "completed",
-    "review": null,
+    "status": "human_review_required",
+    "review": {
+      "reason": "Fabrication details are approximate or pending confirmation.",
+      "missing_fields": [],
+      "conflicts": []
+    },
     "attachments": [],
     "llm_model": "claude-opus-4-8",
     "extraction": {
@@ -100,7 +111,8 @@
                 "TT": "low-iron"
               },
               "fabrication": {
-                "edge_work": "polished edges"
+                "edge_work": "polished edges",
+                "details": "Top two corners radiused at ~1\" radius."
               },
               "found_fields": [
                 "TK",
@@ -162,7 +174,8 @@
                 "TT": "mirror"
               },
               "fabrication": {
-                "edge_work": "seamed edges"
+                "edge_work": "seamed edges",
+                "details": "Safety backing (vinyl) requested on back for gym wall install."
               },
               "found_fields": [
                 "TK",
@@ -388,7 +401,8 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "1/2\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
                 "edge_work": "pencil polished edge all around"
@@ -402,7 +416,8 @@
               "is_complete": true,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
               "notes": "Round table top. Quantity defaulted to 1 (not stated). Customer asks about round upcharge vs standard rectangle."
             }
@@ -465,10 +480,10 @@
               "mark": null,
               "glass_specs": {
                 "TK1": null,
-                "TT1": "tinted",
+                "TT1": "grey",
                 "HT1": null,
                 "TK2": null,
-                "TT2": "tinted",
+                "TT2": "grey",
                 "HT2": null,
                 "interlayer_material": null,
                 "interlayer_thickness": null
@@ -492,7 +507,7 @@
                 "TT1": 0.95,
                 "TT2": 0.95
               },
-              "notes": "Grey tinted laminated glass. Color grey applies to laminated plies. Quantity stated as a range (6-8) to be confirmed; defaulted to 1 pending exact count. Per-lite thickness and heat treatment not specified."
+              "notes": "Grey tinted laminated glass. Color grey applies to laminated plies. Quantity stated as a range (6-8) to be confirmed; defaulted to 1 pending exact count. Per-lite thickness and heat treatment not specified. Quantity was ambiguous; defaulted to 1 piece pending confirmation."
             }
           ]
         }
@@ -1056,7 +1071,8 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "1/2\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
                 "edge_work": "flat polished"
@@ -1070,7 +1086,8 @@
               "is_complete": true,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
               "notes": "Quantity defaulted to 1; not explicitly stated. Customer asks whether size is temperable or must be split, needs manufacturer review."
             }
@@ -1126,10 +1143,12 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": null,
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
-                "edge_work": "flat polished"
+                "edge_work": "flat polished",
+                "details": "Door lite with two door rail cutouts (top and bottom); cutouts do not change rectangle shape."
               },
               "found_fields": [
                 "HT"
@@ -1140,7 +1159,8 @@
               ],
               "is_complete": false,
               "field_confidence": {
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
               "notes": "Door lite with two door rail cutouts (top and bottom); cutouts do not change rectangle shape. Exact size to be provided later - dimensions null. Sender assumed standard 1/2\" thickness but asked for confirmation; 'standard' is not a valid explicit measurement, so TK left null. Quantity defaulted to 1."
             }
@@ -1186,7 +1206,8 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "1/2\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {},
               "found_fields": [
@@ -1198,7 +1219,8 @@
               "is_complete": true,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
               "notes": "Quantity defaulted to 1 (not stated)."
             }
@@ -1252,7 +1274,8 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "1/2\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
                 "edge_work": "flat polished"
@@ -1267,7 +1290,8 @@
               "is_complete": false,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
               "notes": "Budget/ballpark request. Only area given (~120 sq. ft.); individual sizes vary and are not specified, so dimensions set to null. Quantity defaulted to 1."
             }
@@ -1344,7 +1368,8 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "1/2\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
                 "edge_work": "flat polished"
@@ -1359,7 +1384,8 @@
               "is_complete": false,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
               "notes": "Only area given (180 sq. ft.); no dimensions provided so dimensions=null. Quantity defaulted to 1."
             }
@@ -1560,7 +1586,8 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "1/2\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
                 "edge_work": "flat polished"
@@ -1574,7 +1601,8 @@
               "is_complete": true,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               }
             }
           ]
@@ -2001,7 +2029,8 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "1/4\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
                 "edge_work": "polished"
@@ -2015,7 +2044,8 @@
               "is_complete": true,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
               "notes": "Polished edges throughout."
             },
@@ -2029,7 +2059,8 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "1/4\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
                 "edge_work": "polished"
@@ -2043,7 +2074,8 @@
               "is_complete": true,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
               "notes": "Polished edges throughout."
             },
@@ -2117,7 +2149,8 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "3/8\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
                 "edge_work": "polished edges"
@@ -2131,7 +2164,8 @@
               "is_complete": true,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
               "notes": "Thickness corrected from 1/4\" (quarter inch) to 3/8\" (three-eighths) per architect update later in the email."
             }
@@ -2153,7 +2187,7 @@
     "extracted_at": "2026-07-17T04:33:30.983555+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Thread only references a prior job (Hudson Street) for a reorder with no dimensions, glass type, or specs provided. Human review needed to pull prior-job details on file. No glass items were extracted from the message.",
+      "reason": "Thread only references a prior job (Hudson Street) for a reorder with no dimensions, glass type, or specs provided. Human review needed to pull prior-job details on file. No glass items were extracted from the message. No glass items were extracted from the message. No glass items were extracted from the message.",
       "missing_fields": [],
       "conflicts": []
     },
@@ -2204,7 +2238,8 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "10mm",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
                 "edge_work": "polished"
@@ -2218,7 +2253,8 @@
               "is_complete": true,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
               "notes": "Dimensions in metric per European supplier drawing."
             },
@@ -2232,7 +2268,8 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "1/2\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
                 "edge_work": "polished"
@@ -2246,7 +2283,8 @@
               "is_complete": true,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
               "notes": "Half inch thickness; same clear tempered polished as first item."
             }
@@ -2289,14 +2327,15 @@
             {
               "width": 40.0,
               "height": 90.0,
-              "quantity": 15,
+              "quantity": 1,
               "unit_of_measurement": "inch",
               "shape": "rectangle",
               "mark": null,
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "1/2\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
                 "edge_work": "polished edges"
@@ -2310,9 +2349,10 @@
               "is_complete": true,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
-              "notes": "Budgetary/ballpark quote; quantities (~15) and dimensions (~40\" x 90\") are approximate per requester."
+              "notes": "Budgetary/ballpark quote; quantities (~15) and dimensions (~40\" x 90\") are approximate per requester. Quantity was ambiguous; defaulted to 1 piece pending confirmation."
             }
           ]
         }
@@ -2356,7 +2396,8 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "3/8\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
                 "edge_work": "polished edges all around"
@@ -2370,7 +2411,8 @@
               "is_complete": true,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
               "notes": "Fixed shower panel."
             },
@@ -2384,10 +2426,12 @@
               "glass_type": "monolithic",
               "glass_specs": {
                 "TK": "3/8\"",
-                "HT": "tempered"
+                "HT": "tempered",
+                "TT": "clear"
               },
               "fabrication": {
-                "edge_work": "polished edges all around"
+                "edge_work": "polished edges all around",
+                "details": "Shower door with hinge cutouts and a notch for the handle; cutouts/notches do not change rectangle shape."
               },
               "found_fields": [
                 "TK",
@@ -2398,7 +2442,8 @@
               "is_complete": true,
               "field_confidence": {
                 "TK": 0.97,
-                "HT": 0.97
+                "HT": 0.97,
+                "TT": 0.97
               },
               "notes": "Shower door with hinge cutouts and a notch for the handle; cutouts/notches do not change rectangle shape."
             }
@@ -2503,7 +2548,7 @@
             {
               "width": 48.0,
               "height": 96.0,
-              "quantity": 20,
+              "quantity": 1,
               "unit_of_measurement": "inch",
               "shape": "rectangle",
               "mark": null,
@@ -2528,7 +2573,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Frit color still TBD (probably black or dark grey), so color left null. Ceramic frit applied on surface 2. Quantity ~20, could increase. Customer asked about lead time impact of frit."
+              "notes": "Frit color still TBD (probably black or dark grey), so color left null. Ceramic frit applied on surface 2. Quantity ~20, could increase. Customer asked about lead time impact of frit. Quantity was ambiguous; defaulted to 1 piece pending confirmation."
             }
           ]
         }

@@ -76,7 +76,7 @@ class GmailClient:
                     str(self.credentials_path), SCOPES
                 )
                 creds = flow.run_local_server(port=0)
-            self.token_path.write_text(creds.to_json(), encoding="utf-8")
+            _persist_token(self.token_path, creds.to_json())
         return build("gmail", "v1", credentials=creds)
 
     def _list_message_ids(self, query: str, limit: int) -> list[str]:
@@ -164,7 +164,7 @@ class GmailClient:
             if raw_bytes is None:
                 continue
             mime_type = part.get("mimeType")
-            text, error = _extract_attachment_text(filename, mime_type, raw_bytes)
+            text, error = extract_attachment_text(filename, mime_type, raw_bytes)
             attachments.append(
                 AttachmentText(
                     filename=filename,
@@ -202,7 +202,7 @@ def _extract_body(payload: dict[str, Any]) -> tuple[str, str]:
     return "", "plain"
 
 
-def _extract_attachment_text(
+def extract_attachment_text(
     filename: str,
     mime_type: str | None,
     raw_bytes: bytes,
@@ -220,6 +220,9 @@ def _extract_attachment_text(
         return "", f"Unsupported attachment type: {mime_type or lower}"
     except Exception as exc:  # pragma: no cover - depends on external files
         return "", f"{type(exc).__name__}: {exc}"
+
+
+_extract_attachment_text = extract_attachment_text
 
 
 def _docx_text(raw_bytes: bytes) -> str:
@@ -324,3 +327,13 @@ def _preview(text: str, limit: int = 500) -> str | None:
     if not text:
         return None
     return text[:limit]
+
+
+def _persist_token(path: Path, token_json: str) -> bool:
+    try:
+        path.write_text(token_json, encoding="utf-8")
+        return True
+    except OSError:
+        if path.exists():
+            return False
+        raise

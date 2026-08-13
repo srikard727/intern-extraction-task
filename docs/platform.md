@@ -76,6 +76,20 @@ Services:
 - `api`: FastAPI app on `http://127.0.0.1:8000`
 - `worker`: Celery worker
 
+The application containers run as the non-root `app` user. API and worker share
+the `rfq_outputs` named volume, while PostgreSQL uses `postgres_data`. Ports are
+bound to `127.0.0.1` for local/demo access only.
+
+For Gmail extraction, add the read-only credential override:
+
+```bash
+GMAIL_CREDENTIALS_PATH="$PWD/credentials.json" \
+GMAIL_TOKEN_PATH="$PWD/token_reader.json" \
+docker compose -f docker-compose.yml -f docker-compose.gmail.yml up --build
+```
+
+The base Compose file never mounts Gmail credentials or tokens.
+
 API docs:
 
 ```text
@@ -109,6 +123,7 @@ The script runs:
 - JSON/SQLite output audit
 - `/view` UI validation
 - Docker Compose config validation when Docker is available
+- Gmail credential override validation when Docker is available
 
 ## GitHub Actions
 
@@ -119,4 +134,4 @@ The CI workflow is defined in:
 ```
 
 It runs the Python tests, compile checks, output audit, UI validation, Docker
-Compose validation, and Docker image build.
+Compose validation, Gmail override validation, and Docker image build.

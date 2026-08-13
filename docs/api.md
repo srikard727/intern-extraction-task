@@ -21,6 +21,7 @@ The app uses:
 - `GET /view/emails/{email_id}`
 - `GET /emails?limit=100&offset=0`
 - `GET /emails/{email_id}`
+- `GET /emails/{email_id}/sources`
 - `GET /agent-runs?limit=100&offset=0`
 - `GET /agent-runs?email_id=<email_id>`
 - `GET /agent-runs/{run_id}`
@@ -87,7 +88,8 @@ GET /view/emails/{email_id}
 The HTML view reads from the same configured database as the JSON endpoints and
 shows status, email metadata, body text, attachment info, extracted units,
 missing fields, human-review flags, fabrication details, and agent execution
-logs.
+logs. It also shows internal field provenance. The separate source endpoint
+returns the same provenance without adding it to the exported quote JSON.
 
 ## Queued Extraction
 

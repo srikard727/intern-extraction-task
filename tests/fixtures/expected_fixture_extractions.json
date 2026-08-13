@@ -1,0 +1,181 @@
+{
+  "fixture-001": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "monolithic", "width": 36.0, "height": 84.0, "quantity": 1, "shape": "rectangle", "specs": {"TK": "3/8\"", "HT": "tempered", "TT": "clear"}, "fabrication": {"edge_work": "flat polished all around"}, "fabrication_contains": {"details": ["pull holes", "top corner"]}, "missing_fields": []}
+    ]
+  },
+  "fixture-002": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "monolithic", "width": 48.0, "height": 96.0, "quantity": 1, "shape": "rectangle", "specs": {"TK": "1/2\"", "HT": "tempered", "TT": "low-iron"}, "fabrication": {"edge_work": "polished edges"}, "fabrication_contains": {"details": ["corners", "radiused", "radius"]}, "missing_fields": []}
+    ]
+  },
+  "fixture-003": {
+    "status": "completed",
+    "items": [
+      {"glass_type": "monolithic", "width": 60.0, "height": 84.0, "quantity": 1, "shape": "rectangle", "specs": {"TK": "1/4\"", "HT": null, "TT": "mirror"}, "fabrication": {"edge_work": "seamed edges"}, "fabrication_contains": {"details": ["safety backing", "vinyl"]}, "missing_fields": []}
+    ]
+  },
+  "fixture-004": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "laminated", "width": 42.0, "height": 84.0, "quantity": 1, "shape": "rectangle", "specs": {"TK1": "1/4\"", "TK2": "1/4\"", "TT1": "clear", "TT2": "clear", "interlayer_material": "PVB", "interlayer_thickness": ".030\""}, "missing_fields": ["HT1", "HT2"]}
+    ]
+  },
+  "fixture-005": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "insulated", "width": 36.0, "height": 60.0, "quantity": 1, "shape": "rectangle", "specs": {"HT1": "tempered", "HT2": "tempered", "TT1": "clear", "TT2": "clear", "gas_fill": "argon"}, "missing_fields": ["TK1", "TK2", "spacer_material", "spacer_thickness"]}
+    ]
+  },
+  "fixture-006": {
+    "status": "completed",
+    "items": [
+      {"glass_type": "monolithic", "width": 54.0, "height": 54.0, "quantity": 1, "shape": "circle", "specs": {"TK": "1/2\"", "HT": "tempered", "TT": "clear"}, "missing_fields": []}
+    ]
+  },
+  "fixture-007": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "laminated", "width": 48.0, "height": 96.0, "quantity": 1, "shape": "rectangle", "specs": {"TT1": "grey", "TT2": "grey"}, "missing_fields": ["TK1", "TK2", "interlayer_thickness", "interlayer_material", "HT1", "HT2"]}
+    ]
+  },
+  "fixture-008": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "insulated", "width": 48.0, "height": 96.0, "quantity": 1, "shape": "rectangle", "specs": {"gas_fill": "argon"}, "missing_fields": ["TK1", "TK2", "spacer_material", "spacer_thickness", "HT1", "HT2"]}
+    ]
+  },
+  "fixture-009": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "insulated", "width": 72.0, "height": 84.0, "quantity": 1, "shape": "rectangle", "specs": {"TT1": "bronze", "HT1": "tempered", "TT2": "clear", "HT2": "tempered"}, "missing_fields": ["TK1", "TK2", "spacer_material", "spacer_thickness"]}
+    ]
+  },
+  "fixture-010": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "laminated-insulated", "width": 60.0, "height": 96.0, "quantity": 1, "shape": "rectangle", "specs": {"TK1": "1/4\"", "HT1": "tempered", "TK2": "1/4\"", "HT2": "tempered", "TK3": "1/4\"", "HT3": "tempered", "spacer_thickness": "1/2\"", "interlayer_material": "PVB", "interlayer_thickness": ".060\"", "laminated_lite": "outer"}, "missing_fields": ["spacer_material"]}
+    ]
+  },
+  "fixture-011": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "laminated-insulated", "width": 72.0, "height": 120.0, "quantity": 1, "shape": "rectangle", "specs": {"TT1": "low-iron", "gas_fill": "argon", "laminated_lite": "outer"}, "missing_fields": ["TK1", "TK2", "TK3", "HT1", "HT2", "HT3", "interlayer_material", "interlayer_thickness", "spacer_material", "spacer_thickness"]}
+    ]
+  },
+  "fixture-012": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "monolithic", "width": null, "height": null, "quantity": 1, "shape": "square", "specs": {"TK": null, "HT": "tempered"}, "missing_fields": ["dimensions", "TK"]}
+    ]
+  },
+  "fixture-013": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "insulated", "width": 60.0, "height": 96.0, "quantity": 1, "shape": "rectangle", "specs": {"gas_fill": "argon"}, "missing_fields": ["TK1", "TK2", "spacer_material", "spacer_thickness", "HT1", "HT2"]}
+    ]
+  },
+  "fixture-014": {
+    "status": "completed",
+    "items": [
+      {"glass_type": "monolithic", "width": 96.0, "height": 120.0, "quantity": 1, "shape": "rectangle", "specs": {"TK": "1/2\"", "HT": "tempered", "TT": "clear"}, "missing_fields": []}
+    ]
+  },
+  "fixture-015": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "monolithic", "width": null, "height": null, "quantity": 1, "shape": "rectangle", "specs": {"TK": null, "HT": "tempered", "TT": "clear"}, "fabrication_contains": {"details": ["rail cutouts"]}, "missing_fields": ["dimensions", "TK"]}
+    ]
+  },
+  "fixture-016": {
+    "status": "completed",
+    "items": [
+      {"glass_type": "monolithic", "width": 72.0, "height": 96.0, "quantity": 1, "shape": "rectangle", "specs": {"TK": "1/2\"", "HT": "tempered", "TT": "clear"}, "missing_fields": []}
+    ]
+  },
+  "fixture-017": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "monolithic", "width": null, "height": null, "quantity": 1, "shape": "rectangle", "specs": {"TK": "1/2\"", "HT": "tempered", "TT": "clear"}, "missing_fields": ["dimensions"]}
+    ]
+  },
+  "fixture-018": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "monolithic", "width": null, "height": null, "quantity": 1, "shape": "rectangle", "specs": {"TK": "1/2\"", "HT": "tempered", "TT": "clear"}, "missing_fields": ["dimensions"]},
+      {"glass_type": "laminated", "width": null, "height": null, "quantity": 1, "shape": "rectangle", "specs": {"TK1": "1/4\"", "TT1": "clear", "TK2": "1/4\"", "TT2": "clear", "interlayer_material": "PVB", "interlayer_thickness": ".060\""}, "missing_fields": ["dimensions", "HT1", "HT2"]},
+      {"glass_type": "insulated", "width": null, "height": null, "quantity": 1, "shape": "rectangle", "specs": {"gas_fill": "argon"}, "missing_fields": ["dimensions", "TK1", "TK2", "spacer_material", "spacer_thickness", "HT1", "HT2"]},
+      {"glass_type": "laminated-insulated", "width": null, "height": null, "quantity": 1, "shape": "rectangle", "specs": {"laminated_lite": "outer"}, "missing_fields": ["dimensions", "TK1", "TK2", "TK3", "HT1", "HT2", "HT3", "interlayer_material", "interlayer_thickness", "spacer_material", "spacer_thickness"]}
+    ]
+  },
+  "fixture-019": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "monolithic", "width": 48.0, "height": 96.0, "quantity": 2, "shape": "rectangle", "specs": {"TK": "1/2\"", "HT": "tempered", "TT": "clear"}, "missing_fields": []},
+      {"glass_type": "laminated", "width": 60.0, "height": 120.0, "quantity": 1, "shape": "rectangle", "specs": {"TK1": "1/4\"", "TT1": "clear", "HT1": "heat strengthened", "TK2": "1/4\"", "TT2": "clear", "HT2": "heat strengthened", "interlayer_material": "PVB", "interlayer_thickness": ".060\""}, "missing_fields": []},
+      {"glass_type": "insulated", "width": 36.0, "height": 72.0, "quantity": 4, "shape": "rectangle", "specs": {"TK1": "1/4\"", "TT1": "clear", "HT1": "heat strengthened", "TK2": "1/4\"", "TT2": "clear", "HT2": "heat strengthened", "spacer_thickness": "1/2\"", "gas_fill": "argon"}, "missing_fields": ["spacer_material"]},
+      {"glass_type": "laminated-insulated", "width": 48.0, "height": 96.0, "quantity": 2, "shape": "rectangle", "specs": {"TK1": "1/4\"", "TK2": "1/4\"", "TK3": "1/4\"", "HT3": "heat strengthened", "spacer_thickness": "1/2\"", "gas_fill": "argon", "interlayer_material": "PVB", "interlayer_thickness": ".090\"", "laminated_lite": "outer"}, "missing_fields": ["HT1", "HT2", "spacer_material"]}
+    ]
+  },
+  "fixture-020": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "monolithic", "width": 84.0, "height": 108.0, "quantity": 2, "shape": "rectangle", "specs": {"TK": "1/2\"", "HT": null, "TT": "low-iron"}, "missing_fields": ["HT"]},
+      {"glass_type": "laminated", "width": 60.0, "height": 96.0, "quantity": 2, "shape": "rectangle", "specs": {"TT1": "clear", "HT1": "heat strengthened", "TT2": "clear", "HT2": "heat strengthened"}, "missing_fields": ["TK1", "TK2", "interlayer_thickness", "interlayer_material"]},
+      {"glass_type": "insulated", "width": 48.0, "height": 84.0, "quantity": 8, "shape": "rectangle", "specs": {"gas_fill": "argon"}, "missing_fields": ["TK1", "TK2", "spacer_material", "spacer_thickness", "HT1", "HT2"]},
+      {"glass_type": "laminated-insulated", "width": 60.0, "height": 120.0, "quantity": 4, "shape": "rectangle", "specs": {"HT3": "tempered", "laminated_lite": "outer"}, "missing_fields": ["TK1", "TK2", "TK3", "HT1", "HT2", "interlayer_material", "interlayer_thickness", "spacer_material", "spacer_thickness"]}
+    ]
+  },
+  "fixture-021": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "monolithic", "width": 30.0, "height": 72.0, "quantity": 4, "shape": "rectangle", "specs": {"TK": "1/4\"", "HT": "tempered", "TT": "clear"}, "missing_fields": []},
+      {"glass_type": "monolithic", "width": 24.0, "height": 36.0, "quantity": 2, "shape": "rectangle", "specs": {"TK": "1/4\"", "HT": "tempered", "TT": "clear"}, "missing_fields": []},
+      {"glass_type": "monolithic", "width": 60.0, "height": 84.0, "quantity": 1, "shape": "rectangle", "specs": {"TK": "1/2\"", "HT": null}, "missing_fields": ["HT"]}
+    ]
+  },
+  "fixture-022": {
+    "status": "completed",
+    "items": [
+      {"glass_type": "monolithic", "width": 48.0, "height": 80.0, "quantity": 2, "shape": "rectangle", "specs": {"TK": "3/8\"", "HT": "tempered", "TT": "clear"}, "missing_fields": []}
+    ]
+  },
+  "fixture-023": {
+    "status": "human_review_required",
+    "items": []
+  },
+  "fixture-024": {
+    "status": "completed",
+    "items": [
+      {"glass_type": "monolithic", "width": 23.622, "height": 59.0551, "quantity": 5, "shape": "rectangle", "specs": {"TK": "10mm", "HT": "tempered", "TT": "clear"}, "missing_fields": []},
+      {"glass_type": "monolithic", "width": 32.0, "height": 84.0, "quantity": 3, "shape": "rectangle", "specs": {"TK": "1/2\"", "HT": "tempered", "TT": "clear"}, "missing_fields": []}
+    ]
+  },
+  "fixture-025": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "monolithic", "width": 40.0, "height": 90.0, "quantity": 1, "shape": "rectangle", "specs": {"TK": "1/2\"", "HT": "tempered", "TT": "clear"}, "missing_fields": []}
+    ]
+  },
+  "fixture-026": {
+    "status": "completed",
+    "items": [
+      {"glass_type": "monolithic", "mark": "fixed panel", "width": 30.0, "height": 72.0, "quantity": 3, "shape": "rectangle", "specs": {"TK": "3/8\"", "HT": "tempered", "TT": "clear"}, "missing_fields": []},
+      {"glass_type": "monolithic", "mark": "door", "width": 26.0, "height": 72.0, "quantity": 3, "shape": "rectangle", "specs": {"TK": "3/8\"", "HT": "tempered", "TT": "clear"}, "fabrication_contains": {"details": ["hinge cutouts", "notch", "handle"]}, "missing_fields": []}
+    ]
+  },
+  "fixture-027": {
+    "status": "completed",
+    "items": [
+      {"glass_type": "monolithic", "width": 71.5, "height": 99.625, "quantity": 1, "shape": "rectangle", "specs": {"TK": "1/4", "HT": "tempered", "color": "bronze"}, "missing_fields": []}
+    ]
+  },
+  "fixture-028": {
+    "status": "human_review_required",
+    "items": [
+      {"glass_type": "monolithic", "width": 48.0, "height": 96.0, "quantity": 1, "shape": "rectangle", "specs": {"TK": "1/4\"", "HT": "tempered", "TT": "spandrel"}, "missing_fields": []}
+    ]
+  }
+}

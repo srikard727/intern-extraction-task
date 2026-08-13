@@ -41,6 +41,7 @@ Core rules:
 - Use glass_type-specific fields. Do not include laminated/insulated fields on monolithic items.
 - Include null for missing fields that are required for that glass_type. Omit fields that are irrelevant to that glass_type.
 - For monolithic spandrel or tinted glass, keep the finish/type in TT (for example "spandrel") and the color in color (for example "warm grey").
+- "clear" and "low-iron" are valid TT values. Preserve them when explicitly stated; do not drop them as defaults.
 - Airspace/spacer thickness must be an explicit measurement like "1/2\"" or "12mm"; words like "standard" are not valid spacer_thickness values and should be null with a note.
 - spacer_material is the spacer/bar material such as black spacer, silver spacer, aluminum spacer, stainless spacer, or warm edge spacer. Argon/krypton/air are gas fills, not spacer_material.
 - Put argon, krypton, or air fill in gas_fill when explicitly stated.
@@ -58,10 +59,15 @@ Common item fields:
   "glass_type": "monolithic"|"laminated"|"insulated"|"laminated-insulated"|"unknown",
   "coating": string|null,
   "edge_work": string|null,
+  "fabrication_details": string|null,
   "source": "body"|"attachment:<filename>",
   "field_sources": {"field_name": "body"|"attachment:<filename>"},
   "notes": string|null
 }
+
+Put holes, cutouts, notches, corner radii, safety backing, etching, and other
+non-edge fabrication instructions in fabrication_details. Keep edge finishing
+such as flat polish, pencil polish, seamed, or no edge work in edge_work.
 
 Monolithic required/spec fields:
 {
@@ -231,20 +237,26 @@ def _conversation_text(email: InboundEmail) -> str:
 
 def _attachments_text(email: InboundEmail) -> str:
     blocks: list[str] = []
-    messages = email.conversation_messages if len(email.conversation_messages) > 1 else []
-    if messages:
-        for message in messages:
-            blocks.extend(_attachment_blocks(message.email_id, message.attachments))
-    else:
-        blocks.extend(_attachment_blocks(email.email_id, email.attachments))
+    seen: set[tuple[str, str, str]] = set()
+    blocks.extend(_attachment_blocks(email.email_id, email.attachments, seen))
+    for message in email.conversation_messages:
+        blocks.extend(_attachment_blocks(message.email_id, message.attachments, seen))
     return "\n\n".join(blocks) or "(none)"
 
 
-def _attachment_blocks(email_id: str, attachments) -> list[str]:
+def _attachment_blocks(
+    email_id: str,
+    attachments,
+    seen: set[tuple[str, str, str]],
+) -> list[str]:
     blocks: list[str] = []
     for attachment in attachments:
         if not attachment.text:
             continue
+        key = (email_id, attachment.source, attachment.filename)
+        if key in seen:
+            continue
+        seen.add(key)
         blocks.append(
             f"Message email_id: {email_id}\n"
             f"Source: {attachment.source}\n"

@@ -5,14 +5,17 @@ This demo uses the provided `Emails.txt` fixture and writes clean outputs to:
 - `outputs/rfq_extractions.db`
 - `outputs/rfq_extractions.json`
 
-The latest verified fixture run used `claude-opus-4-8` and produced:
+The checked-in acceptance output records `claude-opus-4-8` and contains:
 
 - 28 email records
 - 40 extracted glass items
-- 10 completed records
-- 18 human-review-required records
+- 8 completed records
+- 20 human-review-required records
 
 ## 1. Run Extraction
+
+This command sends the synthetic fixture email contents to Anthropic and uses
+API credits. Run it only when that external transmission is authorized.
 
 ```bash
 .venv/bin/python -m agent_rfq_extractor \
@@ -48,6 +51,8 @@ The audit checks:
 - Exported JSON does not expose `field_sources` or raw `source`.
 - TT fields do not contain `body`, attachment labels, or construction labels.
 - Fixture-specific cases remain correct, including correction handling, metric conversion, mixed package grouping, outboard bronze on an IGU, and inboard `HS` on an LIU.
+- Every supplied fixture email and all 40 expected items match the checked-in acceptance oracle.
+- SQLite field provenance is complete and valid, while exported JSON remains clean.
 
 ## 3. Review JSON And SQLite
 
@@ -84,6 +89,23 @@ Useful demo records:
 - `fixture-022`: latest correction changes thickness from `1/4"` to `3/8"`.
 - `fixture-023`: reorder-only request correctly produces no invented item and requires human review.
 - `fixture-024`: metric dimensions normalize from `600mm x 1500mm` to decimal inches.
+
+For an attachment-origin demonstration, use `fixtures/attachment_demo.txt`.
+The corresponding text schedule lives under `fixtures/attachments/`; after
+extraction, open `/emails/fixture-001/sources` or the UI detail page to show
+`attachment:glass_schedule.txt` provenance.
+
+Use separate outputs so the attachment demo does not replace the 28-email
+acceptance artifacts:
+
+```bash
+.venv/bin/python -m agent_rfq_extractor \
+  --source fixture \
+  --fixture fixtures/attachment_demo.txt \
+  --db /tmp/rfq_attachment_demo.db \
+  --json /tmp/rfq_attachment_demo.json \
+  --replace-existing
+```
 
 ## 5. Validate UI Routes
 
@@ -138,17 +160,36 @@ http://127.0.0.1:8000/health
 http://127.0.0.1:8000/view
 ```
 
+Load the accepted 28-email dataset into the running PostgreSQL platform without
+another model call:
+
+```bash
+.venv/bin/python scripts/import_sqlite_results.py \
+  --source-db outputs/rfq_extractions.db \
+  --database-url postgresql://rfq:rfq@127.0.0.1:5432/rfq_extractions \
+  --json /tmp/rfq_postgres_export.json \
+  --replace
+docker compose cp \
+  /tmp/rfq_postgres_export.json \
+  api:/app/outputs/rfq_extractions.json
+```
+
+Refresh `/view`; it should show 28 emails, 40 items, 8 completed records, and
+20 human-review-required records.
+
 Stop services after the demo:
 
 ```bash
 docker compose down
 ```
 
-Latest local Docker validation completed on August 6, 2026:
+Latest infrastructure revalidation completed on August 12, 2026:
 
-- Docker image build passed through `scripts/final_qa.py --docker-build`.
-- Compose started PostgreSQL, Redis, API, and worker.
-- API health and `/view` returned successfully.
-- A synchronous fixture extraction completed through the API.
-- A queued fixture extraction completed through Redis/Celery.
-- PostgreSQL row counts confirmed `emails=1`, `items=1`, and `agent_runs=1` for the validation run.
+- Compose rebuilt and started PostgreSQL, Redis, API, and worker.
+- API health and `/view` returned successfully with the Opus model configured.
+- Redis and the Celery worker responded; worker concurrency was capped at 2.
+- API and worker ran as non-root and shared a writable output volume.
+- PostgreSQL and the shared JSON volume contained the accepted 28 emails,
+  40 items, and 28 agent runs after deterministic import.
+- Synchronous and queued extraction paths were previously verified with a
+  one-email smoke fixture.

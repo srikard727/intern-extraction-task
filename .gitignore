@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 .DS_Store
 .env
-credentials.json
+.env.*
+!.env.example
+credentials*.json
 token*.json
-
+~$*.docx

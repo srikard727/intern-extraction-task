@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
@@ -11,7 +10,7 @@ from psycopg.types.json import Jsonb
 from agent_rfq_extractor.agents.base import AgentResult
 from agent_rfq_extractor.models import EmailRecord, RFQItem
 
-from .storage import StorageError
+from .storage import StorageError, _write_json_atomic
 
 
 class PostgresExtractionStore:
@@ -132,6 +131,23 @@ class PostgresExtractionStore:
         if row is None or row["raw_json"] is None:
             return None
         return row["raw_json"]
+
+    def list_item_sources(self, email_id: str) -> list[dict[str, Any]]:
+        rows = self.conn.execute(
+            """
+            SELECT id, mark, glass_type, source, field_sources_json
+            FROM items
+            WHERE email_id = %s
+            ORDER BY id
+            """,
+            (email_id,),
+        ).fetchall()
+        results: list[dict[str, Any]] = []
+        for row in rows:
+            data = dict(row)
+            data["field_sources"] = data.pop("field_sources_json", None) or {}
+            results.append(data)
+        return results
 
     def list_agent_runs(
         self,
@@ -255,13 +271,12 @@ class PostgresExtractionStore:
             "SELECT raw_json FROM emails ORDER BY received_at DESC, email_id"
         ).fetchall()
         data = [row["raw_json"] for row in rows if row["raw_json"] is not None]
-        out = Path(out_path)
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        _write_json_atomic(Path(out_path), data)
 
     def _insert_item(self, email_id: str, item: RFQItem) -> None:
         dimensions = item.dimensions
         spec_json = item.to_jsonable()
+        raw_json = item.model_dump(mode="json")
         self.conn.execute(
             """
             INSERT INTO items (
@@ -296,7 +311,7 @@ class PostgresExtractionStore:
                 Jsonb(item.missing_fields),
                 item.notes,
                 Jsonb(spec_json),
-                Jsonb(spec_json),
+                Jsonb(raw_json),
             ),
         )
 

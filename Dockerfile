@@ -5,14 +5,16 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends build-essential \
-    && rm -rf /var/lib/apt/lists/*
+RUN groupadd --system app \
+    && useradd --system --gid app --create-home app
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY --chown=app:app . .
+RUN mkdir -p /app/outputs && chown -R app:app /app/outputs
+
+USER app
 
 EXPOSE 8000
 

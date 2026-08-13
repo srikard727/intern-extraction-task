@@ -303,7 +303,7 @@ def document_xml() -> str:
         table(
             ["Check", "Result"],
             [
-                ["Fixture extraction", "28 records processed; 40 glass items extracted; 10 completed and 18 human-review-required."],
+                ["Fixture extraction", "28 records processed; 40 glass items extracted; 8 completed and 20 human-review-required."],
                 ["JSON/SQLite audit", "Passed. Counts match and output avoids exported field_sources/source and invalid TT values."],
                 ["Unit/API tests", "31 tests passed via unittest discovery."],
                 ["Compile check", "compileall passed for agent_rfq_extractor, database, scripts, and tests."],

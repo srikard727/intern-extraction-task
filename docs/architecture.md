@@ -63,7 +63,8 @@ set.
 
 The JSON export mirrors stored email records and keeps quote data under
 `extraction.glass_type_groups`. Exported `glass_units` do not include internal
-`field_sources` or raw source keys.
+`field_sources` or raw source keys. Internal provenance is retained in the
+`items` table and exposed through the source API and review UI.
 
 ## Attachment Scope
 
@@ -79,4 +80,5 @@ Image-only attachments and OCR are out of scope for this build.
 
 The extractor does not guess required values. Missing or ambiguous required
 fields mark the record as `human_review_required`. Required fields vary by glass
-type and are enforced in `quality.py`.
+type. The authoritative matrix is `REQUIRED_FIELDS_BY_GLASS_TYPE` in
+`models.py`, and `quality.py` uses that same definition for review decisions.
