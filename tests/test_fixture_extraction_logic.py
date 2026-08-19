@@ -1,7 +1,7 @@
 import unittest
 
 from agent_rfq_extractor.graph import RFQExtractionGraph
-from agent_rfq_extractor.models import InboundEmail, extraction_payload
+from agent_rfq_extractor.models import AttachmentText, InboundEmail, extraction_payload
 from agent_rfq_extractor.pipeline import parse_fixture
 from agent_rfq_extractor.quality import build_review, normalize_items
 
@@ -61,6 +61,64 @@ class FixtureExtractionLogicTests(unittest.TestCase):
         self.assertEqual(unit["height"], 96.0)
         self.assertEqual(unit["glass_specs"]["TK"], '1/2"')
         self.assertEqual(unit["glass_specs"]["HT"], "tempered")
+
+    def test_low_confidence_ocr_caps_field_scores_and_requires_review(self):
+        source = "attachment:scan.pdf"
+        graph = RFQExtractionGraph(
+            FakeExtractor(
+                {
+                    "items": [
+                        {
+                            "mark": "M-101",
+                            "dimensions": "48 in x 96 in",
+                            "quantity": 4,
+                            "glass_type": "monolithic",
+                            "TK": "1/2 in",
+                            "HT": "tempered",
+                            "source": source,
+                            "field_sources": {
+                                "mark": source,
+                                "dimensions": source,
+                                "quantity": source,
+                                "glass_type": source,
+                                "TK": source,
+                                "HT": source,
+                            },
+                        }
+                    ],
+                    "review": {"reason": None, "conflicts": []},
+                }
+            )
+        )
+        email = InboundEmail(
+            email_id="ocr-review-001",
+            body_text="Please quote the attached image schedule.",
+            has_attachments=True,
+            attachments=[
+                AttachmentText(
+                    filename="scan.pdf",
+                    mime_type="application/pdf",
+                    source=source,
+                    text="M-101 QTY 4 48 in x 96 in 1/2 in clear tempered",
+                    text_extracted=True,
+                    extraction_method="ocr",
+                    ocr_used=True,
+                    ocr_confidence=0.82,
+                    page_count=1,
+                    ocr_page_count=1,
+                    review_required=True,
+                    review_reason="OCR confidence is 82.0%, below the 90% review threshold.",
+                )
+            ],
+        )
+
+        record = graph.process_email(email)
+        confidence = record.to_jsonable()["extraction"]["glass_type_groups"][0]["glass_units"][0]["field_confidence"]
+
+        self.assertEqual(record.status, "human_review_required")
+        self.assertIn("scan.pdf", record.review.reason)
+        self.assertEqual(confidence["TK"], 0.82)
+        self.assertEqual(confidence["HT"], 0.82)
 
     def test_mixed_package_groups_by_glass_type(self):
         items = normalize_items(

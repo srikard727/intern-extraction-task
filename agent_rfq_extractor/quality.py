@@ -6,6 +6,7 @@ from typing import Any
 
 from .models import (
     REQUIRED_FIELDS_BY_GLASS_TYPE,
+    AttachmentInfo,
     Conflict,
     Dimensions,
     RFQItem,
@@ -119,7 +120,7 @@ FABRICATION_DETAIL_PATTERN = re.compile(
     re.IGNORECASE,
 )
 UNRESOLVED_FABRICATION_PATTERN = re.compile(
-    r"(?:~\s*\d|\b(?:about|approximate|approximately|pending|to follow|"
+    r"(?:~\s*\d|\b(?:about|approx|approximate|approximately|pending|to follow|"
     r"not finalized|not final|tbd|to be confirmed)\b)",
     re.IGNORECASE,
 )
@@ -137,7 +138,7 @@ def normalize_items(raw_items: list[dict[str, Any]]) -> list[RFQItem]:
             quantity = 1
             quantity_note = "Quantity was ambiguous; defaulted to 1 piece pending confirmation."
         item = RFQItem(
-            mark=_clean(raw.get("mark")),
+            mark=_normalize_mark(raw.get("mark"), raw),
             dimensions=_normalize_dimensions(raw.get("dimensions")),
             quantity=quantity,
             shape=_normalize_shape(raw.get("shape"), raw.get("dimensions"), raw),
@@ -172,8 +173,8 @@ def normalize_items(raw_items: list[dict[str, Any]]) -> list[RFQItem]:
             airspace=_normalize_spacer_thickness(raw.get("airspace")),
             overall_thickness=_clean(raw.get("overall_thickness")),
             coating=_clean(raw.get("coating")),
-            edge_work=_clean(raw.get("edge_work")),
-            fabrication_details=_fabrication_details(raw),
+            edge_work=_normalize_edge_work(raw.get("edge_work")),
+            fabrication_details=_normalize_fabrication_details(_fabrication_details(raw)),
             interlayer=_clean(raw.get("interlayer")),
             lite_details=_normalize_lite_details(raw.get("lite_details")),
             source=_normalize_source(raw.get("source")) or "body",
@@ -245,6 +246,42 @@ def _fabrication_details(raw: Mapping[str, Any]) -> str | None:
     return _infer_fabrication_details(_clean(raw.get("notes")))
 
 
+def _normalize_fabrication_details(value: object) -> str | None:
+    text = _clean(value)
+    if not text or re.search(r"\bpull holes?\b", text, re.IGNORECASE):
+        return text
+
+    holes_for_pulls = re.compile(
+        r"\b(?P<hole>holes?)\b(?P<location>.{0,120}?)\s+for (?:the )?pulls?\b",
+        re.IGNORECASE,
+    )
+    match = holes_for_pulls.search(text)
+    if not match:
+        return text
+    replacement = f"pull {match.group('hole')}{match.group('location')}"
+    return f"{text[:match.start()]}{replacement}{text[match.end():]}"
+
+
+def _normalize_edge_work(value: object) -> str | None:
+    text = _clean(value)
+    if _normalized_label(text) in {"seamed", "seamed edge"}:
+        return "seamed edges"
+    return text
+
+
+def _normalize_mark(value: object, raw: Mapping[str, Any]) -> str | None:
+    mark = _clean(value)
+    if mark:
+        return mark
+
+    notes = _clean(raw.get("notes")) or ""
+    if re.match(r"^fixed(?:\s+shower)?\s+panels?\b", notes, re.IGNORECASE):
+        return "fixed panel"
+    if re.match(r"^(?:shower\s+)?doors?\b", notes, re.IGNORECASE):
+        return "door"
+    return None
+
+
 def _infer_fabrication_details(notes: str | None) -> str | None:
     if not notes:
         return None
@@ -281,7 +318,11 @@ def missing_fields_for_item(item: RFQItem) -> list[str]:
     return _dedupe(missing)
 
 
-def build_review(items: list[RFQItem], raw_review: dict[str, Any] | None = None) -> ReviewInfo | None:
+def build_review(
+    items: list[RFQItem],
+    raw_review: dict[str, Any] | None = None,
+    attachments: list[AttachmentInfo] | None = None,
+) -> ReviewInfo | None:
     missing = _dedupe(field for item in items for field in item.missing_fields)
     conflicts = _normalize_conflicts((raw_review or {}).get("conflicts"))
     reasons: list[str] = []
@@ -304,10 +345,19 @@ def build_review(items: list[RFQItem], raw_review: dict[str, Any] | None = None)
         reasons.append("One or more body/attachment conflicts require review.")
     if any(_fabrication_requires_review(item) for item in items):
         reasons.append("Fabrication details are approximate or pending confirmation.")
+    for attachment in attachments or []:
+        if not attachment.review_required:
+            continue
+        detail = attachment.review_reason or "Attachment OCR requires manual verification."
+        reasons.append(f"{attachment.filename}: {detail}")
 
     if not reasons and not missing and not conflicts:
         return None
-    return ReviewInfo(reason=" ".join(reasons), missing_fields=missing, conflicts=conflicts)
+    return ReviewInfo(
+        reason=" ".join(_dedupe(reasons)),
+        missing_fields=missing,
+        conflicts=conflicts,
+    )
 
 
 def _normalize_quantity_with_default(raw: object) -> tuple[int, str | None]:
@@ -407,6 +457,8 @@ def _normalize_shape(raw_shape: object, raw_dimensions: object, raw_item: Mappin
         if _mentions_circle(dimension_text) and not split_dimension_pair(dimension_text):
             return "circle"
         if _mentions_square(dimension_text) and not split_dimension_pair(dimension_text):
+            if not _mentions_square(raw_text) and _has_rectangular_item_context(raw_item):
+                return "rectangle"
             return "square"
         if width is not None and height is not None:
             if width == height and _mentions_circle(raw_shape):
@@ -427,11 +479,33 @@ def _normalize_shape(raw_shape: object, raw_dimensions: object, raw_item: Mappin
         if _mentions_circle(shape_text):
             return "circle"
         if _mentions_square(shape_text):
+            if _has_rectangular_item_context(raw_item):
+                return "rectangle"
             return "square"
         if any(word in shape_text.lower() for word in ("rectangle", "rectangular")):
             return "rectangle"
 
     return "rectangle"
+
+
+def _has_rectangular_item_context(raw: Mapping[str, Any]) -> bool:
+    context = " ".join(
+        str(raw.get(key) or "")
+        for key in (
+            "mark",
+            "description",
+            "notes",
+            "fabrication_details",
+            "construction",
+        )
+    )
+    return bool(
+        re.search(
+            r"\b(?:door\s+lite|door\s+rail|fixed(?:\s+shower)?\s+panel|shower\s+door)\b",
+            context,
+            re.IGNORECASE,
+        )
+    )
 
 
 def _apply_lite_details(item: RFQItem) -> None:
@@ -788,7 +862,8 @@ def _clear_defaulted_spec_fields(item: RFQItem) -> None:
 
 def _cleanup_tt_values(item: RFQItem) -> None:
     for field in ("TT", "TT1", "TT2", "TT3"):
-        value = getattr(item, field)
+        value = _normalize_tt_value(getattr(item, field))
+        setattr(item, field, value)
         if _is_invalid_tt_value(value):
             setattr(item, field, None)
 
@@ -801,6 +876,16 @@ def _cleanup_tt_values(item: RFQItem) -> None:
             if item.field_sources.get("TT"):
                 item.field_sources.setdefault("color", item.field_sources["TT"])
         item.TT = None
+
+
+def _normalize_tt_value(value: object) -> str | None:
+    text = _clean(value)
+    label = _normalized_label(text)
+    match = re.fullmatch(
+        r"(?:tinted\s+)?(black|blue|bronze|gray|green|grey|warm gray|warm grey|white)(?:\s+tint(?:ed)?)?",
+        label,
+    )
+    return match.group(1) if match else text
 
 
 def _apply_multi_lite_color(item: RFQItem, raw: Mapping[str, Any]) -> None:

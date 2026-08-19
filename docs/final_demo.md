@@ -107,6 +107,24 @@ acceptance artifacts:
   --replace-existing
 ```
 
+For the image-only attachment demonstration, use the three generated RFQ PDFs:
+
+```bash
+.venv/bin/python scripts/generate_image_pdf_fixtures.py
+.venv/bin/python -m agent_rfq_extractor \
+  --source fixture \
+  --fixture fixtures/image_pdf_rfq_emails.txt \
+  --db /tmp/rfq_image_pdf_demo.db \
+  --json /tmp/rfq_image_pdf_demo.json \
+  --replace-existing
+```
+
+The first PDF contains two monolithic marks, the second contains one insulated
+unit, and the third intentionally leaves the second laminated lite's heat
+treatment pending. In the UI, verify `Extraction = ocr`, confidence at or above
+90% for the clean fixture pages, `attachment:<filename>` provenance, and human
+review for the pending laminated field.
+
 ## 5. Validate UI Routes
 
 ```bash
@@ -183,11 +201,14 @@ Stop services after the demo:
 docker compose down
 ```
 
-Latest infrastructure revalidation completed on August 12, 2026:
+Latest infrastructure revalidation completed on August 19, 2026:
 
 - Compose rebuilt and started PostgreSQL, Redis, API, and worker.
 - API health and `/view` returned successfully with the Opus model configured.
 - Redis and the Celery worker responded; worker concurrency was capped at 2.
+- Tesseract 5.5 was present in both application containers, and the three
+  raster-only RFQ PDFs completed OCR inside the API container at 93-94%
+  measured confidence.
 - API and worker ran as non-root and shared a writable output volume.
 - PostgreSQL and the shared JSON volume contained the accepted 28 emails,
   40 items, and 28 agent runs after deterministic import.

@@ -102,6 +102,8 @@ class ApiTests(unittest.TestCase):
         self.assertIn("Email", detail_response.text)
         self.assertIn("Attachments", detail_response.text)
         self.assertIn("quote.pdf", detail_response.text)
+        self.assertIn("OCR Confidence", detail_response.text)
+        self.assertIn("96.0%", detail_response.text)
         self.assertIn("Human Review", detail_response.text)
         self.assertIn("Not required.", detail_response.text)
         self.assertIn("Agent Runs", detail_response.text)
@@ -208,6 +210,11 @@ def _record() -> EmailRecord:
                 source="attachment:quote.pdf",
                 text_extracted=True,
                 text_preview="RFQ attachment text",
+                extraction_method="ocr",
+                ocr_used=True,
+                ocr_confidence=0.96,
+                page_count=1,
+                ocr_page_count=1,
             )
         ],
         extracted_at=datetime.now(timezone.utc).isoformat(),

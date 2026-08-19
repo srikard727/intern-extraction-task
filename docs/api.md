@@ -90,6 +90,9 @@ shows status, email metadata, body text, attachment info, extracted units,
 missing fields, human-review flags, fabrication details, and agent execution
 logs. It also shows internal field provenance. The separate source endpoint
 returns the same provenance without adding it to the exported quote JSON.
+For image-based attachments, the attachment table also shows native-text/OCR
+method, OCR confidence, page counts in the JSON response, and any OCR review
+reason.
 
 ## Queued Extraction
 

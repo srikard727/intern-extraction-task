@@ -9,7 +9,8 @@ from typing import Iterable
 from dotenv import load_dotenv
 
 from .agents import AgentWorkflow, AgentWorkflowStep, ExtractorAgent, build_default_registry
-from .gmail_client import GmailClient, extract_attachment_text
+from .attachment_extraction import extract_attachment
+from .gmail_client import GmailClient
 from .models import AttachmentText, EmailRecord, InboundEmail
 from database.factory import create_store, storage_label
 
@@ -173,14 +174,15 @@ def _fixture_attachments(
         filename = attachment_path.name
         mime_type = guess_type(filename)[0]
         if attachment_path.exists():
-            text, error = extract_attachment_text(
+            extraction = extract_attachment(
                 filename,
                 mime_type,
                 attachment_path.read_bytes(),
             )
         else:
-            text = ""
-            error = f"Fixture attachment not found: {relative_path}"
+            extraction = None
+        text = extraction.text if extraction else ""
+        error = extraction.error if extraction else f"Fixture attachment not found: {relative_path}"
         attachments.append(
             AttachmentText(
                 filename=filename,
@@ -190,6 +192,17 @@ def _fixture_attachments(
                 text_extracted=bool(text),
                 text_preview=" ".join(text.split())[:500] or None,
                 error=error,
+                extraction_method=extraction.extraction_method if extraction else None,
+                ocr_used=extraction.ocr_used if extraction else False,
+                ocr_confidence=extraction.ocr_confidence if extraction else None,
+                page_count=extraction.page_count if extraction else None,
+                ocr_page_count=extraction.ocr_page_count if extraction else 0,
+                review_required=extraction.review_required if extraction else True,
+                review_reason=(
+                    extraction.review_reason
+                    if extraction
+                    else "The fixture attachment is missing and requires manual review."
+                ),
             )
         )
 

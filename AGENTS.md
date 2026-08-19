@@ -35,4 +35,4 @@ This project is an internship RFQ extraction system for glass manufacturing quot
 - LangGraph orchestrates the per-email flow in `agent_rfq_extractor/graph.py`.
 - SQLite plus JSON export are the persistence/output targets.
 - SQLite stores common searchable columns plus type-specific item details in `spec_json`.
-- Image-only attachments are out of scope for now; text-layer PDFs and text attachments can be supported.
+- Text-layer PDFs and text attachments are supported. Typed image-only PDFs and common image attachments use local Tesseract OCR with confidence-based human review; handwriting and drawing-aware interpretation remain optional stretch scope.

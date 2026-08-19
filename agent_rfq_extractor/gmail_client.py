@@ -5,18 +5,19 @@ import html
 import re
 from datetime import datetime, timezone
 from email.utils import getaddresses, parsedate_to_datetime
-from io import BytesIO
 from pathlib import Path
 from typing import Any
-from zipfile import ZipFile
-from xml.etree import ElementTree as ET
 
-import pdfplumber
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
+from .attachment_extraction import (
+    docx_text as _docx_text,
+    extract_attachment,
+    extract_attachment_text,
+)
 from .models import AttachmentText, ConversationMessage, InboundEmail
 
 
@@ -164,16 +165,23 @@ class GmailClient:
             if raw_bytes is None:
                 continue
             mime_type = part.get("mimeType")
-            text, error = extract_attachment_text(filename, mime_type, raw_bytes)
+            extraction = extract_attachment(filename, mime_type, raw_bytes)
             attachments.append(
                 AttachmentText(
                     filename=filename,
                     mime_type=mime_type,
                     source=f"attachment:{filename}",
-                    text=text,
-                    text_extracted=bool(text),
-                    text_preview=_preview(text),
-                    error=error,
+                    text=extraction.text,
+                    text_extracted=bool(extraction.text),
+                    text_preview=_preview(extraction.text),
+                    error=extraction.error,
+                    extraction_method=extraction.extraction_method,
+                    ocr_used=extraction.ocr_used,
+                    ocr_confidence=extraction.ocr_confidence,
+                    page_count=extraction.page_count,
+                    ocr_page_count=extraction.ocr_page_count,
+                    review_required=extraction.review_required,
+                    review_reason=extraction.review_reason,
                 )
             )
         return attachments
@@ -202,39 +210,7 @@ def _extract_body(payload: dict[str, Any]) -> tuple[str, str]:
     return "", "plain"
 
 
-def extract_attachment_text(
-    filename: str,
-    mime_type: str | None,
-    raw_bytes: bytes,
-) -> tuple[str, str | None]:
-    lower = filename.lower()
-    try:
-        if mime_type == "application/pdf" or lower.endswith(".pdf"):
-            with pdfplumber.open(BytesIO(raw_bytes)) as pdf:
-                text = "\n".join(page.extract_text() or "" for page in pdf.pages)
-            return text.strip(), None
-        if lower.endswith(".docx"):
-            return _docx_text(raw_bytes), None
-        if (mime_type or "").startswith("text/") or lower.endswith((".txt", ".csv", ".tsv")):
-            return raw_bytes.decode("utf-8", errors="replace").strip(), None
-        return "", f"Unsupported attachment type: {mime_type or lower}"
-    except Exception as exc:  # pragma: no cover - depends on external files
-        return "", f"{type(exc).__name__}: {exc}"
-
-
 _extract_attachment_text = extract_attachment_text
-
-
-def _docx_text(raw_bytes: bytes) -> str:
-    ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
-    with ZipFile(BytesIO(raw_bytes)) as docx:
-        root = ET.fromstring(docx.read("word/document.xml"))
-    paragraphs: list[str] = []
-    for para in root.findall(".//w:p", ns):
-        parts = [node.text for node in para.findall(".//w:t", ns) if node.text]
-        if parts:
-            paragraphs.append("".join(parts))
-    return "\n".join(paragraphs).strip()
 
 
 def _walk_parts(payload: dict[str, Any]):

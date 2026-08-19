@@ -6,11 +6,24 @@ PostgreSQL, Redis, FastAPI, and a Celery worker.
 ## Prerequisites
 
 - Python 3.12
+- Tesseract OCR 5 for image-only attachments
 - Docker Desktop or Docker Engine with Compose
 - Anthropic API key
 - Gmail OAuth credentials and token for Gmail extraction
 
 Keep `.env`, Gmail tokens, and API keys out of source control.
+
+Install Tesseract for a local non-Docker run:
+
+```bash
+# macOS
+brew install tesseract
+
+# Ubuntu/Debian
+sudo apt-get install -y tesseract-ocr
+```
+
+The Docker image installs Tesseract automatically.
 
 ## Local SQLite Deployment
 
@@ -30,6 +43,8 @@ GMAIL_CREDENTIALS=credentials.json
 GMAIL_TOKEN=token_reader.json
 RFQ_DB_PATH=outputs/rfq_extractions.db
 RFQ_JSON_PATH=outputs/rfq_extractions.json
+RFQ_OCR_ENABLED=true
+RFQ_OCR_REVIEW_THRESHOLD=0.90
 ```
 
 Run fixture extraction:

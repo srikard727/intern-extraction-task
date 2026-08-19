@@ -595,7 +595,7 @@ def _email_panel(record: dict[str, Any]) -> str:
 def _attachments_panel(attachments: list[Any]) -> str:
     rows = "\n".join(_attachment_row(item) for item in attachments if isinstance(item, dict))
     if not rows:
-        rows = '<tr><td colspan="6" class="empty">No attachments stored for this email.</td></tr>'
+        rows = '<tr><td colspan="7" class="empty">No attachments stored for this email.</td></tr>'
     return f"""
     <section class="surface">
       <div class="section-title">
@@ -611,7 +611,8 @@ def _attachments_panel(attachments: list[Any]) -> str:
             <th>Type</th>
             <th>Source</th>
             <th>Message</th>
-            <th>Text</th>
+            <th>Extraction</th>
+            <th>OCR Confidence</th>
             <th>Preview / Error</th>
           </tr>
         </thead>
@@ -622,16 +623,31 @@ def _attachments_panel(attachments: list[Any]) -> str:
 
 
 def _attachment_row(attachment: dict[str, Any]) -> str:
-    preview = attachment.get("text_preview") or attachment.get("error") or ""
-    text_state = "yes" if attachment.get("text_extracted") else "no"
+    preview_parts = [
+        str(value)
+        for value in (
+            attachment.get("text_preview"),
+            attachment.get("error"),
+            attachment.get("review_reason"),
+        )
+        if value
+    ]
+    method = attachment.get("extraction_method") or (
+        "text" if attachment.get("text_extracted") else "none"
+    )
+    confidence = attachment.get("ocr_confidence")
+    confidence_label = (
+        f"{float(confidence):.1%}" if isinstance(confidence, (int, float)) else ""
+    )
     return f"""
     <tr>
       <td>{escape(str(attachment.get("filename") or ""))}</td>
       <td>{escape(str(attachment.get("mime_type") or ""))}</td>
       <td>{escape(str(attachment.get("source") or ""))}</td>
       <td>{escape(str(attachment.get("message_email_id") or ""))}</td>
-      <td>{escape(text_state)}</td>
-      <td>{escape(str(preview))}</td>
+      <td>{escape(str(method))}</td>
+      <td>{escape(confidence_label)}</td>
+      <td>{escape(" | ".join(preview_parts))}</td>
     </tr>
     """
 
@@ -819,6 +835,7 @@ def _html_page(title: str, body: str) -> str:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
   <title>{escape(title)}</title>
   <style>
     :root {{

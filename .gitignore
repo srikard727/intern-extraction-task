@@ -8,3 +8,6 @@ __pycache__/
 credentials*.json
 token*.json
 ~$*.docx
+.playwright-cli/
+outputs/*_opus_*.db
+outputs/*_opus_*.json

@@ -4,8 +4,10 @@ import sys
 import time
 import base64
 import argparse
+from mimetypes import guess_type
 from email.message import EmailMessage
 from email.utils import make_msgid
+from pathlib import Path
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -41,12 +43,12 @@ def get_service():
 
 
 def parse_emails(path):
-    text = open(path, encoding="utf-8").read()
+    fixture_path = Path(path)
+    text = fixture_path.read_text(encoding="utf-8")
     chunks = re.split(r"Email:\s*\d+", text)
     emails = []
     for c in chunks[1:]:                       # skip preamble before first marker
-        lines = [ln for ln in c.splitlines()
-                 if set(ln.strip()) != {"-"} and ln.strip() != ""]
+        lines, attachments = _message_lines_and_attachments(c, fixture_path.parent)
         body = "\n".join(lines).strip()
         if not body:
             continue
@@ -59,11 +61,36 @@ def parse_emails(path):
             if any(ch.isdigit() for ch in s) or "glass" in low or "igu" in low or "mirror" in low:
                 subj = "RFQ: " + (s[:60] + ("..." if len(s) > 60 else ""))
                 break
-        emails.append({"subject": subj, "body": body})
+        emails.append({"subject": subj, "body": body, "attachments": attachments})
     return emails
 
 
-def send_one(service, subject, body, account_addr, thread=None):
+def _message_lines_and_attachments(raw, fixture_directory):
+    lines = []
+    attachments = []
+    fixture_root = Path(fixture_directory).resolve()
+    for line in raw.splitlines():
+        stripped = line.strip()
+        if set(stripped) == {"-"} or not stripped:
+            continue
+        match = re.fullmatch(r"Fixture-Attachment:\s*(.+?)\s*", stripped)
+        if not match:
+            lines.append(line)
+            continue
+
+        relative_path = Path(match.group(1))
+        if relative_path.is_absolute():
+            raise ValueError("fixture attachment paths must be relative")
+        attachment_path = (fixture_root / relative_path).resolve()
+        if not attachment_path.is_relative_to(fixture_root):
+            raise ValueError("fixture attachment path must stay inside the fixture directory")
+        if not attachment_path.is_file():
+            raise FileNotFoundError(f"fixture attachment not found: {relative_path}")
+        attachments.append(attachment_path)
+    return lines, attachments
+
+
+def send_one(service, subject, body, account_addr, thread=None, attachments=None):
     msg = EmailMessage()
     to_addr = account_addr if RECIPIENT == "me" else RECIPIENT
     message_id = make_msgid(domain="mail.gmail.com")
@@ -76,6 +103,15 @@ def send_one(service, subject, body, account_addr, thread=None):
         msg["In-Reply-To"] = thread["last_message_id"]
         msg["References"] = " ".join([*thread["references"], thread["last_message_id"]])
     msg.set_content(body)
+    for attachment_path in attachments or []:
+        mime_type = guess_type(attachment_path.name)[0] or "application/octet-stream"
+        maintype, subtype = mime_type.split("/", 1)
+        msg.add_attachment(
+            attachment_path.read_bytes(),
+            maintype=maintype,
+            subtype=subtype,
+            filename=attachment_path.name,
+        )
     raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
     payload = {"raw": raw}
     if thread and thread.get("thread_id"):
@@ -103,6 +139,7 @@ def _send_conversation(service, emails, account_addr):
             email["body"],
             account_addr,
             thread=thread,
+            attachments=email.get("attachments", []),
         )
         sent.append(result)
         if thread is None:
@@ -199,6 +236,11 @@ def main():
                     help="seconds to wait between sends (simulate a live stream)")
     ap.add_argument("--one", metavar="FILE",
                     help="send a single new email read from FILE instead of Emails.txt")
+    ap.add_argument(
+        "--emails-file",
+        default=EMAILS_FILE,
+        help="fixture email file to send; supports Fixture-Attachment directives",
+    )
     ap.add_argument("--follow-ups", type=int, default=None,
                     help="fixed number of related replies after each RFQ sample; overrides --follow-up-pattern")
     ap.add_argument(
@@ -230,7 +272,7 @@ def main():
         )
         return
 
-    emails = parse_emails(EMAILS_FILE)
+    emails = parse_emails(args.emails_file)
     conversations = [
         _related_conversation(
             email,

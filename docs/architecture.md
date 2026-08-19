@@ -20,7 +20,10 @@ Gmail or fixture input
 ## Main Components
 
 - `agent_rfq_extractor/gmail_client.py`: reads Gmail messages, visible HTML or
-  plain bodies, chronological thread context, and text-capable attachments.
+  plain bodies, chronological thread context, and attachment metadata.
+- `agent_rfq_extractor/attachment_extraction.py`: reads native attachment text,
+  renders textless PDF pages, runs local Tesseract OCR, and records confidence
+  and review metadata.
 - `agent_rfq_extractor/pipeline.py`: owns input loading, workflow execution,
   persistence, and JSON export.
 - `agent_rfq_extractor/agents/`: reusable agent base class, registry, workflow,
@@ -71,10 +74,15 @@ The JSON export mirrors stored email records and keeps quote data under
 Supported attachment text extraction:
 
 - text-layer PDFs
+- image-only PDFs through local PDFium rendering and Tesseract OCR
+- PNG, JPEG, TIFF, and WebP images through Tesseract OCR
 - TXT, CSV, and TSV files
 - DOCX files
 
-Image-only attachments and OCR are out of scope for this build.
+OCR confidence is measured from Tesseract output, with additional emphasis on
+numeric tokens. Values sourced from OCR are capped by that confidence. Failed,
+partial, or below-threshold OCR is routed to human review. Handwritten content
+and drawing-aware interpretation remain optional scope.
 
 ## Human Review
 

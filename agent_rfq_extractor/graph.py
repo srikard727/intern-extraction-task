@@ -84,15 +84,21 @@ class RFQExtractionGraph:
         raw = state.get("raw") or {}
         raw_items = _raw_items_from_payload(raw)
         raw_review = raw.get("review") if isinstance(raw.get("review"), dict) else None
+        items = normalize_items(raw_items)
+        _apply_ocr_confidence(items, state.get("attachment_infos", []))
         return {
             "raw_items": raw_items,
             "raw_review": raw_review,
-            "items": normalize_items(raw_items),
+            "items": items,
         }
 
     def _review_node(self, state: ExtractionState) -> ExtractionState:
         items = state.get("items", [])
-        review = build_review(items, state.get("raw_review"))
+        review = build_review(
+            items,
+            state.get("raw_review"),
+            state.get("attachment_infos", []),
+        )
         return {
             "review": review,
             "status": "human_review_required" if review else "completed",
@@ -199,6 +205,28 @@ def _attachment_info(attachment, message_email_id: str) -> AttachmentInfo:
     data = attachment.model_dump(exclude={"text"})
     data["message_email_id"] = message_email_id
     return AttachmentInfo(**data)
+
+
+def _apply_ocr_confidence(
+    items: list[RFQItem],
+    attachments: list[AttachmentInfo],
+) -> None:
+    confidence_by_source = {
+        attachment.source: attachment.ocr_confidence
+        for attachment in attachments
+        if attachment.ocr_used and attachment.ocr_confidence is not None
+    }
+    if not confidence_by_source:
+        return
+
+    for item in items:
+        scores = dict(item.to_glass_unit().get("field_confidence") or {})
+        for field in tuple(scores):
+            source = item.field_sources.get(field) or item.source
+            confidence = confidence_by_source.get(source)
+            if confidence is not None:
+                scores[field] = round(min(scores[field], confidence), 3)
+        item.field_confidence = scores
 
 
 def _now() -> str:

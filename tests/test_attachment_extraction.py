@@ -5,6 +5,13 @@ from types import SimpleNamespace
 from unittest.mock import patch
 from zipfile import ZipFile
 
+from PIL import Image
+
+from agent_rfq_extractor.attachment_extraction import (
+    OCRResult,
+    _parse_tesseract_tsv,
+    extract_attachment,
+)
 from agent_rfq_extractor.gmail_client import GmailClient, _docx_text, _extract_attachment_text
 
 
@@ -42,6 +49,7 @@ class AttachmentExtractionTests(unittest.TestCase):
         class FakePage:
             def __init__(self, text):
                 self.text = text
+                self.images = []
 
             def extract_text(self):
                 return self.text
@@ -55,17 +63,89 @@ class AttachmentExtractionTests(unittest.TestCase):
             def __exit__(self, exc_type, exc, traceback):
                 return False
 
-        with patch("agent_rfq_extractor.gmail_client.pdfplumber.open", return_value=FakePdf()):
-            text, error = _extract_attachment_text("quote.pdf", "application/pdf", b"%PDF-1.4")
+        with patch("agent_rfq_extractor.attachment_extraction.pdfplumber.open", return_value=FakePdf()):
+            result = extract_attachment("quote.pdf", "application/pdf", b"%PDF-1.4")
 
-        self.assertIsNone(error)
-        self.assertEqual(text, "Quote page 1\nGL-1 insulated unit")
+        self.assertIsNone(result.error)
+        self.assertEqual(result.text, "Quote page 1\nGL-1 insulated unit")
+        self.assertEqual(result.extraction_method, "text")
+        self.assertFalse(result.review_required)
 
-    def test_unsupported_image_attachment_stays_out_of_scope(self):
+    def test_malformed_image_attachment_returns_explicit_error(self):
         text, error = _extract_attachment_text("photo.png", "image/png", b"\x89PNG")
 
         self.assertEqual(text, "")
-        self.assertEqual(error, "Unsupported attachment type: image/png")
+        self.assertIn("UnidentifiedImageError", error)
+
+    def test_image_only_pdf_uses_ocr_and_records_confidence(self):
+        class FakePage:
+            images = [{"name": "scan"}]
+
+            def extract_text(self):
+                return ""
+
+            def to_image(self, resolution, antialias):
+                self.render_options = (resolution, antialias)
+                return SimpleNamespace(original=Image.new("RGB", (1200, 1600), "white"))
+
+        class FakePdf:
+            pages = [FakePage()]
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, traceback):
+                return False
+
+        with (
+            patch("agent_rfq_extractor.attachment_extraction.pdfplumber.open", return_value=FakePdf()),
+            patch(
+                "agent_rfq_extractor.attachment_extraction._ocr_image",
+                return_value=OCRResult(
+                    text='M-101 QTY 4 48 in x 96 in 1/2 in clear tempered',
+                    confidence=0.96,
+                    word_count=12,
+                ),
+            ),
+        ):
+            result = extract_attachment("scan.pdf", "application/pdf", b"%PDF-1.4")
+
+        self.assertEqual(result.extraction_method, "ocr")
+        self.assertTrue(result.ocr_used)
+        self.assertEqual(result.ocr_confidence, 0.96)
+        self.assertEqual(result.page_count, 1)
+        self.assertEqual(result.ocr_page_count, 1)
+        self.assertFalse(result.review_required)
+        self.assertIn("[Page 1 - OCR]", result.text)
+        self.assertIn("M-101", result.text)
+
+    def test_low_confidence_image_ocr_requires_review(self):
+        image = Image.new("RGB", (800, 600), "white")
+        buffer = BytesIO()
+        image.save(buffer, format="PNG")
+        with patch(
+            "agent_rfq_extractor.attachment_extraction._ocr_image",
+            return_value=OCRResult(text="M-1 48 x 96", confidence=0.72, word_count=4),
+        ):
+            result = extract_attachment("scan.png", "image/png", buffer.getvalue())
+
+        self.assertTrue(result.review_required)
+        self.assertIn("72.0%", result.review_reason)
+
+    def test_tesseract_tsv_parser_keeps_lines_and_critical_confidence(self):
+        raw = (
+            "level\tpage_num\tblock_num\tpar_num\tline_num\tword_num\tleft\ttop\twidth\theight\tconf\ttext\n"
+            "5\t1\t1\t1\t1\t1\t0\t0\t1\t1\t96\tM-101\n"
+            "5\t1\t1\t1\t1\t2\t0\t0\t1\t1\t94\tQTY\n"
+            "5\t1\t1\t1\t1\t3\t0\t0\t1\t1\t88\t4\n"
+            "5\t1\t1\t1\t2\t1\t0\t0\t1\t1\t93\tTempered\n"
+        )
+
+        result = _parse_tesseract_tsv(raw)
+
+        self.assertEqual(result.text, "M-101 QTY 4\nTempered")
+        self.assertEqual(result.word_count, 4)
+        self.assertEqual(result.confidence, 0.92)
 
     def test_gmail_attachment_fetch_extracts_text_and_preview(self):
         raw_text = b"GL-1, 2 pcs, 1/4 clear tempered, 12 x 24"
@@ -90,6 +170,7 @@ class AttachmentExtractionTests(unittest.TestCase):
         self.assertEqual(attachments[0].filename, "schedule.txt")
         self.assertEqual(attachments[0].source, "attachment:schedule.txt")
         self.assertTrue(attachments[0].text_extracted)
+        self.assertEqual(attachments[0].extraction_method, "text")
         self.assertIn("clear tempered", attachments[0].text)
         self.assertIn("GL-1", attachments[0].text_preview)
 

@@ -9,10 +9,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:30:52.355649+00:00",
+    "extracted_at": "2026-08-19T20:08:17.984443+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Fabrication details are approximate or pending confirmation.",
+      "reason": "Quantity ambiguous ('a few door lites', 'a couple of 1\" holes'). Confirm number of door lites. Fabrication details are approximate or pending confirmation. Fabrication details are approximate or pending confirmation.",
       "missing_fields": [],
       "conflicts": []
     },
@@ -45,7 +45,7 @@
               },
               "fabrication": {
                 "edge_work": "flat polished all around",
-                "details": "Two 1\" pull holes ~4\" down from each top corner; holes do not change rectangle shape. Hole detail to follow once hardware finalized."
+                "details": "two 1\" pull holes about 4\" down from each top corner; detail to follow"
               },
               "found_fields": [
                 "TK",
@@ -59,7 +59,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Quantity not explicitly stated ('a few door lites'); defaulted to 1. Two 1\" pull holes ~4\" down from each top corner; holes do not change rectangle shape. Hole detail to follow once hardware finalized. Budgetary pricing and lead time requested. Quantity was ambiguous; defaulted to 1 piece pending confirmation."
+              "notes": "Quantity not explicitly stated ('a few door lites'); defaulted to 1. Holes are cutouts and do not change shape to circle."
             }
           ]
         }
@@ -76,7 +76,7 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:30:56.894311+00:00",
+    "extracted_at": "2026-08-19T20:08:22.796086+00:00",
     "status": "human_review_required",
     "review": {
       "reason": "Fabrication details are approximate or pending confirmation.",
@@ -112,7 +112,7 @@
               },
               "fabrication": {
                 "edge_work": "polished edges",
-                "details": "Top two corners radiused at ~1\" radius."
+                "details": "top two corners radiused at approx 1\" radius"
               },
               "found_fields": [
                 "TK",
@@ -126,7 +126,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Ultra clear low-iron (Starphire-type). Top two corners radiused at ~1\" radius. Quantity defaulted to 1. Freight to 60607 requested."
+              "notes": "Quantity defaulted to 1 (not stated). Low-iron described as starphire-type ultra clear. Freight requested to zip 60607."
             }
           ]
         }
@@ -143,7 +143,7 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:31:01.502428+00:00",
+    "extracted_at": "2026-08-19T20:08:28.172417+00:00",
     "status": "completed",
     "review": null,
     "attachments": [],
@@ -175,7 +175,7 @@
               },
               "fabrication": {
                 "edge_work": "seamed edges",
-                "details": "Safety backing (vinyl) requested on back for gym wall install."
+                "details": "safety backing (vinyl) applied on back"
               },
               "found_fields": [
                 "TK",
@@ -187,7 +187,7 @@
                 "TK": 0.97,
                 "TT": 0.97
               },
-              "notes": "Safety backing (vinyl) requested on back for gym wall install. Quantity defaulted to 1."
+              "notes": "Quantity not stated; defaulted to 1. Mirror glass with vinyl safety backing for gym wall."
             }
           ]
         }
@@ -204,10 +204,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:31:07.682456+00:00",
+    "extracted_at": "2026-08-19T20:08:34.238971+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Heat treatment unspecified; customer requests recommendation on tempered-laminated for railing infill. Quantity defaulted to 1. One or more items are missing required fields: HT1, HT2.",
+      "reason": "Heat treatment (HT1/HT2) not specified; customer requested recommendation on tempered-laminated for railing app. Quantity defaulted to 1. One or more items are missing required fields: HT1, HT2.",
       "missing_fields": [
         "HT1",
         "HT2"
@@ -271,7 +271,7 @@
                 "interlayer_material": 0.96,
                 "interlayer_thickness": 0.94
               },
-              "notes": "Quantity defaulted to 1 (not stated). Heat treatment not specified; customer asks whether to use tempered-laminated for railing application - flag for recommendation. Interlayer described as clear."
+              "notes": "Quantity not stated; defaulted to 1. Heat treatment not specified; customer asked whether tempered-laminated is recommended for railing application. Interlayer described as clear."
             }
           ]
         }
@@ -288,10 +288,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:31:14.910547+00:00",
+    "extracted_at": "2026-08-19T20:08:41.429697+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Per-lite glass thicknesses (TK1/TK2) not specified; spacer_thickness given only as 'standard' (invalid); argon is conditional. One or more items are missing required fields: TK1, TK2, spacer_material, spacer_thickness.",
+      "reason": "Per-lite glass thicknesses (TK1/TK2) not provided; only 1\" overall thickness stated. Airspace given as 'standard' which is not a valid measurement. Argon is conditional on lead time. Quantity defaulted. One or more items are missing required fields: TK1, TK2, spacer_material, spacer_thickness.",
       "missing_fields": [
         "TK1",
         "TK2",
@@ -357,7 +357,7 @@
                 "HT2": 0.92,
                 "gas_fill": 0.9
               },
-              "notes": "Quantity defaulted to 1. Per-lite thicknesses not stated; only 1\" overall given. Airspace stated as 'standard' which is not a valid measurement, so spacer_thickness is null. Argon requested conditionally ('if it doesn't push the lead time out')."
+              "notes": "Quantity defaulted to 1; not stated. Per-lite thicknesses not specified; only 1\" overall given. 'Standard airspace' is not a valid explicit spacer measurement, so spacer_thickness left null. Argon requested conditionally (only if it doesn't extend lead time)."
             }
           ]
         }
@@ -374,7 +374,7 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:31:19.518510+00:00",
+    "extracted_at": "2026-08-19T20:08:46.205637+00:00",
     "status": "completed",
     "review": null,
     "attachments": [],
@@ -405,7 +405,7 @@
                 "TT": "clear"
               },
               "fabrication": {
-                "edge_work": "pencil polished edge all around"
+                "edge_work": "pencil polished all around"
               },
               "found_fields": [
                 "TK",
@@ -419,7 +419,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Round table top. Quantity defaulted to 1 (not stated). Customer asks about round upcharge vs standard rectangle."
+              "notes": "Round table top. Quantity not stated, defaulted to 1. Customer asks about round upcharge vs rectangle (not a spec)."
             }
           ]
         }
@@ -436,10 +436,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:31:26.592293+00:00",
+    "extracted_at": "2026-08-19T20:08:53.334336+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Quantity is an unconfirmed range (6-8); per-lite thickness, heat treatment, and interlayer not specified. One or more items are missing required fields: TK1, TK2, interlayer_thickness, interlayer_material, HT1, HT2.",
+      "reason": "Quantity is a range (6-8) not yet finalized; defaulted to 1 pending confirmation. Laminated ply thicknesses, heat treatment, and interlayer material/thickness not specified. One or more items are missing required fields: TK1, TK2, interlayer_thickness, interlayer_material, HT1, HT2.",
       "missing_fields": [
         "TK1",
         "TK2",
@@ -507,7 +507,7 @@
                 "TT1": 0.95,
                 "TT2": 0.95
               },
-              "notes": "Grey tinted laminated glass. Color grey applies to laminated plies. Quantity stated as a range (6-8) to be confirmed; defaulted to 1 pending exact count. Per-lite thickness and heat treatment not specified. Quantity was ambiguous; defaulted to 1 piece pending confirmation."
+              "notes": "Quantity defaulted to 1; sender states between 6 and 8 units, exact count to be confirmed once layout is locked. Per-lite pricing requested. Ply thicknesses, heat treatment, and interlayer not specified. Quantity was ambiguous; defaulted to 1 piece pending confirmation."
             }
           ]
         }
@@ -524,10 +524,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:31:33.856330+00:00",
+    "extracted_at": "2026-08-19T20:09:01.019658+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Glass thicknesses not yet available (architect pending); customer requested 'standard' which is not a valid spec value. Per-lite thicknesses and spacer thickness left null for human review. One or more items are missing required fields: TK1, TK2, spacer_material, spacer_thickness, HT1, HT2.",
+      "reason": "Per-lite glass thicknesses (TK1/TK2) and spacer thickness are unspecified; customer said to assume 'standard' which is not a valid explicit measurement. Overall thickness is 1\" but lite breakdown cannot be reliably derived. Needs clarification. One or more items are missing required fields: TK1, TK2, spacer_material, spacer_thickness, HT1, HT2.",
       "missing_fields": [
         "TK1",
         "TK2",
@@ -593,7 +593,7 @@
               "field_confidence": {
                 "gas_fill": 0.9
               },
-              "notes": "Quantity defaulted to 1 (not stated). Per-lite glass thicknesses not provided; architect thickness pending and 'standard' is not a valid spec value, so TK1/TK2 left null. Spacer_thickness not derivable without lite thicknesses, left null. Overall thickness 1\" provided as context. Budgetary request."
+              "notes": "Quantity not stated; defaulted to 1. Overall IGU thickness is 1\" but per-lite glass thicknesses are not yet provided (architect has not confirmed); customer asked to assume 'standard' which is not a valid explicit measurement, so per-lite TK and spacer thickness left null. Budgetary quote stage."
             }
           ]
         }
@@ -610,10 +610,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:31:41.157696+00:00",
+    "extracted_at": "2026-08-19T20:09:07.785778+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Per-lite glass thicknesses and spacer thickness not provided; only overall 1\" unit thickness given. One or more items are missing required fields: TK1, TK2, spacer_material, spacer_thickness.",
+      "reason": "Per-lite glass thicknesses and spacer thickness not provided for the 1\" insulated unit; cannot derive spacer from unknown lites. Buyer requested lead time. One or more items are missing required fields: TK1, TK2, spacer_material, spacer_thickness.",
       "missing_fields": [
         "TK1",
         "TK2",
@@ -675,7 +675,7 @@
                 "TT2": 0.94,
                 "HT2": 0.92
               },
-              "notes": "Quantity defaulted to 1; not stated. Overall unit thickness 1\"; per-lite thicknesses and spacer thickness not specified. Outboard lite bronze, inboard lite clear, tempered both sides. Exterior glazing on south elevation. Lead time requested."
+              "notes": "Outboard lite bronze tempered, inboard lite clear tempered. Per-lite thicknesses (TK1/TK2) and spacer thickness not stated; overall unit is 1\". Quantity defaulted to 1. Exterior glazing, south elevation. Buyer also requested lead time."
             }
           ]
         }
@@ -692,10 +692,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:31:48.932317+00:00",
+    "extracted_at": "2026-08-19T20:09:15.932000+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Low-E surface placement not specified by customer and requires recommendation; hurricane zone impact requirements should be verified. One or more items are missing required fields: spacer_material.",
+      "reason": "Low-E coating surface not specified (customer asked fabricator to recommend). Quantity defaulted to 1. Hurricane zone requirement may require specific interlayer/spec confirmation. Spacer material not stated. One or more items are missing required fields: spacer_material.",
       "missing_fields": [
         "spacer_material"
       ],
@@ -738,7 +738,8 @@
                 "laminated_lite": "outer"
               },
               "fabrication": {
-                "coatings": "Low-E"
+                "coatings": "Low-E (surface not specified)",
+                "details": "Hurricane zone application"
               },
               "found_fields": [
                 "TK1",
@@ -766,7 +767,7 @@
                 "interlayer_thickness": 0.93,
                 "laminated_lite": 0.96
               },
-              "notes": "Quantity defaulted to 1. Low-E surface not specified; customer requests recommendation ('you tell me which surface') - requires engineering input. Hurricane zone noted; verify laminate/impact requirements. Spacer material not specified."
+              "notes": "Quantity not stated; defaulted to 1. Low-E surface not specified by customer; customer requested fabricator recommendation. Hurricane zone noted, which may affect specs/interlayer. Spacer material not specified."
             }
           ]
         }
@@ -783,10 +784,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:31:55.725441+00:00",
+    "extracted_at": "2026-08-19T20:09:23.308660+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Many required per-lite specs missing (thicknesses, heat treatment, interlayer, spacer, inboard lite). Customer requests budget pricing and size feasibility confirmation. One or more items are missing required fields: TK1, TK2, TK3, HT1, HT2, HT3, interlayer_material, interlayer_thickness, spacer_material, spacer_thickness.",
+      "reason": "Budget/feasibility request with minimal specs. Many required per-lite fields (thicknesses, heat treatment, interlayer material/thickness, spacer, inboard lite type) are missing and left null. Quantity was defaulted. One or more items are missing required fields: TK1, TK2, TK3, HT1, HT2, HT3, interlayer_material, interlayer_thickness, spacer_material, spacer_thickness.",
       "missing_fields": [
         "TK1",
         "TK2",
@@ -873,7 +874,7 @@
                 "gas_fill": 0.89,
                 "laminated_lite": 0.96
               },
-              "notes": "Quantity defaulted to 1; none stated. Outboard lite is laminated low-iron; per-lite thicknesses, heat treatments, interlayer, and inboard lite specs not provided. Budget/mockup pricing requested and confirmation of large-size fabrication feasibility."
+              "notes": "Laminated low-iron outboard lite of an argon-filled IGU. Per-lite thicknesses, heat treatments, interlayer, spacer, and inboard lite specs not provided. Quantity defaulted to 1 (not stated)."
             }
           ]
         }
@@ -890,10 +891,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:32:00.954155+00:00",
+    "extracted_at": "2026-08-19T20:09:28.476811+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Preliminary feasibility inquiry; pentagon shape not in standard enum and no dimensions or thickness provided yet. Human review recommended. One or more items are missing required fields: dimensions, TK.",
+      "reason": "Feasibility/budget inquiry with no dimensions and no thickness; pentagon shape not in allowed enum (mapped to 'square' as unclear shape). Needs template and specs before quoting. Fabrication details are approximate or pending confirmation. One or more items are missing required fields: dimensions, TK. Fabrication details are approximate or pending confirmation.",
       "missing_fields": [
         "dimensions",
         "TK"
@@ -929,7 +930,9 @@
                 "TK": null,
                 "HT": "tempered"
               },
-              "fabrication": {},
+              "fabrication": {
+                "details": "Pentagon-shaped panel; template to follow"
+              },
               "found_fields": [
                 "HT"
               ],
@@ -941,7 +944,7 @@
               "field_confidence": {
                 "HT": 0.97
               },
-              "notes": "Pentagon-shaped panel; no standard shape enum for pentagon, defaulted to square (shape unclear/non-standard). No dimensions provided yet (template to follow). Quantity defaulted to 1. Feasibility/pricing inquiry only."
+              "notes": "Pentagon shape is neither rectangle nor circle; shape set to 'square' per unclear-shape rule. No dimensions provided (template to follow). Quantity defaulted to 1. Preliminary feasibility/pricing inquiry only."
             }
           ]
         }
@@ -958,10 +961,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:32:06.871130+00:00",
+    "extracted_at": "2026-08-19T20:09:36.070169+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Insulated unit missing per-lite specs (TK1/HT1, TK2/HT2) and spacer thickness; overall thickness given as 1\". One or more items are missing required fields: TK1, TK2, spacer_material, spacer_thickness, HT1, HT2.",
+      "reason": "Insulated unit missing per-lite thicknesses, heat treatments, and tints. Spacer thickness not explicitly stated ('standard' is not a valid measurement). One or more items are missing required fields: TK1, TK2, spacer_material, spacer_thickness, HT1, HT2.",
       "missing_fields": [
         "TK1",
         "TK2",
@@ -1027,7 +1030,7 @@
               "field_confidence": {
                 "gas_fill": 0.9
               },
-              "notes": "Quantity defaulted to 1 (not stated). Per-lite thicknesses and heat treatment not specified. Overall unit is 1\"; 'standard' is not a valid spacer_thickness so spacer_thickness left null."
+              "notes": "Quantity defaulted to 1 (not stated). Overall unit thickness given as 1\" but per-lite thicknesses/heat treatments not specified. 'Standard' 1\" unit does not provide an explicit spacer_thickness, so spacer_thickness left null."
             }
           ]
         }
@@ -1044,7 +1047,7 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:32:12.898720+00:00",
+    "extracted_at": "2026-08-19T20:09:41.984414+00:00",
     "status": "completed",
     "review": null,
     "attachments": [],
@@ -1089,7 +1092,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Quantity defaulted to 1; not explicitly stated. Customer asks whether size is temperable or must be split, needs manufacturer review."
+              "notes": "Quantity defaulted to 1; not explicitly stated. Customer asks whether the size is temperable as a single piece or must be split."
             }
           ]
         }
@@ -1106,10 +1109,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:32:18.187927+00:00",
+    "extracted_at": "2026-08-19T20:09:47.424128+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Dimensions not yet provided and thickness unconfirmed ('standard 1/2\"' pending confirmation). One or more items are missing required fields: dimensions, TK.",
+      "reason": "Dimensions missing (sender to provide later). Thickness unconfirmed ('assuming standard 1/2\"' but asked fabricator to confirm), left null. One or more items are missing required fields: dimensions, TK.",
       "missing_fields": [
         "dimensions",
         "TK"
@@ -1148,7 +1151,7 @@
               },
               "fabrication": {
                 "edge_work": "flat polished",
-                "details": "Door lite with two door rail cutouts (top and bottom); cutouts do not change rectangle shape."
+                "details": "two door rail cutouts (top and bottom)"
               },
               "found_fields": [
                 "HT"
@@ -1162,7 +1165,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Door lite with two door rail cutouts (top and bottom); cutouts do not change rectangle shape. Exact size to be provided later - dimensions null. Sender assumed standard 1/2\" thickness but asked for confirmation; 'standard' is not a valid explicit measurement, so TK left null. Quantity defaulted to 1."
+              "notes": "Exact size not yet provided; sender will follow up. Thickness assumed '1/2\"' by sender but requested confirmation, so left null pending confirmation. Quantity defaulted to 1."
             }
           ]
         }
@@ -1179,7 +1182,7 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:32:22.392130+00:00",
+    "extracted_at": "2026-08-19T20:09:51.721772+00:00",
     "status": "completed",
     "review": null,
     "attachments": [],
@@ -1222,7 +1225,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Quantity defaulted to 1 (not stated)."
+              "notes": "Quantity not stated; defaulted to 1."
             }
           ]
         }
@@ -1239,10 +1242,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:32:28.716455+00:00",
+    "extracted_at": "2026-08-19T20:09:56.843953+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Budget estimate only; no per-panel dimensions provided (area total 120 sq. ft. is not a dimension). One or more items are missing required fields: dimensions.",
+      "reason": "Only total area (~120 sq. ft.) given with no individual panel dimensions or quantity; this is a budget/ballpark request. One or more items are missing required fields: dimensions.",
       "missing_fields": [
         "dimensions"
       ],
@@ -1293,7 +1296,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Budget/ballpark request. Only area given (~120 sq. ft.); individual sizes vary and are not specified, so dimensions set to null. Quantity defaulted to 1."
+              "notes": "Only area (~120 sq. ft.) provided, not individual panel dimensions; dimensions set to null. Individual sizes vary. Quantity defaulted to 1. Budget/ballpark per-square-foot estimate requested."
             }
           ]
         }
@@ -1310,10 +1313,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:32:43.380516+00:00",
+    "extracted_at": "2026-08-19T20:10:12.051716+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "All items provided as square-footage totals only, so dimensions are null. Multiple required per-lite specs (thicknesses, heat treatments, spacer, interlayer) are unspecified and need clarification. One or more items are missing required fields: dimensions, HT1, HT2, TK1, TK2, spacer_material, spacer_thickness, TK3, HT3, interlayer_material, interlayer_thickness.",
+      "reason": "Schedule referenced as attached but no attachment provided. All items give only square footage totals, not per-unit dimensions or quantities; many required per-lite spec values (thicknesses, heat treatment, spacer) are missing. Manual review needed. One or more items are missing required fields: dimensions, HT1, HT2, TK1, TK2, spacer_material, spacer_thickness, TK3, HT3, interlayer_material, interlayer_thickness.",
       "missing_fields": [
         "dimensions",
         "HT1",
@@ -1387,7 +1390,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Only area given (180 sq. ft.); no dimensions provided so dimensions=null. Quantity defaulted to 1."
+              "notes": "Only area given (180 sq. ft.), no per-unit dimensions; dimensions set to null. Quantity defaulted to 1."
             }
           ]
         },
@@ -1435,7 +1438,7 @@
                 "interlayer_material": 0.96,
                 "interlayer_thickness": 0.94
               },
-              "notes": "Only area given (120 sq. ft.); no dimensions provided. Heat treatment not specified. Quantity defaulted to 1."
+              "notes": "Only area given (120 sq. ft.), no per-unit dimensions; dimensions set to null. Heat treatment not stated. Quantity defaulted to 1."
             }
           ]
         },
@@ -1476,7 +1479,7 @@
               "field_confidence": {
                 "gas_fill": 0.9
               },
-              "notes": "Only area given (240 sq. ft.); no dimensions. Per-lite thicknesses and spacer thickness not specified; overall 1\" given as context. Quantity defaulted to 1."
+              "notes": "Only area given (240 sq. ft.), no per-unit dimensions; dimensions set to null. Per-lite thicknesses and spacer thickness not stated. Quantity defaulted to 1."
             }
           ]
         },
@@ -1527,7 +1530,7 @@
               "field_confidence": {
                 "laminated_lite": 0.96
               },
-              "notes": "Only area given (160 sq. ft.); no dimensions. Laminated outboard lite with Low-E; per-lite specs, interlayer, spacer, and gas fill not specified. Quantity defaulted to 1."
+              "notes": "Only area given (160 sq. ft.), no per-unit dimensions; dimensions set to null. Laminated outboard lite with Low-E; no per-lite thicknesses, interlayer, or spacer details provided. Quantity defaulted to 1."
             }
           ]
         }
@@ -1544,10 +1547,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:32:59.426813+00:00",
+    "extracted_at": "2026-08-19T20:10:29.221701+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "One or more items are missing required fields: spacer_material, HT1, HT2.",
+      "reason": "Laminated-insulated item: outboard laminated plies (1/4\" + .090 PVB + 1/4\") have no stated heat treatment; only inboard lite is specified as 1/4\" HS. Left HT1/HT2 null rather than inheriting HS. Tint/color for the laminated-insulated lites not stated. One or more items are missing required fields: spacer_material, HT1, HT2.",
       "missing_fields": [
         "spacer_material",
         "HT1",
@@ -1755,7 +1758,7 @@
                 "interlayer_thickness": 0.93,
                 "laminated_lite": 0.96
               },
-              "notes": "Outboard laminated plies have no stated heat treatment; not inheriting the inboard HS designation. Colors/tints not stated for laminated plies."
+              "notes": "Outboard laminated plies list no heat treatment; not inheriting HS from the inboard lite. Interlayer material assumed PVB per '.090 PVB' notation. Outboard/inboard tint not stated."
             }
           ]
         }
@@ -1772,10 +1775,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:33:14.306313+00:00",
+    "extracted_at": "2026-08-19T20:10:44.558515+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Multiple items lack per-lite thicknesses and construction details (interlayer, spacer). Verify specs before quoting. One or more items are missing required fields: HT, TK1, TK2, interlayer_thickness, interlayer_material, spacer_material, spacer_thickness, HT1, HT2, TK3.",
+      "reason": "Multiple items lack required per-lite thicknesses, heat treatments, and spacer/interlayer details. Only overall thicknesses provided for IGU and LIU. Please confirm build-ups. One or more items are missing required fields: HT, TK1, TK2, interlayer_thickness, interlayer_material, spacer_material, spacer_thickness, HT1, HT2, TK3.",
       "missing_fields": [
         "HT",
         "TK1",
@@ -1844,7 +1847,7 @@
                 "TK": 0.97,
                 "TT": 0.97
               },
-              "notes": "Monolithic low-iron. No heat treatment stated."
+              "notes": "Heat treatment not specified."
             }
           ]
         },
@@ -1886,7 +1889,7 @@
                 "TT2": 0.95,
                 "HT2": 0.93
               },
-              "notes": "9/16\" overall clear laminated, HS construction. Per-lite thicknesses and interlayer not specified."
+              "notes": "9/16\" overall laminated stated; per-lite thicknesses and interlayer thickness not broken out."
             }
           ]
         },
@@ -1928,7 +1931,7 @@
               "field_confidence": {
                 "gas_fill": 0.9
               },
-              "notes": "1\" overall IGU, Low-E surface 2, argon filled. Per-lite thicknesses and spacer not specified."
+              "notes": "Only overall thickness (1\") given; per-lite thicknesses and spacer not specified."
             }
           ]
         },
@@ -1977,7 +1980,7 @@
                 "HT3": 0.91,
                 "laminated_lite": 0.96
               },
-              "notes": "LIU with laminated outboard lite and tempered inboard lite. Per-lite thicknesses, interlayer, and spacer not specified. Outboard laminated ply heat treatment not stated; not inherited from inboard tempered."
+              "notes": "Laminated outboard lite (plies not specified), tempered inboard lite. Only overall thickness (1-5/16\") given; per-lite thicknesses, interlayer, and spacer not specified."
             }
           ]
         }
@@ -1994,10 +1997,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:33:23.808317+00:00",
+    "extracted_at": "2026-08-19T20:10:55.953178+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "60 x 84 half-inch lite lacks explicit heat treatment and color; confirm whether tempered/clear applies. One or more items are missing required fields: HT.",
+      "reason": "Sender is estimating GC intent ('from what I can tell'); sizes reference a markup not attached. 60x84 1/2\" lite lacks explicit heat treatment and tint. Verify against markup drawing. One or more items are missing required fields: HT.",
       "missing_fields": [
         "HT"
       ],
@@ -2046,8 +2049,7 @@
                 "TK": 0.97,
                 "HT": 0.97,
                 "TT": 0.97
-              },
-              "notes": "Polished edges throughout."
+              }
             },
             {
               "width": 24.0,
@@ -2076,8 +2078,7 @@
                 "TK": 0.97,
                 "HT": 0.97,
                 "TT": 0.97
-              },
-              "notes": "Polished edges throughout."
+              }
             },
             {
               "width": 60.0,
@@ -2105,7 +2106,7 @@
               "field_confidence": {
                 "TK": 0.97
               },
-              "notes": "Larger lite at half inch. Heat treatment and color not explicitly stated for this lite; the 'quarter inch clear tempered' applied to the other lites and should not be inherited here without confirmation."
+              "notes": "Larger lite specified as 1/2\". Heat treatment and tint not explicitly stated for this lite; 'quarter inch clear tempered' description applied to the other lites only. Left HT/TT null to avoid inheriting from other items."
             }
           ]
         }
@@ -2122,7 +2123,7 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:33:28.385789+00:00",
+    "extracted_at": "2026-08-19T20:11:00.826951+00:00",
     "status": "completed",
     "review": null,
     "attachments": [],
@@ -2167,7 +2168,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Thickness corrected from 1/4\" (quarter inch) to 3/8\" (three-eighths) per architect update later in the email."
+              "notes": "Thickness corrected from quarter inch (1/4\") to 3/8\" per architect's updated instruction in the same message."
             }
           ]
         }
@@ -2184,10 +2185,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:33:30.983555+00:00",
+    "extracted_at": "2026-08-19T20:11:03.213651+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Thread only references a prior job (Hudson Street) for a reorder with no dimensions, glass type, or specs provided. Human review needed to pull prior-job details on file. No glass items were extracted from the message. No glass items were extracted from the message. No glass items were extracted from the message.",
+      "reason": "Message only references a prior job (Hudson Street job last month) for a reorder with no dimensions, glass type, edge work, or quantity provided. No spec details available to extract; requires human review to pull prior job details from file. No glass items were extracted from the message. No glass items were extracted from the message.",
       "missing_fields": [],
       "conflicts": []
     },
@@ -2211,7 +2212,7 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:33:37.138758+00:00",
+    "extracted_at": "2026-08-19T20:11:10.520975+00:00",
     "status": "completed",
     "review": null,
     "attachments": [],
@@ -2242,7 +2243,7 @@
                 "TT": "clear"
               },
               "fabrication": {
-                "edge_work": "polished"
+                "edge_work": "polished edges"
               },
               "found_fields": [
                 "TK",
@@ -2256,7 +2257,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Dimensions in metric per European supplier drawing."
+              "notes": "Dimensions in metric per European supplier's drawing."
             },
             {
               "width": 32.0,
@@ -2286,7 +2287,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Half inch thickness; same clear tempered polished as first item."
+              "notes": "Dimensions in imperial units."
             }
           ]
         }
@@ -2303,10 +2304,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:33:42.504818+00:00",
+    "extracted_at": "2026-08-19T20:11:16.015916+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Budgetary estimate with approximate quantity and dimensions; final specs pending architect details.",
+      "reason": "Budgetary/preliminary RFQ with approximate quantity and dimensions; architect has not provided final details. Values should be confirmed before firm quote.",
       "missing_fields": [],
       "conflicts": []
     },
@@ -2338,7 +2339,7 @@
                 "TT": "clear"
               },
               "fabrication": {
-                "edge_work": "polished edges"
+                "edge_work": "polished"
               },
               "found_fields": [
                 "TK",
@@ -2352,7 +2353,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Budgetary/ballpark quote; quantities (~15) and dimensions (~40\" x 90\") are approximate per requester. Quantity was ambiguous; defaulted to 1 piece pending confirmation."
+              "notes": "Budgetary/ballpark request. Dimensions approximate ('somewhere around 40\" x 90\" give or take') and quantity approximate ('roughly fifteen lites'). Architect details not finalized. Quantity was ambiguous; defaulted to 1 piece pending confirmation."
             }
           ]
         }
@@ -2369,7 +2370,7 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:33:51.854461+00:00",
+    "extracted_at": "2026-08-19T20:11:22.797263+00:00",
     "status": "completed",
     "review": null,
     "attachments": [],
@@ -2414,7 +2415,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Fixed shower panel."
+              "notes": "Fixed shower panels."
             },
             {
               "width": 26.0,
@@ -2431,7 +2432,7 @@
               },
               "fabrication": {
                 "edge_work": "polished edges all around",
-                "details": "Shower door with hinge cutouts and a notch for the handle; cutouts/notches do not change rectangle shape."
+                "details": "hinge cutouts and a notch for the handle"
               },
               "found_fields": [
                 "TK",
@@ -2445,7 +2446,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Shower door with hinge cutouts and a notch for the handle; cutouts/notches do not change rectangle shape."
+              "notes": "Shower doors."
             }
           ]
         }
@@ -2462,7 +2463,7 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:33:56.125168+00:00",
+    "extracted_at": "2026-08-19T20:11:27.533561+00:00",
     "status": "completed",
     "review": null,
     "attachments": [],
@@ -2507,7 +2508,7 @@
                 "HT": 0.97,
                 "color": 0.97
               },
-              "notes": "One piece stated explicitly. Rush requested."
+              "notes": "One piece stated."
             }
           ]
         }
@@ -2524,10 +2525,10 @@
     "emailbody_variant": "plain",
     "received_at": null,
     "has_attachments": false,
-    "extracted_at": "2026-07-17T04:34:01.828179+00:00",
+    "extracted_at": "2026-08-19T20:11:33.165813+00:00",
     "status": "human_review_required",
     "review": {
-      "reason": "Frit color is unspecified (TBD); customer requested lead time information which requires human follow-up.",
+      "reason": "Frit color is TBD (black or dark grey undecided); quantity is approximate ('around 20, could go up'). Buyer also asked about lead time impact of the frit.",
       "missing_fields": [],
       "conflicts": []
     },
@@ -2559,7 +2560,8 @@
                 "TT": "spandrel"
               },
               "fabrication": {
-                "coatings": "ceramic frit on surface 2"
+                "coatings": "ceramic frit on surface 2",
+                "details": "ceramic frit applied on surface 2"
               },
               "found_fields": [
                 "TK",
@@ -2573,7 +2575,7 @@
                 "HT": 0.97,
                 "TT": 0.97
               },
-              "notes": "Frit color still TBD (probably black or dark grey), so color left null. Ceramic frit applied on surface 2. Quantity ~20, could increase. Customer asked about lead time impact of frit. Quantity was ambiguous; defaulted to 1 piece pending confirmation."
+              "notes": "Frit color still TBD (probably black or dark grey), left null. Quantity stated as 'around 20, could go up' - used 20. Quantity was ambiguous; defaulted to 1 piece pending confirmation."
             }
           ]
         }

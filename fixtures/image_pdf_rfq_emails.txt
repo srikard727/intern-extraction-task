@@ -1,0 +1,39 @@
+Email: 1
+RFQ IMG-MONO-001 - image-only PDF schedule
+
+Hello,
+
+Please quote the attached image-only RFQ schedule. All item specifications are in the attachment.
+
+Fixture-Attachment: attachments/image_rfq_monolithic.pdf
+
+Thanks,
+Morgan
+
+------------------------------------------------------------
+
+Email: 2
+RFQ IMG-IGU-002 - image-only PDF schedule
+
+Good morning,
+
+Please provide pricing from the attached image-only RFQ. Use the exact construction shown in the PDF.
+
+Fixture-Attachment: attachments/image_rfq_insulated.pdf
+
+Regards,
+Taylor
+
+------------------------------------------------------------
+
+Email: 3
+RFQ IMG-LAM-003 - image-only PDF schedule
+
+Hi team,
+
+Please review and quote the attached laminated-glass request. Do not assume any pending specification.
+
+Fixture-Attachment: attachments/image_rfq_laminated_review.pdf
+
+Thank you,
+Jordan

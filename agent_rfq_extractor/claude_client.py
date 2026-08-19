@@ -35,6 +35,7 @@ Core rules:
 - Include shape for every item. Use "rectangle" for normal width x height glass, "circle" for round/diameter/radius glass, and "square" when only one side is given or the shape is otherwise unclear.
 - Holes, pull holes, cutouts, notches, or drilled circles do not make the glass shape circle. Keep shape rectangle when the glass size is width x height.
 - Attribute every field to "body" or "attachment:<filename>" in field_sources.
+- Attachment text labeled as OCR was read from an image and may contain character errors. Do not silently repair uncertain dimensions, quantities, thicknesses, or marks; leave uncertain required values null and explain the ambiguity in review.reason.
 - Do not invent field_confidence scores. Leave confidence scoring to downstream code unless true confidence values are provided.
 - Prefer the latest explicit correction in the email body, but note the correction.
 - If body and attachment conflict, include both values in review.conflicts.
@@ -261,9 +262,15 @@ def _attachment_blocks(
             f"Message email_id: {email_id}\n"
             f"Source: {attachment.source}\n"
             f"Filename: {attachment.filename}\n"
+            f"Extraction method: {attachment.extraction_method or 'text'}\n"
+            f"OCR confidence: {_ocr_confidence_label(attachment.ocr_confidence)}\n"
             f"Text:\n{_clip(attachment.text, 12000)}"
         )
     return blocks
+
+
+def _ocr_confidence_label(value: float | None) -> str:
+    return "not applicable" if value is None else f"{value:.1%}"
 
 
 def _response_text(response: Any) -> str:

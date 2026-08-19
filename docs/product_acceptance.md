@@ -1,11 +1,11 @@
 # Product Acceptance Review
 
-Review date: August 12, 2026
+Review date: August 19, 2026
 
 ## Decision
 
 The internship MVP satisfies the required assignment scope and is ready for a
-final demonstration, subject to the two external confirmations listed below.
+final demonstration.
 The core extraction artifacts contain 28 emails, 40 per-item glass records, and
 28 agent execution logs. The deterministic acceptance audit passes every
 provided email against a checked-in expected result.
@@ -31,12 +31,12 @@ The complete A1-K4 schedule mapping is maintained in
 | Human review | Verified | Missing required fields, ambiguity, approximate specs, empty extraction, failures, and body/attachment conflicts route to review without filling required values. |
 | Source attribution | Verified | Field sources are persisted in SQLite and exposed through `/emails/{email_id}/sources` and the review UI. Exported quote JSON intentionally omits internal provenance. |
 | Gmail ingestion | Verified by tests | Gmail IDs, labeled conversation IDs, visible HTML preference, chronological thread context, and prior-message attachments are covered. |
-| Text attachments | Verified by tests and demo fixture | TXT, CSV, TSV, DOCX, and text-layer PDF paths are covered. `fixtures/attachment_demo.txt` provides a repeatable source-attributed attachment demo. |
+| Attachments and OCR | Verified by tests and demo fixtures | TXT, CSV, TSV, DOCX, text-layer PDF, typed image-only PDF, and common raster-image paths are covered. OCR records confidence and routes failed/low-confidence pages to review. |
 | Structured output | Verified | Pydantic enforces one email record with grouped item lists, type-specific specs, completion state, review data, and required email metadata. |
 | SQLite and JSON | Verified | Counts match, foreign-key integrity passes, exports are atomic, and internal item payloads remain auditable. |
 | LangGraph and agent framework | Verified | The extractor runs through LangGraph behind `BaseAgent`, `AgentRegistry`, and `AgentWorkflow`; each run is logged. |
-| API and UI | Verified | FastAPI read/extraction/task endpoints and the review dashboard are covered by route and filter validation. |
-| PostgreSQL/Redis/Celery/Docker | Verified locally | Compose/image rebuild, API health, non-root execution, shared output persistence, Redis/Celery connectivity, PostgreSQL persistence, synchronous extraction, and queued extraction have been validated. |
+| API and UI | Verified | FastAPI read/extraction/task endpoints and the review dashboard are covered by route and filter validation. A human pass at desktop and mobile widths confirmed responsive layout, internal table scrolling, readable detail sections, and no browser console errors. |
+| PostgreSQL/Redis/Celery/Docker | Verified locally | The August 19 Compose rebuild passed API health with 28 emails/40 items/28 runs, Redis `PONG`, Celery worker `pong`, PostgreSQL persistence, and Tesseract 5.5 availability in both application containers. All three raster-only PDFs were OCR'd successfully inside the API container. |
 | Documentation and demo | Verified | Setup, architecture, API, deployment, platform, multi-agent, and final demo documents are present. |
 
 ## Policy Resolution
@@ -71,6 +71,11 @@ model identifies it as unresolved.
 - Source backfill/validation and an internal source endpoint/UI column.
 - Prior-thread attachment preservation with originating message ID.
 - Safe local attachment fixtures and a repeatable attachment demo input.
+- Typed image-only PDF and raster-image OCR through local PDFium/Tesseract,
+  including page metadata, measured confidence, confidence-capped extracted
+  fields, and deterministic review routing.
+- Three realistic raster-only RFQ PDF fixtures and an attachment-aware Gmail
+  sample sender.
 - Deferred destructive replacement until a run actually starts.
 - Atomic JSON export, SQLite foreign-key enforcement, and database integrity checks.
 - Fixture path containment in the API.
@@ -80,23 +85,27 @@ model identifies it as unresolved.
 - Tested SQLite-to-PostgreSQL import for loading accepted records, internal
   provenance, and agent logs into the live demo without another model call.
 - Automated checks for Opus defaults, canonical output paths, secret ignores, and manually runnable CI.
+- Human desktop/mobile dashboard validation and a read-only live Gmail OAuth
+  smoke test; the current 30-day RFQ query returned no matching messages.
 
-## External Confirmations
+## Fresh Model Validation
 
-Two checks cannot be completed from deterministic local data alone:
+With explicit authorization on August 19, 2026, all 28 synthetic emails were
+extracted again using `claude-opus-4-8`. The run produced 40 separate items and
+28 execution logs. Its first strict audit exposed ordinary model wording drift
+in seven checks, including `approx`, `seamed`, `grey tinted`, and omitted item
+labels. Reusable deterministic normalization rules and five regression tests
+were added; replaying the stored Opus response then produced the accepted
+8-completed/20-review split and passed the full 28-email/40-item oracle.
 
-1. A fresh 28-email Anthropic Opus extraction requires explicit authorization
-   to transmit the synthetic fixture contents to Anthropic. The acceptance run
-   instead replayed the already stored Opus output through the current quality
-   layer and passed the full oracle.
-2. GitHub Actions must be observed after the pending workflow commit is pushed.
-   Local workflow content and project checks are valid, but the remote run is an
-   external repository state.
-
+A separate Opus run over the three raster-only PDF emails produced four items,
+passed JSON/SQLite parity checks, preserved every field source as
+`attachment:<filename>`, and correctly routed the intentionally missing
+laminated-lite heat treatment to human review.
 ## Optional Stretch Scope
 
-Image-only scans, photographs, handwritten takeoffs, and drawing-aware vision
-remain optional stretch work under the original assignment. They are not
-required for MVP acceptance. If pursued, the preferred implementation is a
-vision-capable model with drawing-specific tests, especially tests that prevent
-rough-opening dimensions from being mistaken for glass cut size.
+Typed image-only PDFs and common image files are now supported locally. General
+handwriting and drawing-aware vision remain optional stretch work under the
+original assignment. Future drawing interpretation needs drawing-specific tests,
+especially tests that prevent rough-opening dimensions from being mistaken for
+glass cut size.

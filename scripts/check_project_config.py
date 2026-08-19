@@ -66,6 +66,8 @@ def main() -> int:
             errors.append(f"Docker Compose port {port} is not restricted to localhost")
     if "USER app" not in dockerfile or "COPY --chown=app:app" not in dockerfile:
         errors.append("Docker image does not run application processes as an unprivileged user")
+    if "tesseract-ocr" not in dockerfile:
+        errors.append("Docker image does not install the image-only attachment OCR runtime")
 
     gmail_override_path = PROJECT_ROOT / "docker-compose.gmail.yml"
     if not gmail_override_path.exists():
@@ -80,6 +82,8 @@ def main() -> int:
     workflow = (PROJECT_ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
     if "workflow_dispatch:" not in workflow:
         errors.append("GitHub Actions workflow is not manually runnable")
+    if "tesseract-ocr" not in workflow:
+        errors.append("GitHub Actions does not install the OCR runtime before tests")
 
     _check_tracked_sensitive_files(errors)
 

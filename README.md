@@ -275,12 +275,14 @@ The fixture acceptance audit compares all 28 provided emails and all 40 expected
 items against `tests/fixtures/expected_fixture_extractions.json`; it is not only
 a row-count check.
 
-Docker acceptance was revalidated on August 12, 2026: all four services started,
+Docker acceptance was revalidated on August 19, 2026: all four services started,
 the API became healthy, Redis and Celery responded, PostgreSQL retained its
 records, the API and worker ran as non-root, and both processes shared the
-output volume. The accepted 28-email/40-item/28-run dataset and matching JSON
-export were loaded into the live platform. Synchronous and queued extraction
-paths were previously validated with rows persisted to PostgreSQL.
+output volume. Tesseract 5.5 was available in both application containers, and
+all three raster-only RFQ PDFs were OCR'd successfully inside the API image.
+The accepted 28-email/40-item/28-run dataset and matching JSON export were
+loaded into the live platform. Synchronous and queued extraction paths were
+previously validated with rows persisted to PostgreSQL.
 
 Start the API and open the browser view:
 
@@ -297,6 +299,25 @@ http://127.0.0.1:8000/view
 For a repeatable text-attachment input, use `fixtures/attachment_demo.txt`.
 Its referenced schedule is loaded from `fixtures/attachments/` and passed to
 the extractor with `attachment:<filename>` provenance.
+
+For image-only PDF validation, generate or refresh the raster fixtures and run
+their three-email package into separate outputs:
+
+```bash
+.venv/bin/python scripts/generate_image_pdf_fixtures.py
+.venv/bin/python -m agent_rfq_extractor \
+  --source fixture \
+  --fixture fixtures/image_pdf_rfq_emails.txt \
+  --db /tmp/rfq_image_pdf.db \
+  --json /tmp/rfq_image_pdf.json \
+  --replace-existing
+```
+
+PDF pages without a usable text layer are rendered locally and read with
+Tesseract. Attachment metadata records `extraction_method`, page counts,
+`ocr_confidence`, and any OCR review reason. Fields sourced from OCR are capped
+by that measured confidence, and OCR below the configured threshold routes the
+email to human review.
 
 ## Run Against Gmail
 
@@ -363,6 +384,16 @@ sample should use the same reply count:
 .venv/bin/python rfq_sender.py --follow-ups 2
 ```
 
+To send the three synthetic image-only PDF examples, use the attachment-aware
+fixture option. This command creates Gmail messages and therefore should only
+be run against the intended test account:
+
+```bash
+.venv/bin/python rfq_sender.py \
+  --emails-file fixtures/image_pdf_rfq_emails.txt \
+  --follow-ups 0
+```
+
 In extraction output, `email_id` is the individual Gmail message id. `conv_id`
 is labeled from Gmail's thread id as `gmail-thread:<threadId>`, so replies in
 the same conversation share the same `conv_id` while keeping distinct
@@ -397,10 +428,14 @@ If any required value is missing or ambiguous, the record status becomes `human_
 The current build supports text extraction from:
 
 - text-layer PDFs
+- image-only PDFs through local Tesseract OCR
+- PNG, JPEG, TIFF, and WebP images through local Tesseract OCR
 - text files / CSV / TSV
 - DOCX files
 
-Image-only attachments are intentionally out of scope for now.
+Clean typed image documents are supported. Low-confidence or failed OCR routes
+to human review. Handwriting, complex takeoff drawings, and semantic matching
+of drawing dimensions to glass cut sizes remain optional vision scope.
 
 See `docs/product_acceptance.md` for the product decision and
 `docs/requirement_traceability.md` for the complete A1-K4 task-to-evidence

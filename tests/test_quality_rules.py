@@ -103,6 +103,22 @@ class QualityRuleTests(unittest.TestCase):
         self.assertEqual(specs["TT1"], "grey")
         self.assertEqual(specs["TT2"], "grey")
 
+    def test_color_tinted_wording_is_normalized_for_multi_lite_glass(self):
+        item = normalize_items(
+            [
+                {
+                    "dimensions": '48" x 96"',
+                    "glass_type": "laminated",
+                    "TT1": "grey tinted",
+                    "TT2": "tinted grey",
+                }
+            ]
+        )[0]
+
+        specs = item.to_glass_unit()["glass_specs"]
+        self.assertEqual(specs["TT1"], "grey")
+        self.assertEqual(specs["TT2"], "grey")
+
     def test_fabrication_details_are_structured_separately_from_edge_work(self):
         item = normalize_items(
             [
@@ -165,6 +181,75 @@ class QualityRuleTests(unittest.TestCase):
             "Safety backing (vinyl) requested on back for gym wall install.",
         )
         self.assertIsNone(build_review([item]))
+
+    def test_approx_abbreviation_in_fabrication_requires_review(self):
+        item = normalize_items(
+            [
+                {
+                    "dimensions": '48" x 96"',
+                    "glass_type": "monolithic",
+                    "TK": '1/2"',
+                    "HT": "tempered",
+                    "fabrication_details": 'top corners radiused at approx 1" radius',
+                }
+            ]
+        )[0]
+
+        review = build_review([item])
+        self.assertIsNotNone(review)
+        self.assertIn("Fabrication details are approximate", review.reason)
+
+    def test_pull_hole_wording_and_seamed_edge_are_canonicalized(self):
+        item = normalize_items(
+            [
+                {
+                    "dimensions": '36" x 84"',
+                    "glass_type": "monolithic",
+                    "TK": '3/8"',
+                    "HT": "tempered",
+                    "edge_work": "seamed",
+                    "fabrication_details": (
+                        'two 1" holes about 4" down from each top corner for pulls'
+                    ),
+                }
+            ]
+        )[0]
+
+        self.assertEqual(item.edge_work, "seamed edges")
+        self.assertIn("pull holes", item.fabrication_details)
+
+    def test_door_lite_with_pending_dimensions_remains_rectangular(self):
+        item = normalize_items(
+            [
+                {
+                    "dimensions": {"width": None, "height": None, "shape": "square"},
+                    "shape": "square",
+                    "glass_type": "monolithic",
+                    "HT": "tempered",
+                    "notes": "Door lite with two door rail cutouts; exact size pending.",
+                }
+            ]
+        )[0]
+
+        self.assertEqual(item.shape, "rectangle")
+
+    def test_item_marks_are_recovered_from_specific_leading_notes(self):
+        items = normalize_items(
+            [
+                {
+                    "dimensions": '30" x 72"',
+                    "glass_type": "monolithic",
+                    "notes": "Fixed shower panels.",
+                },
+                {
+                    "dimensions": '26" x 72"',
+                    "glass_type": "monolithic",
+                    "notes": "Shower doors.",
+                },
+            ]
+        )
+
+        self.assertEqual([item.mark for item in items], ["fixed panel", "door"])
 
     def test_approximate_integer_quantity_defaults_to_one(self):
         item = normalize_items(

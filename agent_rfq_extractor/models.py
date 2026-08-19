@@ -119,6 +119,13 @@ class AttachmentInfo(BaseModel):
     text_extracted: bool = False
     text_preview: str | None = None
     error: str | None = None
+    extraction_method: str | None = None
+    ocr_used: bool = False
+    ocr_confidence: float | None = None
+    page_count: int | None = None
+    ocr_page_count: int = 0
+    review_required: bool = False
+    review_reason: str | None = None
 
 
 class AttachmentText(AttachmentInfo):
