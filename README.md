@@ -2,6 +2,14 @@
 
 This project reads inbound Gmail RFQ messages for glass manufacturing work and converts each email into structured, per-item glass specifications. It persists results to SQLite and exports the same records to JSON.
 
+## Public Data Safety
+
+The checked-in sample emails and canonical files under `outputs/` contain
+synthetic demonstration data only. Do not commit databases produced from a real
+mailbox, OAuth credentials, tokens, `.env` files, or internal project reports.
+Those paths are excluded by `.gitignore`; see `SECURITY.md` for credential and
+responsible-disclosure guidance.
+
 ## What It Extracts
 
 Each email produces one record with quote data under `extraction`. The

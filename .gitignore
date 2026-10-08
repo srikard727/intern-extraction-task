@@ -7,7 +7,14 @@ __pycache__/
 !.env.example
 credentials*.json
 token*.json
+client_secret*.json
+service-account*.json
+*.pem
+*.key
 ~$*.docx
 .playwright-cli/
+data/*.db
+data/*.sqlite*
+reports/*.docx
 outputs/*_opus_*.db
 outputs/*_opus_*.json
